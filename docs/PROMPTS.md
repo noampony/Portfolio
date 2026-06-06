@@ -90,7 +90,7 @@ Task focus: real landmarks (header/nav/main/footer); "Skip to content" as the fi
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/2.2-layout-shell`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 2.3 — Build the Sticky, Data-Driven Navbar
+## ✅ Task 2.3 — Build the Sticky, Data-Driven Navbar
 
 ```text
 Implement ONLY Task 2.3 — "Build the Sticky, Data-Driven Navbar" — for the Noam Pony portfolio. Depends on Task 2.2.
@@ -102,7 +102,7 @@ Task focus: sticky navbar driven by a `lib/navigation.ts` config that starts wit
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/2.3-navbar`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 2.4 — Build the Accessible Mobile Navigation Menu
+## ✅ Task 2.4 — Build the Accessible Mobile Navigation Menu
 
 ```text
 Implement ONLY Task 2.4 — "Build the Accessible Mobile Navigation Menu" — for the Noam Pony portfolio. Depends on Task 2.3.

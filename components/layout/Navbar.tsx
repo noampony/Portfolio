@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS, type NavItem } from "@/lib/navigation";
+import { MobileNav } from "@/components/layout/MobileNav";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,9 +15,9 @@ import { cn } from "@/lib/utils";
  * lib/navigation.ts for the "targets must exist" contract. Active state (§5.4)
  * is route-based and intentionally subtle; scroll-spy is out of scope here.
  *
- * Client component because active state reads the current route. The mobile
- * collapse/menu is added in Task 2.4; until then the (few) items stay visible
- * and usable at every breakpoint.
+ * Client component because active state reads the current route. Below the `md`
+ * breakpoint the inline list is hidden and {@link MobileNav} renders a
+ * collapsible menu from the same nav-config (Task 2.4).
  */
 
 /**
@@ -49,7 +50,7 @@ export function Navbar() {
           Noam Pony
         </Link>
 
-        <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:ml-auto">
+        <ul className="ml-auto hidden flex-wrap items-center gap-x-5 gap-y-2 md:flex">
           {NAV_ITEMS.map((item) => {
             if (item.disabled || item.href === null) {
               // TBD target (e.g. Resume, §5.7): present per §5.1 but never a dead
@@ -92,6 +93,8 @@ export function Navbar() {
             );
           })}
         </ul>
+
+        <MobileNav className="ml-auto md:hidden" />
       </nav>
     </header>
   );
