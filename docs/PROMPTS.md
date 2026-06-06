@@ -172,7 +172,7 @@ Task focus: render name (<h1>), title, the required two-line hero text, location
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/4.1-hero-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 4.2 — Style the Hero and Make It Responsive
+## ✅ Task 4.2 — Style the Hero and Make It Responsive
 
 ```text
 Implement ONLY Task 4.2 — "Style the Hero and Make It Responsive" — for the Noam Pony portfolio. Depends on Task 4.1.
