@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/lib/content/loaders";
 import { geistSans, jetBrainsMono } from "./fonts";
 import { SkipLink, MAIN_CONTENT_ID } from "@/components/layout/SkipLink";
 import { Navbar } from "@/components/layout/Navbar";

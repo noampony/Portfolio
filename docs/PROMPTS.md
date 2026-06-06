@@ -131,7 +131,7 @@ Task focus: TypeScript types in lib/content/types.ts for Profile, Experience, Pr
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/3.1-content-types`, type-check green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 3.2 — Build the Build-Time Content Validator
+## ✅ Task 3.2 — Build the Build-Time Content Validator
 
 ```text
 Implement ONLY Task 3.2 — "Build the Build-Time Content Validator" — for the Noam Pony portfolio. Depends on Task 3.1.
