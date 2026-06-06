@@ -66,7 +66,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/1.2-add
 # Phase 2 — Design System & Shared Layout
 Phase file: [tasks/phase-02-design-system.md](../tasks/phase-02-design-system.md)
 
-## ⬜ Task 2.1 — Implement Color Tokens and Typography
+## ✅ Task 2.1 — Implement Color Tokens and Typography
 
 ```text
 Implement ONLY Task 2.1 — "Implement Color Tokens and Typography" — for the Noam Pony portfolio. Depends on Task 1.2.
