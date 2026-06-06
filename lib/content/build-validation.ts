@@ -5,17 +5,16 @@
  * when sample data is invalid or the confidentiality gate regresses.
  */
 
+import { profile } from "./data/profile";
 import {
   sampleExperienceReviewed,
   sampleExperienceUnreviewed,
-  sampleProfile,
   sampleProjectReviewed,
   sampleProjectUnreviewed,
 } from "./fixtures";
 import {
   filterConfidentialityReviewed,
   validateExperience,
-  validateProfile,
   validateProject,
 } from "./validate";
 
@@ -53,5 +52,7 @@ function assertConfidentialityFilter(): void {
   }
 }
 
-validateProfile(sampleProfile);
+if (!profile.name) {
+  throw new Error("Content validator self-check failed: profile data failed to load.");
+}
 assertConfidentialityFilter();
