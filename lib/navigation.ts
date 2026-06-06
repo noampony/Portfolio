@@ -6,8 +6,7 @@
  * Done), this list contains **only items whose targets already exist at the
  * current commit**. Items are added/enabled by later tasks as their targets ship:
  *
- *   - `Home`      → `/` (the homepage route already exists).
- *                   Re-pointed to the `#home` anchor when the Hero ships (Task 4.1).
+ *   - `Home`      → `/#home` (Hero anchor, Task 4.1).
  *   - `About`     → `#about`       — appended by Task 5.2 when the About section ships.
  *   - `Experience`→ `#experience`  — appended by Task 6.2.
  *   - `Projects`  → `#projects`    — appended by Task 7.2 (homepage preview anchor per §5.3;
@@ -49,7 +48,7 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { id: "home", label: "Home", href: "/" },
+  { id: "home", label: "Home", href: "/#home" },
   {
     id: "resume",
     label: "Resume",
