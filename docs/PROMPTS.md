@@ -78,7 +78,7 @@ Task focus: encode all §6.3 color tokens (exact hex) as CSS variables / Tailwin
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/2.1-tokens-typography`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 2.2 — Build the Root Layout Shell, Skip Link, and Footer
+## ✅ Task 2.2 — Build the Root Layout Shell, Skip Link, and Footer
 
 ```text
 Implement ONLY Task 2.2 — "Build the Root Layout Shell, Skip Link, and Footer" — for the Noam Pony portfolio. Depends on Task 2.1.
