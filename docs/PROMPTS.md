@@ -119,7 +119,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/2.4-mob
 # Phase 3 — Content / Data Model
 Phase file: [tasks/phase-03-content-model.md](../tasks/phase-03-content-model.md)
 
-## ⬜ Task 3.1 — Define Content Model Types
+## ✅ Task 3.1 — Define Content Model Types
 
 ```text
 Implement ONLY Task 3.1 — "Define Content Model Types" — for the Noam Pony portfolio. Depends on Task 1.2.
