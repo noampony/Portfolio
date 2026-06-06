@@ -8,39 +8,66 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "\"SF Mono\"", "Menlo", "monospace"]
+      },
+      fontSize: {
+        display: ["var(--type-display)", { lineHeight: "var(--leading-display)" }],
+        h1: ["var(--type-h1)", { lineHeight: "var(--leading-h1)" }],
+        h2: ["var(--type-h2)", { lineHeight: "var(--leading-h2)" }],
+        body: ["var(--type-body)", { lineHeight: "var(--leading-body)" }],
+        small: ["var(--type-small)", { lineHeight: "var(--leading-small)" }]
+      },
+      maxWidth: {
+        measure: "var(--measure-body)"
+      },
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        "bg-base": "var(--bg-base)",
+        "bg-surface": "var(--bg-surface)",
+        "bg-surface-raised": "var(--bg-surface-raised)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-muted": "var(--text-muted)",
+        "accent-hover": "var(--accent-hover)",
+        "accent-contrast": "var(--accent-contrast)",
+        "gradient-from": "var(--gradient-from)",
+        "gradient-to": "var(--gradient-to)",
+        danger: "var(--danger)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))"
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)"
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))"
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)"
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))"
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)"
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))"
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
+          contrast: "var(--accent-contrast)",
+          foreground: "var(--accent-foreground)"
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))"
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)"
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))"
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)"
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))"
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)"
         }
       },
       borderRadius: {
