@@ -143,7 +143,7 @@ Task focus: a build/dev-time validator that fails on missing required fields and
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/3.2-content-validator`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 3.3 — Create and Populate the Profile Data
+## ✅ Task 3.3 — Create and Populate the Profile Data
 
 ```text
 Implement ONLY Task 3.3 — "Create and Populate the Profile Data" — for the Noam Pony portfolio. Depends on Tasks 3.1, 3.2.
