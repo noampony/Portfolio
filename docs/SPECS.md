@@ -286,11 +286,13 @@ The planning template allows either:
 
 Final resume behavior is **TBD**.
 
-Required known resume file path:
+Required known resume file (filesystem location in the repo):
 
 ```text
 /public/resume.pdf
 ```
+
+> **Served-URL correction (Next.js):** Files placed in the `public/` directory are served from the site **root**, not under `/public`. The resume must therefore be linked/downloaded from the URL **`/resume.pdf`**, not `/public/resume.pdf` (the latter returns 404 in production). Throughout this spec, `/public/resume.pdf` denotes the repo path and `/resume.pdf` denotes the public URL.
 
 Required download button text:
 
@@ -388,7 +390,7 @@ GitHub is mentioned as a skill/source area but a specific public profile link is
 The Resume nav item should either:
 
 - Navigate to a Resume section on the homepage,
-- Open/download `/public/resume.pdf`,
+- Open/download the resume at URL `/resume.pdf`,
 - Open a resume modal,
 - Or navigate to a dedicated Resume page.
 
@@ -424,9 +426,7 @@ The planning template references the following sites:
 
 The preferred palette is dark and developer-oriented.
 
-Specific colors are not provided.
-
-Required:
+Required (from planning):
 
 - Dark background
 - Strong text contrast
@@ -434,19 +434,60 @@ Required:
 - Avoid overly dark low-contrast surfaces
 - Avoid generic neon-overload design
 
-Final palette is **TBD**.
+**Proposed palette (now specified — see note below).** Values are chosen to satisfy the requirements above and WCAG 2.1 AA contrast on the dark base. They are sensible defaults the owner may override, but they unblock the visual build. Implement as CSS custom properties / Tailwind theme tokens.
+
+| Token | Hex | Role | Contrast note |
+|---|---|---|---|
+| `--bg-base` | `#0B0F14` | Page background (near-black slate, not pure black) | base layer |
+| `--bg-surface` | `#141A22` | Card / section surface | distinct from base (avoids "all one black") |
+| `--bg-surface-raised` | `#1C242E` | Hover / raised / nav surface | layered depth |
+| `--border` | `#2A333F` | Card borders, dividers | visible separation on dark |
+| `--text-primary` | `#E6EDF3` | Headings, primary body | ~14:1 on `--bg-base` ✓ AAA |
+| `--text-secondary` | `#9FB0C0` | Secondary body, labels | ~7:1 on `--bg-base` ✓ AA |
+| `--text-muted` | `#6B7A8A` | Captions, non-essential meta | large/decorative text only |
+| `--accent` | `#2DD4BF` | **Primary accent** — CTAs, links, active states, highlights, focus ring | high contrast on dark; pair with `--bg-base` text on filled buttons |
+| `--accent-hover` | `#5EEAD4` | Accent hover/active state | — |
+| `--accent-contrast` | `#0B0F14` | Text/icon color on a filled accent button | dark-on-accent for AA |
+| `--gradient-from` | `#2DD4BF` | Animated-gradient start (used sparingly) | — |
+| `--gradient-to` | `#3B82F6` | Animated-gradient end (subtle blue companion) | keep low-opacity to avoid neon overload |
+| `--danger` | `#F87171` | Form/validation errors only | not color-only; pair with text/icon |
+
+Usage rules:
+
+- **One** primary accent (`--accent`) only — the blue gradient companion is for subtle background/gradient accents, not a second button color, to avoid neon overload.
+- Filled accent buttons use `--accent` background with `--accent-contrast` text. Links/active states use `--accent` as foreground on dark surfaces.
+- All text/background pairings must verify ≥ 4.5:1 (normal text) or ≥ 3:1 (large text / UI components) with a contrast checker before shipping.
+
+This palette supersedes the earlier "TBD" status; owner may substitute exact brand colors later without changing the token names.
 
 ### 6.4 Typography
 
-Typography should be:
+Typography should be clean, professional, developer-oriented, highly readable, and suitable for both technical and non-technical audiences.
 
-- Clean
-- Professional
-- Developer-oriented
-- Highly readable
-- Suitable for both technical and non-technical audiences
+**Proposed fonts (now specified).** Chosen for a modern, developer-oriented but professional feel that fits the Next.js/Vercel stack and is not the generic default. Load via `next/font` (self-hosted, `display: swap`, primary family preloaded) — no render-blocking external font CSS.
 
-Specific fonts are **TBD**.
+| Role | Font | Fallback stack | Used for |
+|---|---|---|---|
+| Sans (UI / body / headings) | **Geist Sans** | `Inter, system-ui, -apple-system, sans-serif` | All prose, headings, navigation, buttons |
+| Mono | **JetBrains Mono** | `ui-monospace, "SF Mono", Menlo, monospace` | Hero floating-code motif, terminal popup, stat numbers, tech-stack badges, inline code |
+
+Type scale (baseline, mobile-first; scale up at `lg`):
+
+| Token | Size / line-height | Use |
+|---|---|---|
+| `display` | 2.5rem / 1.1 (desktop up to 3.5rem) | Hero name |
+| `h1` | 2rem / 1.2 | Section headings |
+| `h2` | 1.5rem / 1.25 | Sub-section headings |
+| `body` | 1rem / 1.6 | Default body |
+| `small` | 0.875rem / 1.5 | Labels, captions |
+
+Rules:
+
+- Body line length capped at ~70–75 characters for readability.
+- Use the mono family for "engineering texture" (code, terminal, numeric stats) — do not set long-form paragraphs in mono.
+- Owner may swap families later; keep the Sans/Mono role split and the scale tokens.
+
+This supersedes the earlier "TBD" status.
 
 ### 6.5 Layout Feel
 
@@ -643,17 +684,19 @@ Status: **TBD**
 
 ### CTA Buttons
 
-The Hero must include:
+The Hero must include both CTA buttons, **rendered and styled**, but for the MVP they are **intentionally no-op** (they do not navigate or trigger any action yet). They are wired up later when their target sections exist.
 
-1. Primary CTA:
-   - Label: **TBD**
-   - Expected behavior: open resume page, resume section, resume modal, or `/public/resume.pdf`
-   - Current planning intent: “resume page”
+1. Primary CTA (Resume):
+   - Label: **TBD** (suggested default: `Resume`)
+   - MVP behavior: **no-op** — renders as a styled button with no action.
+   - Final behavior: **deferred.** To be wired when the Resume section (§8.7) is built — see the wiring note there.
 
-2. Secondary CTA:
-   - Label: **TBD**
-   - Expected behavior: navigate to Contact section or Contact page
-   - Current planning intent: “contact me page / section”
+2. Secondary CTA (Contact):
+   - Label: **TBD** (suggested default: `Contact`)
+   - MVP behavior: **no-op** — renders as a styled button with no action.
+   - Final behavior: **deferred.** To be wired when the Contact section (§8.8) is built — see the wiring note there.
+
+> **Implementation note:** Keep the buttons keyboard-focusable and visible, but do not attach a broken/placeholder destination (no `href="#"` that scrolls to top, no dead `/public/...` link). A no-op handler or a disabled-but-labelled state is acceptable for the MVP. They MUST be activated before launch — see §8.7 and §8.8 wiring notes.
 
 ### Visual Elements
 
@@ -685,8 +728,7 @@ Mobile:
 - Hero uses the required hero text.
 - Hero is responsive across desktop, tablet, and mobile.
 - Hero has no placeholder content except explicitly marked TBD fields.
-- Resume CTA has a working final behavior.
-- Contact CTA has a working final behavior.
+- Resume and Contact CTAs are rendered, styled, and keyboard-focusable, but are **intentionally no-op** in the MVP (no broken/dead links). Their final behavior is deferred to when the Resume (§8.7) and Contact (§8.8) sections are built.
 - LinkedIn link opens safely in a new tab.
 - Visual effects do not reduce readability.
 - Hero passes basic accessibility checks for heading order, contrast, keyboard navigation, and CTA labels.
@@ -715,7 +757,7 @@ The section must include:
 ### Paragraph Draft
 
 ```text
-Experienced cloud backend software developer with a degree in Computer Science and X years of hands-on experience and over 30 professional courses during my role as a software developer to continuously enhance my technical and soft skills.
+Experienced cloud backend software developer with a degree in Computer Science and X years of hands-on experience and 35 professional courses during my role as a software developer to continuously enhance my technical and soft skills.
 ```
 
 The value `X years` should be calculated dynamically from October 2022 if implemented as dynamic content.
@@ -724,11 +766,17 @@ The value `X years` should be calculated dynamically from October 2022 if implem
 
 | Stat | Value | Label |
 |---|---:|---|
-| Years of experience | Since Oct 2022, calculate at runtime | Years Experience |
-| Projects completed | 10+ | Projects |
+| Years of experience | Since Oct 2022, calculate at build time | Years Experience |
+| Projects completed | **TBD** — real count not yet known; do **not** display `10+`. Show the actual public-safe number once confirmed, or omit this stat until then. | Projects |
 | Technologies / frameworks | 18+ | Technologies |
-| Certificates | 40 | Certificates |
-| Main fields of experience | Python, AWS, Docker | Main Fields |
+| Courses completed | **35** | Courses |
+| Certificates | **TBD subset of 35** — not every course has a PDF certificate (some were completed without a certificate in hand). Show the count of courses that *do* have a certificate, or omit this stat until counted. | Certificates |
+| Main fields of experience | Python, AWS, Docker (rendered as badges, not a counter — see §21.1 A5) | Main Fields |
+
+> **Stat accuracy rules (from C3 resolution):**
+> - **Courses ≠ certificates.** There are **35 courses completed**; certificates are a *subset* (only courses that have a PDF). Never present 35 courses as "35 certificates".
+> - Do not advertise a projects count larger than what the site can actually show. Until the real number is known, omit the projects stat or show the true count.
+> - The earlier "40 certificates" / "over 30 courses" figures are superseded by **35 courses** + a TBD certificate subset.
 
 ### Main Fields
 
@@ -769,7 +817,7 @@ Preferred layout:
 ### Acceptance Criteria
 
 - Section communicates professional background clearly.
-- Stats match the planning template.
+- Stats follow the C3 accuracy rules: 35 courses; certificates shown as a subset (or omitted until counted); projects count omitted until the real number is known (never `10+`).
 - Years of experience are either dynamically calculated from Oct 2022 or explicitly generated during build.
 - Main fields are displayed visually and accessibly.
 - No confidential employer details are exposed.
@@ -809,7 +857,7 @@ Screenshots are optional and must comply with confidentiality constraints.
 | Duration | 1 year, 1 month |
 | Team size | 3–5 volunteer developers |
 | Technology | Bubble.io |
-| Link | `https://www.linkedin.com/feed/update/urn:li:activity:7305508419812126722/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3B%2F15DZSrzTOa0RP%2FMY8eIuA%3D%3D` |
+| Link | `https://www.linkedin.com/feed/update/urn:li:activity:7305508419812126722/` (tracking query params such as `lipi` MUST be stripped before publishing — they encode a personal session/tracking token) |
 
 Description:
 
@@ -1305,6 +1353,8 @@ Mobile:
 
 The Resume section should give visitors a quick preview of the resume and allow them to download it.
 
+> **Hero CTA wiring note:** The Hero's primary (Resume) CTA is shipped as a no-op in the MVP (§8.1). When this section is implemented, the Hero Resume button MUST be wired to the chosen resume behavior (scroll to `#resume`, open `/resume.pdf`, or open the modal) and its no-op state removed before launch.
+
 ### Required Features
 
 - Embedded resume preview
@@ -1315,7 +1365,8 @@ The Resume section should give visitors a quick preview of the resume and allow 
 | Field | Value |
 |---|---|
 | File name | Noam Pony CV.pdf |
-| Location in project | `/public/resume.pdf` |
+| Location in project (repo path) | `/public/resume.pdf` |
+| Served URL | `/resume.pdf` |
 | Last updated | TBD |
 | Download button text | Download CV |
 
@@ -1333,7 +1384,7 @@ Expected behavior:
 Required:
 
 - Provide a `Download CV` button.
-- Resume should be available from `/public/resume.pdf`.
+- Resume file lives at repo path `/public/resume.pdf` and is served at URL **`/resume.pdf`**.
 - Browser should either download or open the PDF depending on final implementation.
 
 Final behavior is **TBD**.
@@ -1357,6 +1408,8 @@ Status: **TBD**
 
 ## 8.8 Contact Section
 
+> **Hero CTA wiring note:** The Hero's secondary (Contact) CTA is shipped as a no-op in the MVP (§8.1). When this section is implemented, the Hero Contact button MUST be wired to scroll to `#contact` (or navigate to the Contact page) and its no-op state removed before launch.
+
 ### Purpose
 
 The Contact section should make it easy to contact Noam professionally.
@@ -1377,7 +1430,7 @@ The Contact section should make it easy to contact Noam professionally.
 | Email | `noampony2@gmail.com` |
 | LinkedIn | `https://www.linkedin.com/in/noam-pony/` |
 | Phone | `+972 50 4377257` |
-| Location | Tel Aviv, Israel |
+| Location | Israel |
 | Preferred contact method | Phone |
 
 Recommended text correction:
@@ -1495,7 +1548,7 @@ Mobile behavior:
 | LinkedIn | `https://www.linkedin.com/in/noam-pony/` |
 | Resume link | TBD |
 | Profile picture | TBD |
-| Location | Tel Aviv, Israel |
+| Location | Israel |
 
 ### Visual Style
 
@@ -1865,11 +1918,11 @@ The Courses Hub should include:
 
 Known certificate/course stats:
 
-- Certificates: 40
-- Completed courses/certificates phrase: “over 30 professional courses”
+- Courses completed: **35**
+- Certificates: a **subset of the 35** — not every course has a PDF certificate. Exact certificate count is **TBD** (count only courses that have a certificate).
 - Top course hours provided for selected courses
 
-Exact total courses and total hours are **TBD**.
+Total hours is **TBD**. (Supersedes the earlier "40 certificates" / "over 30 courses" figures.)
 
 ### 10.9 Certificate Link Behavior
 
@@ -1906,14 +1959,15 @@ The following models are implementation-neutral. They may later be represented a
 | `shortTagline` | String | Optional | Short tagline | TBD |
 | `oneLineSummary` | String | Yes | Short summary | `A passionate experienced cloud backend developer` |
 | `heroText` | String | Yes | Hero text block | `A passionate experienced cloud backend developer. Building scalable & reliable cloud backend systems.` |
-| `location` | String | Yes | Public location | `Israel` |
-| `city` | String | Optional | More specific location | `Tel Aviv, Israel` |
+| `location` | String | Yes | Public location (owner prefers `Israel` everywhere) | `Israel` |
+| `city` | String | Optional | More specific location — **not used**; owner prefers showing `Israel` only | unused |
 | `profileImage` | Asset reference | Optional | Profile image path/source | TBD |
 | `logo` | Asset reference | Optional | Personal logo path/source | TBD |
 | `yearsExperienceStartDate` | Date | Yes | Start date for dynamic experience calculation | `2022-10` |
-| `projectsCountLabel` | String | Yes | Display count | `10+` |
+| `projectsCountLabel` | String | Optional | Display count — omit until the real count is known; do not hardcode `10+` | TBD |
 | `technologiesCountLabel` | String | Yes | Display count | `18+` |
-| `certificatesCountLabel` | String | Yes | Display count | `40` |
+| `coursesCountLabel` | String | Yes | Display count of completed courses | `35` |
+| `certificatesCountLabel` | String | Optional | Display count of courses that have a certificate (subset of courses) — omit until counted | TBD |
 | `mainFields` | List of strings | Yes | Main professional fields | `Python`, `AWS`, `Docker` |
 
 ## 11.2 Experience Model
@@ -1994,7 +2048,8 @@ The following models are implementation-neutral. They may later be represented a
 | Field | Type | Required | Description | Example |
 |---|---|---:|---|---|
 | `fileName` | String | Yes | Original resume filename | `Noam Pony CV.pdf` |
-| `publicPath` | String | Yes | Public project path | `/public/resume.pdf` |
+| `repoPath` | String | Yes | Filesystem path in repo | `/public/resume.pdf` |
+| `publicUrl` | String | Yes | Served URL used in links | `/resume.pdf` |
 | `lastUpdated` | Date | Optional | Last updated date | TBD |
 | `downloadButtonText` | String | Yes | Download CTA label | `Download CV` |
 | `previewEnabled` | Boolean | Yes | Whether preview is enabled | `true` |
@@ -2009,7 +2064,7 @@ The following models are implementation-neutral. They may later be represented a
 | `email` | Email string | Yes | Contact email | `noampony2@gmail.com` |
 | `linkedIn` | URL | Yes | LinkedIn URL | `https://www.linkedin.com/in/noam-pony/` |
 | `phone` | String | Yes | Phone number | `+972 50 4377257` |
-| `location` | String | Yes | Public location | `Tel Aviv, Israel` |
+| `location` | String | Yes | Public location | `Israel` |
 | `preferredContactMethod` | String | Yes | Preferred method | `Phone` |
 | `contactFormEnabled` | Boolean | Yes | Whether contact form is enabled | `false` for initial implementation unless promoted |
 
@@ -2550,8 +2605,7 @@ The MVP is complete when the Hero section:
 - Displays Backend Developer as the title.
 - Displays the required Hero text.
 - Displays location.
-- Provides working resume CTA behavior.
-- Provides working contact CTA behavior.
+- Renders Resume and Contact CTA buttons as no-op placeholders (styled, focusable, no broken links); final behavior deferred to §8.7/§8.8.
 - Includes LinkedIn link.
 - Includes profile image/logo or approved placeholder visual.
 - Includes polished backend/developer visual direction.
@@ -2718,3 +2772,22 @@ The finished planned website is complete when:
 - What certificate files should be included locally?
 - What icons are license-safe?
 - What images are safe for backend projects without exposing internal systems?
+
+---
+
+## 20. Accessibility Baseline (Basic)
+
+This is the **basic, must-have** accessibility set for every shipped page. It is intentionally minimal — not a full WCAG audit. Target conformance is **WCAG 2.1 AA**.
+
+1. **Semantic structure** — use real landmarks (`header`, `nav`, `main`, `footer`, `section`) and one `<h1>` per page with headings in logical order (no skipped levels for styling).
+2. **Keyboard operable** — every interactive element (links, buttons, nav, drawer, any modal/terminal) works with keyboard alone, in a sensible tab order. No keyboard traps.
+3. **Visible focus** — a clearly visible focus indicator on every focusable element (use the `--accent` focus ring; never remove outlines without a replacement).
+4. **Color contrast** — meet AA: ≥ 4.5:1 for normal text, ≥ 3:1 for large text and UI components/icons. The §6.3 palette is designed to pass; verify final pairings.
+5. **Images have text alternatives** — meaningful images get descriptive `alt`; purely decorative visuals (e.g. the floating-code background) use `alt=""` / `aria-hidden="true"`.
+6. **Skip link** — a "Skip to content" link as the first focusable element (important because the navbar is sticky).
+7. **Language** — set `<html lang="en">`.
+8. **Form labels** — if the contact form is built, every field has a programmatic `<label>`, and errors are conveyed by text/icon (not color alone).
+9. **Reduced motion** — honor `prefers-reduced-motion` (already specified in §7.3); animated counters/typing reduce to final/static values.
+10. **Links open safely** — external `target="_blank"` links use `rel="noopener noreferrer"` and have accessible names.
+
+Basic verification: keyboard-only pass over Hero + nav + any drawer/modal, plus an automated check (axe or Lighthouse accessibility ≥ 95). Deeper, optional a11y enhancements are listed in the review at §21.7.
