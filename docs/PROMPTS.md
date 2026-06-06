@@ -37,7 +37,7 @@ Every task prompt ends by telling the agent to follow this. Full text, reference
 # Phase 1 — Project Foundation
 Phase file: [tasks/phase-01-foundation.md](../tasks/phase-01-foundation.md)
 
-## ⬜ Task 1.1 — Initialize Next.js + TypeScript Project with Planned Tooling
+## ✅ Task 1.1 — Initialize Next.js + TypeScript Project with Planned Tooling
 
 ```text
 Implement ONLY Task 1.1 — "Initialize Next.js + TypeScript Project with Planned Tooling" — for the Noam Pony portfolio website (Next.js App Router + TypeScript + Tailwind CSS + ESLint, pnpm, Vercel-ready).
