@@ -160,7 +160,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/3.3-pro
 # Phase 4 — Hero Section (MVP)
 Phase file: [tasks/phase-04-hero.md](../tasks/phase-04-hero.md) · This phase is the MVP (spec §2.1).
 
-## ⬜ Task 4.1 — Implement the Hero Layout and Semantic Structure
+## ✅ Task 4.1 — Implement the Hero Layout and Semantic Structure
 
 ```text
 Implement ONLY Task 4.1 — "Implement the Hero Layout and Semantic Structure" — for the Noam Pony portfolio. Depends on Tasks 3.3, 2.4.
