@@ -1,3 +1,4 @@
+import { FloatingCode } from "@/components/sections/FloatingCode";
 import { profile } from "@/lib/content/data/profile";
 import { cn } from "@/lib/utils";
 
@@ -27,10 +28,8 @@ const ctaBaseClasses =
   "inline-flex min-h-11 min-w-[2.75rem] items-center justify-center rounded-md px-5 py-2.5 text-body font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base";
 
 /**
- * Hero section — layout (Task 4.1), styling and responsive polish (Task 4.2).
- *
- * Floating-code animation lands in Task 4.3. CTAs render as keyboard-focusable
- * no-ops (no href, no dead links).
+ * Hero section — layout (Task 4.1), styling (Task 4.2), animations (Task 4.3).
+ * CTAs render as keyboard-focusable no-ops (no href, no dead links).
  */
 export function Hero() {
   const initials = getInitials(profile.name);
@@ -41,7 +40,7 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="relative isolate w-full overflow-x-hidden"
     >
-      {/* Atmospheric backdrop — tokens only (§6.3); floating code animates in 4.3. */}
+      {/* Atmospheric backdrop — tokens only (§6.3) + decorative floating code (§8.1). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-bg-base" />
         <div
@@ -53,11 +52,10 @@ export function Hero() {
         <div
           className="absolute -left-1/3 bottom-0 h-[min(50vh,20rem)] w-[min(70vw,24rem)] rounded-full bg-accent opacity-[0.04] blur-3xl"
         />
-        {/* Decorative floating-code backdrop — hidden on mobile when it would clutter (§16.3). */}
-        <div className="max-md:hidden absolute inset-0" data-floating-code-container />
+        <FloatingCode />
       </div>
 
-      <div className="mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-measure flex-col justify-center gap-8 px-6 py-10 sm:gap-10 md:flex-row md:items-center md:justify-between md:gap-10 md:py-12 lg:gap-12 lg:py-16">
+      <div className="hero-entrance mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-measure flex-col justify-center gap-8 px-6 py-10 sm:gap-10 md:flex-row md:items-center md:justify-between md:gap-10 md:py-12 lg:gap-12 lg:py-16">
         <div className="flex min-w-0 flex-1 flex-col gap-4">
           <h1
             id="hero-heading"

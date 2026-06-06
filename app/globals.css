@@ -79,6 +79,25 @@ html {
   }
 }
 
+/* Hero entrance fade-in — transform/opacity only; skipped under reduced motion (§7.3, §14.8). */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-entrance {
+    animation: hero-fade-in 0.55s ease-out both;
+  }
+}
+
 body {
   min-height: 100vh;
   margin: 0;
