@@ -67,6 +67,16 @@ html {
   min-height: 100%;
   background: var(--bg-base);
   font-family: var(--font-sans), var(--font-sans-fallback);
+  /* Offset in-page anchor jumps so the sticky navbar never covers a section
+     heading (spec §5.2). Section anchors are added by later tasks. */
+  scroll-padding-top: 5rem;
+}
+
+/* Smooth in-page anchor scrolling, disabled under reduced-motion (spec §7.3). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
