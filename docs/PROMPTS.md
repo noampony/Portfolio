@@ -49,7 +49,7 @@ Task focus: scaffold a buildable App-Router project on the authorized stack ONLY
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/1.1-project-init`, implement green, commit + push + PR into main as Noam Pony / GitHub noampony, then mark this task ✅).
 ```
 
-## ⬜ Task 1.2 — Add Framer Motion and shadcn/ui (Authorized Dependencies)
+## ✅ Task 1.2 — Add Framer Motion and shadcn/ui (Authorized Dependencies)
 
 ```text
 Implement ONLY Task 1.2 — "Add Framer Motion and shadcn/ui" — for the Noam Pony portfolio. Depends on Task 1.1 (merged).
