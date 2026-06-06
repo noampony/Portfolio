@@ -19,7 +19,6 @@ const SNIPPET_POOL = [
   `skills = [\n    "Python",\n    "AWS",\n    "Docker",\n    "CI/CD",\n    "Testing",\n]`,
   `main_fields = [\n    "Backend Development",\n    "Cloud / AWS",\n    "DevOps",\n]`,
   `def open_contact() -> str:\n    return "Let's work together!"`,
-  `linkedin_url = (\n    "linkedin.com/in/noam-pony"\n)`,
   `class DeveloperProfile:\n    name: str = "Noam Pony"\n    title: str = "Backend Developer"`,
   `experience_start = "2022-10"`,
   `def build_backend() -> str:\n    return "scalable & reliable systems"`,

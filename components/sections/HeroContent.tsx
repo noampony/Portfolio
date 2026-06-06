@@ -1,0 +1,256 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { profile } from "@/lib/content/data/profile";
+import { cn } from "@/lib/utils";
+
+const PRIMARY_CTA_LABEL = "Resume";
+const SECONDARY_CTA_LABEL = "Contact";
+const TYPEWRITER_CHAR_MS = 88;
+
+const heroTextLines = profile.heroText.split("\n").filter(Boolean);
+
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
+const ctaBaseClasses =
+  "inline-flex min-h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-md px-5 py-2.5 text-body font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base";
+
+const paragraphContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.22,
+    },
+  },
+};
+
+const paragraphItemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: easeOut },
+  },
+};
+
+function DownloadIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
+function useTypewriter(text: string, enabled: boolean, charDelayMs: number, skip: boolean) {
+  const [displayed, setDisplayed] = useState("");
+  const [complete, setComplete] = useState(false);
+
+  useEffect(() => {
+    if (skip || !enabled) {
+      return;
+    }
+
+    let index = 0;
+    let timer: number | undefined;
+
+    const step = () => {
+      index += 1;
+      setDisplayed(text.slice(0, index));
+
+      if (index >= text.length) {
+        setComplete(true);
+        return;
+      }
+
+      timer = window.setTimeout(step, charDelayMs);
+    };
+
+    timer = window.setTimeout(step, charDelayMs);
+
+    return () => {
+      if (timer !== undefined) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, [text, enabled, charDelayMs, skip]);
+
+  if (skip) {
+    return { displayed: text, complete: true };
+  }
+
+  if (!enabled) {
+    return { displayed: "", complete: false };
+  }
+
+  return { displayed, complete };
+}
+
+type HeroContentProps = {
+  initials: string;
+};
+
+/**
+ * Animated Hero copy — typewriter name, staggered reveals, reduced-motion fallbacks (§7.3).
+ */
+export function HeroContent({ initials }: HeroContentProps) {
+  const prefersReducedMotion = useReducedMotion() ?? false;
+  const [greetingReady, setGreetingReady] = useState(prefersReducedMotion);
+
+  const { displayed: displayedName, complete: nameComplete } = useTypewriter(
+    profile.name,
+    greetingReady,
+    TYPEWRITER_CHAR_MS,
+    prefersReducedMotion
+  );
+
+  const contentRevealed = prefersReducedMotion || greetingReady;
+
+  const profileImageClasses = cn(
+    "shrink-0 object-contain",
+    "mx-auto h-44 w-auto sm:h-52",
+    // Desktop: contained portrait, top-aligned; w-auto + max-h preserve aspect ratio.
+    "md:mx-0 md:h-auto md:max-h-[22rem] md:w-auto lg:max-h-[24rem]"
+  );
+
+  return (
+    <div className="flex w-full flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:gap-10 lg:gap-12">
+      {/* Left column on md+; `contents` on mobile lets the image slot between text and buttons. */}
+      <div className="contents md:flex md:min-w-0 md:flex-1 md:flex-col md:gap-8">
+        <div className="order-1 flex min-w-0 flex-col gap-5 sm:gap-6 md:order-none">
+          <h1
+            id="hero-heading"
+            aria-label={`Hello! I'm ${profile.name}`}
+            className="m-0 text-[2.75rem] font-semibold leading-[1.08] tracking-tight sm:text-[3.25rem] lg:text-[4.75rem]"
+          >
+            <motion.span
+              className="mb-2 block text-body font-medium tracking-wide text-text-secondary sm:mb-3 sm:text-h2 lg:text-[1.875rem]"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: easeOut }}
+              onAnimationComplete={() => {
+                if (!prefersReducedMotion) {
+                  setGreetingReady(true);
+                }
+              }}
+            >
+              Hello! I&apos;m
+            </motion.span>
+            <span className="inline-flex items-baseline">
+              <span className="hero-name-glow bg-gradient-to-r from-gradient-from to-gradient-to bg-clip-text text-transparent">
+                {displayedName}
+              </span>
+              {!nameComplete && !prefersReducedMotion ? (
+                <span
+                  aria-hidden="true"
+                  className="hero-type-cursor ml-1 inline-block h-[0.82em] w-[2px] translate-y-[0.06em] rounded-full bg-gradient-to-b from-gradient-from to-gradient-to"
+                />
+              ) : null}
+            </span>
+          </h1>
+
+          <motion.p
+            className="m-0 text-h2 font-medium text-text-secondary sm:text-h1 lg:text-[2.25rem]"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+            animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.12 }}
+          >
+            {profile.title}
+          </motion.p>
+
+          <motion.div
+            className="flex flex-col gap-1.5 text-lg text-white sm:text-xl lg:text-[1.375rem] lg:leading-relaxed"
+            variants={paragraphContainerVariants}
+            initial="hidden"
+            animate={contentRevealed ? "visible" : "hidden"}
+          >
+            {heroTextLines.map((line) => (
+              <motion.p key={line} variants={paragraphItemVariants} className="m-0 max-w-none xl:whitespace-nowrap">
+                {line}
+              </motion.p>
+            ))}
+          </motion.div>
+
+          <motion.p
+            className="m-0 text-body text-text-secondary sm:text-lg"
+            initial={prefersReducedMotion ? false : { opacity: 0 }}
+            animate={contentRevealed ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.4, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.38 }}
+          >
+            {profile.location}
+          </motion.p>
+        </div>
+
+        <motion.div
+          className="order-3 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap md:order-none"
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+          animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.48 }}
+        >
+          <button
+            type="button"
+            className={cn(
+              ctaBaseClasses,
+              "w-full bg-accent text-accent-contrast hover:bg-accent-hover sm:w-auto"
+            )}
+          >
+            {PRIMARY_CTA_LABEL}
+            <DownloadIcon />
+          </button>
+          <button
+            type="button"
+            className={cn(
+              ctaBaseClasses,
+              "w-full border border-border bg-bg-surface-raised text-text-primary hover:border-accent hover:text-accent sm:w-auto"
+            )}
+          >
+            {SECONDARY_CTA_LABEL}
+          </button>
+        </motion.div>
+      </div>
+
+      <motion.div
+        className="order-2 flex shrink-0 items-start justify-center md:order-none md:justify-end"
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
+        animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.55, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.16 }}
+      >
+        {profile.profileImage ? (
+          // eslint-disable-next-line @next/next/no-img-element -- Hero LCP; static public asset
+          <img
+            src={profile.profileImage}
+            alt={`${profile.name} profile`}
+            width={1191}
+            height={1852}
+            className={profileImageClasses}
+          />
+        ) : (
+          <div
+            role="img"
+            aria-label={`${profile.name} profile`}
+            className={cn(
+              profileImageClasses,
+              "flex aspect-square items-center justify-center rounded-full bg-bg-surface-raised font-mono text-display font-semibold text-accent"
+            )}
+          >
+            <span aria-hidden="true">{initials}</span>
+          </div>
+        )}
+      </motion.div>
+    </div>
+  );
+}

@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        hero: ["var(--font-hero)", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "\"SF Mono\"", "Menlo", "monospace"]
       },
       fontSize: {

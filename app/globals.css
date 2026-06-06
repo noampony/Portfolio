@@ -79,22 +79,29 @@ html {
   }
 }
 
-/* Hero entrance fade-in — transform/opacity only; skipped under reduced motion (§7.3, §14.8). */
-@keyframes hero-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.75rem);
+/* Hero name — crisp gradient edge glow on the typed display name. */
+.hero-name-glow {
+  filter: drop-shadow(0 0 1px color-mix(in srgb, var(--gradient-from) 85%, transparent))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--gradient-from) 55%, transparent))
+    drop-shadow(0 0 4px color-mix(in srgb, var(--gradient-to) 38%, transparent));
+}
+
+/* Hero typewriter cursor — decorative; disabled under reduced motion (§7.3). */
+@keyframes hero-type-cursor-blink {
+  0%,
+  45% {
+    opacity: 1;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  50%,
+  100% {
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-entrance {
-    animation: hero-fade-in 0.55s ease-out both;
+  .hero-type-cursor {
+    animation: hero-type-cursor-blink 1s step-end infinite;
   }
 }
 
