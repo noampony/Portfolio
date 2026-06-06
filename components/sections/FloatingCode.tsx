@@ -1,39 +1,42 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { motion, useAnimation, useReducedMotion } from "framer-motion";
 
 /**
- * Generic Python snippets for the decorative Hero backdrop.
+ * Portfolio-themed Python snippets for the decorative Hero backdrop.
  * Exact content is TBD (spec §19.2) — these defaults are owner-confirmable
  * placeholders only. Never use real or work-derived code (spec §15.2).
  */
 const SNIPPET_POOL = [
-  `def greet(name: str) -> str:\n    return f"Hello, {name}!"`,
-  `items = [1, 2, 3, 4, 5]\ntotal = sum(items)`,
-  `async def fetch(url: str) -> bytes:\n    ...`,
-  `squares = [n * n for n in range(6)]`,
-  `for item in collection:\n    process(item)`,
-  `data = {"key": "value"}`,
-  `class Point:\n    def __init__(self, x: float, y: float):\n        self.x = x\n        self.y = y`,
-  `result = sorted(names, key=len)`,
-  `values = map(str.upper, words)`,
-  `total = sum(n for n in numbers if n > 0)`,
-  `payload = {"status": "ok"}`,
-  `names = [user.name for user in users]`,
+  `name = "Noam Pony"\nrole = "Backend Developer"\nlocation = "Israel"`,
+  `def greet() -> str:\n    return "Hello, welcome!"`,
+  `def nice_to_meet_you() -> str:\n    return "Nice to meet you!"`,
+  `summary = (\n    "A passionate experienced"\n    " cloud backend developer"\n)`,
+  `tagline = (\n    "Building scalable & reliable"\n    " cloud backend systems."\n)`,
+  `portfolio_sections = [\n    "about",\n    "experience",\n    "projects",\n    "courses",\n    "skills",\n    "resume",\n    "contact",\n]`,
+  `courses_completed = 35\ntech_stack_count = "18+"`,
+  `skills = [\n    "Python",\n    "AWS",\n    "Docker",\n    "CI/CD",\n    "Testing",\n]`,
+  `main_fields = [\n    "Backend Development",\n    "Cloud / AWS",\n    "DevOps",\n]`,
+  `def open_contact() -> str:\n    return "Let's work together!"`,
+  `linkedin_url = (\n    "linkedin.com/in/noam-pony"\n)`,
+  `class DeveloperProfile:\n    name: str = "Noam Pony"\n    title: str = "Backend Developer"`,
+  `experience_start = "2022-10"`,
+  `def build_backend() -> str:\n    return "scalable & reliable systems"`,
+  `learning_path = {\n    "courses": 35,\n    "focus": "cloud backend",\n}`,
+  `project_preview = "#projects"\ncourses_hub = "#courses"`,
+  `certificates_note = (\n    "Certificates are a subset"\n    " of completed courses."\n)`,
+  `resume_action = "Download CV"\nresume_path = "/resume.pdf"`,
+  `contact_message = (\n    "Have something interesting"\n    " to work on? Contact me."\n)`,
+  `stack = ["Python", "Automation", "System Design"]`,
+  `def welcome_visitor() -> str:\n    return "Thanks for stopping by!"`,
+  `site_theme = "dark developer aesthetic"`,
+  `async def deploy_portfolio() -> None:\n    await launch()`,
 ] as const;
 
 /** Approximate rendered block footprint used to keep spawn zones from overlapping. */
 const BLOCK_WIDTH_VW = 14;
 const BLOCK_HEIGHT_VH = 10;
-
-/** Drift bounds across the full Hero backdrop. */
-const BACKDROP = {
-  xMin: 2,
-  xMax: 82,
-  yMin: 4,
-  yMax: 82,
-} as const;
 
 const blockClassName =
   "absolute left-0 top-0 m-0 max-w-[15rem] whitespace-pre-wrap rounded-md border border-border bg-bg-surface p-3 font-mono text-small leading-snug text-[color-mix(in_srgb,var(--text-muted)_45%,var(--bg-surface))] will-change-transform lg:max-w-[17rem] xl:max-w-[18rem]";
@@ -50,9 +53,14 @@ type Point = {
   y: number;
 };
 
-type TravelLeg = {
-  target: Point;
-  duration: number;
+type BlockCycle = {
+  code: string;
+  start: Point;
+  end: Point;
+  visibleDuration: number;
+  fadeInDuration: number;
+  fadeOutDuration: number;
+  gapAfter: number;
 };
 
 type BlockLayout = {
@@ -125,29 +133,28 @@ function randomPointInZone(zone: Zone): Point {
   };
 }
 
-function randomPointInBackdrop(): Point {
-  return {
-    x: randomBetween(BACKDROP.xMin, BACKDROP.xMax - BLOCK_WIDTH_VW),
-    y: randomBetween(BACKDROP.yMin, BACKDROP.yMax - BLOCK_HEIGHT_VH),
-  };
-}
-
-function randomTravelLeg(from: Point): TravelLeg {
-  let target = randomPointInBackdrop();
-
-  for (let attempt = 0; attempt < 32; attempt += 1) {
-    const candidate = randomPointInBackdrop();
-    if (Math.hypot(candidate.x - from.x, candidate.y - from.y) >= 24) {
-      target = candidate;
-      break;
+function randomDriftEnd(zone: Zone, start: Point): Point {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const candidate = randomPointInZone(zone);
+    if (Math.hypot(candidate.x - start.x, candidate.y - start.y) >= 3) {
+      return candidate;
     }
   }
 
-  const distance = Math.hypot(target.x - from.x, target.y - from.y);
+  return randomPointInZone(zone);
+}
+
+function createBlockCycle(zone: Zone, start?: Point): BlockCycle {
+  const startPoint = start ?? randomPointInZone(zone);
 
   return {
-    target,
-    duration: randomBetween(14, 24) * (distance / 36),
+    code: pickSnippet(),
+    start: startPoint,
+    end: randomDriftEnd(zone, startPoint),
+    visibleDuration: randomBetween(4, 7),
+    fadeInDuration: randomBetween(0.9, 1.4),
+    fadeOutDuration: randomBetween(1.0, 1.6),
+    gapAfter: randomBetween(500, 1500),
   };
 }
 
@@ -170,6 +177,12 @@ function createBlockSeeds(count: number): BlockSeed[] {
       layout: createInitialLayout(zone),
       staticPosition: randomPointInZone(zone),
     };
+  });
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
   });
 }
 
@@ -201,59 +214,87 @@ function useBlockCount(): number {
 }
 
 type FloatingCodeBlockProps = {
+  zone: Zone;
   initialLayout: BlockLayout;
   staticPosition: Point;
   reducedMotion: boolean;
 };
 
 /**
- * One independently drifting code block — continuously moves across the full
- * backdrop on random legs. Snippet text refreshes occasionally with a quick fade.
+ * One independently cycling code block — fades in, drifts briefly, fades out,
+ * then respawns with new content at a new position in its zone.
  */
-function FloatingCodeBlock({ initialLayout, staticPosition, reducedMotion }: FloatingCodeBlockProps) {
+function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion }: FloatingCodeBlockProps) {
   const controls = useAnimation();
   const [code, setCode] = useState(initialLayout.code);
+  const zoneRef = useRef(zone);
+  const startPositionRef = useRef({ x: initialLayout.x, y: initialLayout.y });
 
   useEffect(() => {
     if (reducedMotion) {
       return;
     }
 
+    const activeZone = zoneRef.current;
+    const startPosition = startPositionRef.current;
     let cancelled = false;
-    let legsSinceRefresh = 0;
-    let position: Point = { x: initialLayout.x, y: initialLayout.y };
 
-    async function drift() {
-      await controls.set({
-        x: `${position.x}vw`,
-        y: `${position.y}vh`,
-      });
+    async function runLifecycle() {
+      let isFirstCycle = true;
+      let cycle = createBlockCycle(activeZone, startPosition);
 
       while (!cancelled) {
-        const leg = randomTravelLeg(position);
+        setCode(cycle.code);
+
+        if (isFirstCycle) {
+          await controls.set({
+            x: `${cycle.start.x}vw`,
+            y: `${cycle.start.y}vh`,
+            opacity: 1,
+          });
+
+          await controls.start({
+            x: `${cycle.end.x}vw`,
+            y: `${cycle.end.y}vh`,
+            transition: { duration: cycle.visibleDuration, ease: "linear" },
+          });
+
+          isFirstCycle = false;
+        } else {
+          await controls.set({
+            x: `${cycle.start.x}vw`,
+            y: `${cycle.start.y}vh`,
+            opacity: 0,
+          });
+
+          await controls.start({
+            opacity: 1,
+            transition: { duration: cycle.fadeInDuration, ease: "easeInOut" },
+          });
+
+          await controls.start({
+            x: `${cycle.end.x}vw`,
+            y: `${cycle.end.y}vh`,
+            transition: { duration: cycle.visibleDuration, ease: "linear" },
+          });
+        }
 
         await controls.start({
-          x: `${leg.target.x}vw`,
-          y: `${leg.target.y}vh`,
-          transition: { duration: leg.duration, ease: "linear" },
+          opacity: 0,
+          transition: { duration: cycle.fadeOutDuration, ease: "easeInOut" },
         });
 
-        position = leg.target;
-        legsSinceRefresh += 1;
-
-        if (legsSinceRefresh >= 4 && Math.random() < 0.45) {
-          legsSinceRefresh = 0;
-          setCode(pickSnippet());
-        }
+        await sleep(cycle.gapAfter);
+        cycle = createBlockCycle(activeZone);
       }
     }
 
-    void drift();
+    void runLifecycle();
 
     return () => {
       cancelled = true;
     };
-  }, [controls, initialLayout.x, initialLayout.y, reducedMotion]);
+  }, [controls, reducedMotion]);
 
   if (reducedMotion) {
     return (
@@ -270,7 +311,16 @@ function FloatingCodeBlock({ initialLayout, staticPosition, reducedMotion }: Flo
   }
 
   return (
-    <motion.pre tabIndex={-1} className={blockClassName} initial={false} animate={controls}>
+    <motion.pre
+      tabIndex={-1}
+      className={blockClassName}
+      initial={{
+        opacity: 1,
+        x: `${initialLayout.x}vw`,
+        y: `${initialLayout.y}vh`,
+      }}
+      animate={controls}
+    >
       <code>{code}</code>
     </motion.pre>
   );
@@ -298,6 +348,7 @@ export function FloatingCode() {
       {blockSeeds.map((seed, index) => (
         <FloatingCodeBlock
           key={index}
+          zone={seed.zone}
           initialLayout={seed.layout}
           staticPosition={seed.staticPosition}
           reducedMotion={prefersReducedMotion}
