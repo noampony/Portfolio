@@ -177,8 +177,18 @@ export function HeroContent({ initials }: HeroContentProps) {
               Hello! I&apos;m
             </motion.span>
             <span className="inline-flex items-baseline">
-              <span className="hero-name-glow bg-gradient-to-r from-gradient-from to-gradient-to bg-clip-text text-transparent">
-                {displayedName}
+              <span className="relative inline-block">
+                <span className="hero-name-glow bg-gradient-to-r from-gradient-from to-gradient-to bg-clip-text text-transparent">
+                  {displayedName}
+                </span>
+                {nameComplete && !prefersReducedMotion ? (
+                  <span
+                    aria-hidden="true"
+                    className="hero-name-shine absolute inset-0"
+                  >
+                    {displayedName}
+                  </span>
+                ) : null}
               </span>
               {!nameComplete && !prefersReducedMotion ? (
                 <span
@@ -195,7 +205,17 @@ export function HeroContent({ initials }: HeroContentProps) {
             animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.12 }}
           >
-            {profile.title}
+            <span className="relative inline-block">
+              {profile.title}
+              {nameComplete && !prefersReducedMotion ? (
+                <span
+                  aria-hidden="true"
+                  className="hero-name-shine hero-name-shine--delayed absolute inset-0"
+                >
+                  {profile.title}
+                </span>
+              ) : null}
+            </span>
           </motion.p>
 
           <motion.div
