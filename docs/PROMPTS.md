@@ -196,7 +196,7 @@ Task focus: subtle entrance fade-in + animated floating Python code background (
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/4.3-hero-animation`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 4.4 — Add Homepage SEO Metadata
+## ✅ Task 4.4 — Add Homepage SEO Metadata
 
 ```text
 Implement ONLY Task 4.4 — "Add Homepage SEO Metadata" — for the Noam Pony portfolio. Depends on Task 4.1.
