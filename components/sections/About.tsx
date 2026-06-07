@@ -1,34 +1,66 @@
-import type { CSSProperties } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 import { about } from "@/lib/content/data/about";
 
+const easeOut = [0.22, 1, 0.36, 1] as const;
+const COUNT_DURATION_MS = 1500;
+
 type StatItem = {
   id: string;
-  value: string;
   label: string;
-  fill: string;
+  numericValue: number;
+  suffix?: string;
 };
 
 const stats: StatItem[] = [
   {
     id: "years",
-    value: about.stats.yearsExperienceCountLabel,
+    numericValue: Number(about.stats.yearsExperienceCountLabel),
     label: "Years Experience",
-    fill: "58%",
+    suffix: "+",
   },
   {
     id: "technologies",
-    value: about.stats.technologiesCountLabel,
+    numericValue: 18,
     label: "Technologies",
-    fill: "82%",
+    suffix: "+",
   },
   {
     id: "courses",
-    value: about.stats.coursesCountLabel,
+    numericValue: 35,
     label: "Courses",
-    fill: "74%",
+    suffix: "+",
   },
 ];
+
+const revealVariants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: easeOut },
+  },
+};
+
+const staggerContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.12, delayChildren: 0.08 },
+  },
+};
+
+const cardRevealVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.55, ease: easeOut },
+  },
+};
 
 function MetricIcon() {
   return (
@@ -50,7 +82,51 @@ function MetricIcon() {
   );
 }
 
+type AnimatedStatValueProps = {
+  value: number;
+  suffix?: string;
+  animate: boolean;
+};
+
+function AnimatedStatValue({ value, suffix = "", animate }: AnimatedStatValueProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const [displayed, setDisplayed] = useState(animate ? 0 : value);
+
+  useEffect(() => {
+    if (!animate || !isInView) {
+      return;
+    }
+
+    const start = performance.now();
+    let frame = 0;
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / COUNT_DURATION_MS, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      setDisplayed(Math.round(eased * value));
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(tick);
+      }
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [animate, isInView, value]);
+
+  return (
+    <span ref={ref}>
+      {displayed}
+      {suffix}
+    </span>
+  );
+}
+
 export function About() {
+  const reduceMotion = useReducedMotion();
+  const animate = !reduceMotion;
+
   return (
     <section
       id="about"
@@ -65,67 +141,81 @@ export function About() {
       <div aria-hidden="true" className="about-scanline" />
 
       <div className="mx-auto grid w-full max-w-7xl gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-start lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
-        <div className="about-reveal about-copy-panel max-w-measure">
-          <p className="mb-3 font-mono text-small uppercase tracking-[0.18em] text-accent">
-            About Me
-          </p>
+        <motion.div
+          className="about-copy-panel max-w-measure"
+          initial={animate ? "hidden" : false}
+          whileInView={animate ? "visible" : undefined}
+          viewport={{ once: true, margin: "-80px" }}
+          variants={revealVariants}
+        >
+          <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://ABOUT</p>
           <h2 id="about-heading" className="m-0 text-h1 font-semibold text-text-primary">
             Backend systems, cloud practice, and continuous learning.
           </h2>
           <p className="mt-5 text-body text-text-secondary sm:text-[1.0625rem]">
             {about.professionalSummary}
           </p>
-          <div aria-hidden="true" className="mt-7 flex items-center gap-3 font-mono text-small text-text-muted">
-            <span className="h-px min-w-8 flex-1 bg-gradient-to-r from-accent/70 to-transparent" />
-            <span>profile.compile()</span>
-          </div>
-        </div>
+        </motion.div>
 
-        <div className="about-reveal grid gap-4 sm:gap-5">
-          <dl
+        <div className="grid gap-4 sm:gap-5">
+          <motion.div
             aria-label="About statistics"
             className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3"
+            role="group"
+            initial={animate ? "hidden" : false}
+            whileInView={animate ? "visible" : undefined}
+            viewport={{ once: true, margin: "-80px" }}
+            variants={staggerContainerVariants}
           >
             {stats.map((stat) => (
-              <div
+              <motion.div
                 key={stat.id}
                 className="about-stat-card group"
-                style={{ "--metric-fill": stat.fill } as CSSProperties}
+                variants={cardRevealVariants}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <dt className="whitespace-nowrap text-small text-text-muted">{stat.label}</dt>
-                    <dd className="mt-2 font-mono text-h2 font-semibold text-accent transition-colors duration-200 group-hover:text-accent-hover">
-                      {stat.value}
-                    </dd>
+                    <p className="m-0 whitespace-nowrap text-small text-text-muted">{stat.label}</p>
+                    <p className="m-0 mt-2 font-mono text-h2 font-semibold text-accent transition-colors duration-200 group-hover:text-accent-hover">
+                      <AnimatedStatValue
+                        value={stat.numericValue}
+                        suffix={stat.suffix}
+                        animate={animate}
+                      />
+                    </p>
                   </div>
                   <span className="about-stat-icon">
                     <MetricIcon />
                   </span>
                 </div>
-                <div aria-hidden="true" className="about-meter mt-4" />
-              </div>
+              </motion.div>
             ))}
-          </dl>
+          </motion.div>
 
-          <div className="about-fields-panel">
+          <motion.div
+            className="about-fields-panel"
+            initial={animate ? "hidden" : false}
+            whileInView={animate ? "visible" : undefined}
+            viewport={{ once: true, margin: "-80px" }}
+            variants={revealVariants}
+          >
             <div className="flex items-center justify-between gap-4">
-              <h3 className="m-0 text-body font-semibold text-text-primary">Main Fields</h3>
-              <span aria-hidden="true" className="h-px min-w-12 flex-1 bg-gradient-to-r from-border via-accent/35 to-transparent" />
+              <h3 className="m-0 text-body font-semibold text-text-primary">
+                Main Fields Of Development
+              </h3>
+              <span
+                aria-hidden="true"
+                className="h-px min-w-12 flex-1 bg-gradient-to-r from-border via-accent/35 to-transparent"
+              />
             </div>
-            <ul
-              aria-label="Main professional fields"
-              className="mt-4 flex flex-wrap gap-2"
-            >
+            <ul aria-label="Main professional fields" className="mt-4 flex flex-wrap gap-2">
               {about.mainFields.map((field) => (
                 <li key={field}>
-                  <span className="about-field-badge">
-                    {field}
-                  </span>
+                  <span className="about-field-badge">{field}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

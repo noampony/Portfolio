@@ -174,14 +174,6 @@ html {
   }
 }
 
-/* About section reveal — content is visible by default and only receives a subtle
-   scroll-linked polish where supported. Without CSS support or JavaScript, nothing
-   is hidden; reduced-motion users receive the final static state. */
-.about-reveal {
-  opacity: 1;
-  transform: none;
-}
-
 .about-grid-wash {
   position: absolute;
   inset: 0;
@@ -277,25 +269,6 @@ html {
   box-shadow: inset 0 1px 0 color-mix(in srgb, white 9%, transparent);
 }
 
-.about-meter {
-  position: relative;
-  height: 0.25rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg-surface-raised) 72%, black);
-}
-
-.about-meter::before {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  width: var(--metric-fill);
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), var(--gradient-to));
-  box-shadow: 0 0 1rem color-mix(in srgb, var(--accent) 38%, transparent);
-  content: "";
-}
-
 .about-fields-panel {
   padding: 1.25rem;
 }
@@ -329,30 +302,6 @@ html {
     0 0 1.2rem color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
-@keyframes about-scroll-reveal {
-  from {
-    opacity: 0.64;
-    transform: translateY(1rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes about-card-scroll-reveal {
-  from {
-    opacity: 0.72;
-    filter: brightness(0.86);
-  }
-
-  to {
-    opacity: 1;
-    filter: brightness(1);
-  }
-}
-
 @keyframes about-scanline-scroll {
   0% {
     opacity: 0;
@@ -374,19 +323,18 @@ html {
 }
 
 @keyframes about-shimmer-pass {
+  from {
+    opacity: 0;
+    transform: translateX(-80%);
+  }
+
+  12% {
+    opacity: 1;
+  }
+
   to {
     opacity: 1;
-    transform: translateX(80%);
-  }
-}
-
-@keyframes about-meter-fill {
-  from {
-    transform: scaleX(0.18);
-  }
-
-  to {
-    transform: scaleX(1);
+    transform: translateX(130%);
   }
 }
 
@@ -408,26 +356,6 @@ html {
     .about-scanline {
       animation: about-scanline-scroll 1s linear both;
       animation-range: entry 8% cover 72%;
-      animation-timeline: view();
-    }
-
-    .about-reveal {
-      animation: about-scroll-reveal 1s ease-out both;
-      animation-range: entry 0% cover 28%;
-      animation-timeline: view();
-    }
-
-    .about-stat-card,
-    .about-fields-panel {
-      animation: about-card-scroll-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-      animation-range: entry 4% cover 34%;
-      animation-timeline: view();
-    }
-
-    .about-meter::before {
-      transform-origin: left;
-      animation: about-meter-fill 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-      animation-range: entry 16% cover 42%;
       animation-timeline: view();
     }
   }
