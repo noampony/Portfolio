@@ -1,12 +1,9 @@
-import type { CSSProperties } from "react";
-
 import { about } from "@/lib/content/data/about";
 
 type StatItem = {
   id: string;
   value: string;
   label: string;
-  fill: string;
 };
 
 const stats: StatItem[] = [
@@ -14,41 +11,18 @@ const stats: StatItem[] = [
     id: "years",
     value: about.stats.yearsExperienceCountLabel,
     label: "Years Experience",
-    fill: "58%",
   },
   {
     id: "technologies",
     value: about.stats.technologiesCountLabel,
     label: "Technologies",
-    fill: "82%",
   },
   {
     id: "courses",
     value: about.stats.coursesCountLabel,
     label: "Courses",
-    fill: "74%",
   },
 ];
-
-function MetricIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <path
-        d="M4 18V8m6 10V4m6 14v-7m4 7H3"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 export function About() {
   return (
@@ -75,7 +49,7 @@ export function About() {
           <p className="mt-5 text-body text-text-secondary sm:text-[1.0625rem]">
             {about.professionalSummary}
           </p>
-          <div aria-hidden="true" className="mt-7 flex items-center gap-3 font-mono text-small text-text-muted">
+          <div aria-hidden="true" className="mt-7 flex items-center gap-3 font-mono text-small text-text-secondary">
             <span className="h-px min-w-8 flex-1 bg-gradient-to-r from-accent/70 to-transparent" />
             <span>profile.compile()</span>
           </div>
@@ -90,20 +64,11 @@ export function About() {
               <div
                 key={stat.id}
                 className="about-stat-card group"
-                style={{ "--metric-fill": stat.fill } as CSSProperties}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <dt className="whitespace-nowrap text-small text-text-muted">{stat.label}</dt>
-                    <dd className="mt-2 font-mono text-h2 font-semibold text-accent transition-colors duration-200 group-hover:text-accent-hover">
-                      {stat.value}
-                    </dd>
-                  </div>
-                  <span className="about-stat-icon">
-                    <MetricIcon />
-                  </span>
-                </div>
-                <div aria-hidden="true" className="about-meter mt-4" />
+                <dt className="whitespace-nowrap text-small text-text-secondary">{stat.label}</dt>
+                <dd className="mt-2 font-mono text-h2 font-semibold text-accent transition-colors duration-200 group-hover:text-accent-hover">
+                  {stat.value}
+                </dd>
               </div>
             ))}
           </dl>

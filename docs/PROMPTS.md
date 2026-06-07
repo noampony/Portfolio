@@ -261,7 +261,7 @@ Task focus: single-column mobile / card+badge larger screens, consistent padding
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.3-about-polish`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 5.4 — About Section Completion Review
+## ✅ Task 5.4 — About Section Completion Review
 
 ```text
 Implement ONLY Task 5.4 — "About Section Completion Review" — for the Noam Pony portfolio. Depends on Task 5.3.

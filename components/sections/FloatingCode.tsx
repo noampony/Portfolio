@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { motion, useAnimation, useReducedMotion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
+
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
 /**
  * Portfolio-themed Python snippets for the decorative Hero backdrop.
@@ -409,7 +411,7 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
  */
 export function FloatingCode() {
   const isClient = useIsClient();
-  const prefersReducedMotion = useReducedMotion() ?? false;
+  const prefersReducedMotion = usePrefersReducedMotion();
   const blockCount = useBlockCount();
   const blockSeeds = useMemo(
     () => (blockCount > 0 ? createBlockSeeds(blockCount) : []),

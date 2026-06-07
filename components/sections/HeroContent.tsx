@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { profile } from "@/lib/content/data/profile";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
 const PRIMARY_CTA_LABEL = "Resume";
@@ -134,8 +135,8 @@ type HeroContentProps = {
  * Animated Hero copy — typewriter name, staggered reveals, reduced-motion fallbacks (§7.3).
  */
 export function HeroContent({ initials }: HeroContentProps) {
-  const prefersReducedMotion = useReducedMotion() ?? false;
-  const [greetingReady, setGreetingReady] = useState(prefersReducedMotion);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [greetingReady, setGreetingReady] = useState(false);
 
   const { displayed: displayedName, complete: nameComplete } = useTypewriter(
     profile.name,
