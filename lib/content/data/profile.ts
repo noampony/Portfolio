@@ -1,8 +1,8 @@
 /**
  * Profile content (spec §8.1, §8.2, §11.1) — used by Hero, About, and Contact.
  *
- * TBD fields (profileImage, logo, shortTagline, projectsCountLabel,
- * certificatesCountLabel, city) are intentionally omitted.
+ * TBD fields (logo, shortTagline, projectsCountLabel, certificatesCountLabel,
+ * city) are intentionally omitted.
  */
 
 import type { Profile } from "../types";
@@ -15,6 +15,7 @@ const profileData = {
   heroText:
     "A passionate experienced cloud backend developer.\nBuilding scalable & reliable cloud backend systems.",
   location: "Israel",
+  profileImage: "/profile.png",
   yearsExperienceStartDate: "2022-10",
   technologiesCountLabel: "18+",
   coursesCountLabel: "35",

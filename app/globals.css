@@ -79,6 +79,101 @@ html {
   }
 }
 
+/* Hero name — crisp gradient edge glow on the typed display name. */
+.hero-name-glow {
+  filter: drop-shadow(0 0 1px color-mix(in srgb, var(--gradient-from) 85%, transparent))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--gradient-from) 55%, transparent))
+    drop-shadow(0 0 4px color-mix(in srgb, var(--gradient-to) 38%, transparent));
+}
+
+/* Hero name shine — decorative sweep layered over the typed name; runs after typing
+   completes (gated in JSX) and only when motion is allowed. */
+.hero-name-shine {
+  background-image: linear-gradient(
+    100deg,
+    transparent 35%,
+    color-mix(in srgb, #ffffff 85%, var(--gradient-from)) 50%,
+    transparent 65%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  pointer-events: none;
+}
+
+/* Linear (constant-speed) sweep so the band never decelerates/lingers at the hand-off.
+   Endpoints 120% → -20% carry the band fully off-screen at both ends. The sweep occupies
+   ~32.26% of the 6.2s cycle (= 2s). The title's delay (1.2s) is tuned so its bright peak
+   enters the title at the exact moment the name's peak exits the name — a zero-gap,
+   continuous flow. Cycle: name sweep (0-2s) → title sweep (1.2-3.2s, peak hand-off at
+   ~1.6s) → ~3s cooldown → repeat. */
+@keyframes hero-name-shine-sweep {
+  0% {
+    background-position: 120% 0;
+  }
+  32.26% {
+    background-position: -20% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-name-shine {
+    animation: hero-name-shine-sweep 6.2s linear infinite;
+  }
+
+  /* Title peak enters exactly as the name peak exits — no gap. */
+  .hero-name-shine--delayed {
+    animation-delay: 1.2s;
+  }
+}
+
+/* Hero typewriter cursor — decorative; disabled under reduced motion (§7.3). */
+@keyframes hero-type-cursor-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-type-cursor {
+    animation: hero-type-cursor-blink 1s step-end infinite;
+  }
+}
+
+/* Hero CTA icons — decorative hover bounce, disabled under reduced motion (§7.3). */
+@keyframes hero-cta-icon-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  35% {
+    transform: translateY(-0.16rem);
+  }
+
+  70% {
+    transform: translateY(0.06rem);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .hero-cta-icon-bounce {
+    animation: hero-cta-icon-bounce 0.72s ease-in-out infinite;
+  }
+}
+
 body {
   min-height: 100vh;
   margin: 0;
