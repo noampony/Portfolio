@@ -122,10 +122,27 @@ export function HeroContent({ initials }: HeroContentProps) {
 
   const profileImageClasses = cn(
     "shrink-0 object-contain",
-    "mx-auto h-44 w-auto sm:h-52",
+    "mx-auto h-52 w-auto sm:h-60",
     // Desktop: contained portrait, top-aligned; w-auto + max-h preserve aspect ratio.
-    "md:mx-0 md:h-auto md:max-h-[22rem] md:w-auto lg:max-h-[24rem]"
+    "md:mx-0 md:h-auto md:max-h-[25rem] md:w-auto lg:max-h-[27rem]"
   );
+
+  // Clip the image to the oval: top stays fully visible (head pops out), the lower
+  // portion is masked to an ellipse so the body curves to match the border shape.
+  const profileImageMask = {
+    maskImage:
+      "linear-gradient(#000, #000), radial-gradient(ellipse 50% 50% at 50% 50%, #000 99%, transparent 100%)",
+    maskSize: "100% 50%, 100% 100%",
+    maskPosition: "top, bottom",
+    maskRepeat: "no-repeat",
+    maskComposite: "add",
+    WebkitMaskImage:
+      "linear-gradient(#000, #000), radial-gradient(ellipse 50% 50% at 50% 50%, #000 99%, transparent 100%)",
+    WebkitMaskSize: "100% 50%, 100% 100%",
+    WebkitMaskPosition: "top, bottom",
+    WebkitMaskRepeat: "no-repeat",
+    WebkitMaskComposite: "source-over",
+  } as const;
 
   return (
     <div className="flex w-full flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:gap-10 lg:gap-12">
@@ -230,14 +247,42 @@ export function HeroContent({ initials }: HeroContentProps) {
         transition={{ duration: 0.55, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.16 }}
       >
         {profile.profileImage ? (
-          // eslint-disable-next-line @next/next/no-img-element -- Hero LCP; static public asset
-          <img
-            src={profile.profileImage}
-            alt={`${profile.name} profile`}
-            width={1191}
-            height={1852}
-            className={profileImageClasses}
-          />
+          <div className="relative isolate inline-flex">
+            {/*
+             * Decorative oval frame (§6.3 / §7 aesthetic): an ellipse sharing the image
+             * box, so the border traces exactly where the image is clipped. Both the
+             * fill and border fade in over the lower half only, leaving the cropped head
+             * "popping out" of an unframed top.
+             */}
+            {/* Dark-blue gradient fill — clipped to the oval, fills the lower ~70%. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%]"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.5) 70%)",
+              }}
+            />
+            {/* Border line — masked to the lower half so the head stays unframed. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.7)]"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, transparent 40%, #000 62%)",
+                maskImage: "linear-gradient(to bottom, transparent 40%, #000 62%)",
+              }}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element -- Hero LCP; static public asset */}
+            <img
+              src={profile.profileImage}
+              alt={`${profile.name} profile`}
+              width={1191}
+              height={1852}
+              className={profileImageClasses}
+              style={profileImageMask}
+            />
+          </div>
         ) : (
           <div
             role="img"
