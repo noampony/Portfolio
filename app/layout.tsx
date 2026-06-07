@@ -7,8 +7,9 @@ import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Noam Pony Portfolio",
-  description: "Portfolio website for Noam Pony."
+  title: "Noam Pony | Backend Developer",
+  description:
+    "Noam Pony is a backend developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
