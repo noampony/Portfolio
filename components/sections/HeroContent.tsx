@@ -120,15 +120,24 @@ export function HeroContent({ initials }: HeroContentProps) {
 
   const contentRevealed = prefersReducedMotion || greetingReady;
 
+  // Placeholder (no image) — kept as a square avatar, independent of the framed portrait.
   const profileImageClasses = cn(
     "shrink-0 object-contain",
     "mx-auto h-52 w-auto sm:h-60",
-    // Desktop: contained portrait, top-aligned; w-auto + max-h preserve aspect ratio.
     "md:mx-0 md:h-auto md:max-h-[25rem] md:w-auto lg:max-h-[27rem]"
   );
 
-  // Clip the image to the oval: top stays fully visible (head pops out), the lower
-  // portion is masked to an ellipse so the body curves to match the border shape.
+  // Framed-portrait sizing. The frame box is a touch wider than the portrait's own
+  // aspect (1191×1852 ≈ 5/8) so the body sits inside the oval without being clipped.
+  const profileFrameClasses = cn(
+    "relative isolate shrink-0",
+    "h-56 sm:h-64 md:h-[26rem] lg:h-[28rem]",
+    "aspect-[5/7]"
+  );
+
+  // Clip the portrait to the frame ellipse: the top half stays fully visible (head
+  // pops out), the lower half is masked to the same ellipse the border/fill use, so
+  // the body curves to match the frame and never spills outside it.
   const profileImageMask = {
     maskImage:
       "linear-gradient(#000, #000), radial-gradient(ellipse 50% 50% at 50% 50%, #000 99%, transparent 100%)",
@@ -247,12 +256,13 @@ export function HeroContent({ initials }: HeroContentProps) {
         transition={{ duration: 0.55, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.16 }}
       >
         {profile.profileImage ? (
-          <div className="relative isolate inline-flex">
+          <div className={profileFrameClasses}>
             {/*
-             * Decorative oval frame (§6.3 / §7 aesthetic): an ellipse sharing the image
-             * box, so the border traces exactly where the image is clipped. Both the
-             * fill and border fade in over the lower half only, leaving the cropped head
-             * "popping out" of an unframed top.
+             * Decorative oval frame (§6.3 / §7 aesthetic): the fill, the border and the
+             * portrait's clip all share this element's ellipse (inset-0, rounded-[50%]),
+             * so the border traces exactly where the portrait is clipped — nothing
+             * spills outside. Fill + border fade in over the lower half only, leaving
+             * the cropped head "popping out" of an unframed top.
              */}
             {/* Dark-blue gradient fill — clipped to the oval, fills the lower ~70%. */}
             <div
@@ -279,7 +289,7 @@ export function HeroContent({ initials }: HeroContentProps) {
               alt={`${profile.name} profile`}
               width={1191}
               height={1852}
-              className={profileImageClasses}
+              className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />
           </div>
