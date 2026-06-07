@@ -41,7 +41,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-bg-surface/90 backdrop-blur supports-[backdrop-filter]:bg-bg-surface/75">
       <nav
         aria-label="Primary"
-        className="mx-auto flex max-w-measure flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4"
+        className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 sm:px-14 md:px-16"
       >
         <Link
           href="/"

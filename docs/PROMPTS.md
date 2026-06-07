@@ -184,7 +184,7 @@ Task focus: dark developer aesthetic using ONLY §6.3 tokens + §6.4 scale; desk
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/4.2-hero-styling`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 4.3 — Add Hero Animations with Reduced-Motion Support
+## ✅ Task 4.3 — Add Hero Animations with Reduced-Motion Support
 
 ```text
 Implement ONLY Task 4.3 — "Add Hero Animations with Reduced-Motion Support" — for the Noam Pony portfolio. Depends on Task 4.2.
