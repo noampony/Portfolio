@@ -35,6 +35,24 @@ export type Profile = {
   mainFields: string[];
 };
 
+/** Known About stats only; TBD stats stay absent until owner-confirmed. */
+export type AboutStats = {
+  yearsExperienceCountLabel: string;
+  coursesCountLabel: string;
+  technologiesCountLabel: string;
+  projectsCountLabel?: string;
+  certificatesCountLabel?: string;
+};
+
+/** About section data (spec §8.2). */
+export type AboutSectionData = {
+  professionalSummary: string;
+  yearsExperienceStartDate: YearMonthDate;
+  stats: AboutStats;
+  mainFields: string[];
+  professionalFocus?: string;
+};
+
 /** §11.2 Experience Model */
 export type Experience = {
   organization: string;

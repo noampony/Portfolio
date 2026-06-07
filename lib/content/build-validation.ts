@@ -6,6 +6,7 @@
  */
 
 import { profile } from "./data/profile";
+import { about } from "./data/about";
 import {
   sampleExperienceReviewed,
   sampleExperienceUnreviewed,
@@ -54,5 +55,8 @@ function assertConfidentialityFilter(): void {
 
 if (!profile.name) {
   throw new Error("Content validator self-check failed: profile data failed to load.");
+}
+if (!about.professionalSummary) {
+  throw new Error("Content validator self-check failed: about data failed to load.");
 }
 assertConfidentialityFilter();
