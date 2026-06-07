@@ -174,6 +174,36 @@ html {
   }
 }
 
+/* About section reveal — content is visible by default and only receives a subtle
+   scroll-linked polish where supported. Without CSS support or JavaScript, nothing
+   is hidden; reduced-motion users receive the final static state. */
+.about-reveal {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes about-scroll-reveal {
+  from {
+    opacity: 0.64;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .about-reveal {
+      animation: about-scroll-reveal 1s ease-out both;
+      animation-range: entry 0% cover 28%;
+      animation-timeline: view();
+    }
+  }
+}
+
 body {
   min-height: 100vh;
   margin: 0;
