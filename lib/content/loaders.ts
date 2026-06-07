@@ -8,6 +8,7 @@
 import {
   filterConfidentialityReviewed,
   validateContact,
+  validateAboutSectionData,
   validateCourse,
   validateExperience,
   validateExperienceList,
@@ -25,6 +26,7 @@ export {
   filterConfidentialityReviewed,
   getUnreviewedWorkItems,
   validateContact,
+  validateAboutSectionData,
   validateCourse,
   validateExperience,
   validateExperienceList,
@@ -41,6 +43,10 @@ export type { ConfidentialityGated } from "./validate";
 
 export function loadProfile(data: unknown) {
   return validateProfile(data);
+}
+
+export function loadAboutSectionData(data: unknown) {
+  return validateAboutSectionData(data);
 }
 
 export function loadExperience(data: unknown) {

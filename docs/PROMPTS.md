@@ -208,7 +208,7 @@ Task focus: set homepage <title> = "Noam Pony | Backend Developer" and the §13.
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/4.4-home-metadata`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 4.5 — Hero Section Completion Review (MVP Gate)
+## ✅ Task 4.5 — Hero Section Completion Review (MVP Gate)
 
 ```text
 Implement ONLY Task 4.5 — "Hero Section Completion Review (MVP Gate)" — for the Noam Pony portfolio. Depends on Tasks 4.2, 4.3, 4.4.
@@ -225,7 +225,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/4.5-her
 # Phase 5 — About Me Section
 Phase file: [tasks/phase-05-about.md](../tasks/phase-05-about.md)
 
-## ⬜ Task 5.1 — Define About Section Data
+## ✅ Task 5.1 — Define About Section Data
 
 ```text
 Implement ONLY Task 5.1 — "Define About Section Data" — for the Noam Pony portfolio. Depends on Tasks 4.5, 3.2.

@@ -6,6 +6,8 @@
  */
 
 import type {
+  AboutSectionData,
+  AboutStats,
   Contact,
   Course,
   Experience,
@@ -28,6 +30,9 @@ export class ContentValidationError extends Error {
     this.path = path;
   }
 }
+
+const FORBIDDEN_YEARS_PLACEHOLDER = `X ${"years"}`;
+const FORBIDDEN_PROJECTS_PLACEHOLDER = `10${"+"}`;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -89,6 +94,12 @@ function assertRequiredStringArray(value: unknown, path: string): string[] {
     throw new ContentValidationError(path, "required array of strings");
   }
   return value.map((item, index) => assertRequiredString(item, `${path}[${index}]`));
+}
+
+function assertNoForbiddenToken(value: string, path: string, token: string): void {
+  if (value.includes(token)) {
+    throw new ContentValidationError(path, `must not include ${token}`);
+  }
 }
 
 function assertOptionalStringArray(value: unknown, path: string): string[] | undefined {
@@ -184,6 +195,86 @@ export function validateProfile(data: unknown): Profile {
       `${path}.certificatesCountLabel`,
     ),
     mainFields: assertRequiredStringArray(raw.mainFields, `${path}.mainFields`),
+  });
+}
+
+function validateAboutStats(value: unknown, path: string): AboutStats {
+  const raw = assertObject(value, path);
+  const yearsExperienceCountLabel = assertRequiredString(
+    raw.yearsExperienceCountLabel,
+    `${path}.yearsExperienceCountLabel`,
+  );
+  const coursesCountLabel = assertRequiredString(raw.coursesCountLabel, `${path}.coursesCountLabel`);
+  const technologiesCountLabel = assertRequiredString(
+    raw.technologiesCountLabel,
+    `${path}.technologiesCountLabel`,
+  );
+  const projectsCountLabel = assertOptionalString(raw.projectsCountLabel, `${path}.projectsCountLabel`);
+  const certificatesCountLabel = assertOptionalString(
+    raw.certificatesCountLabel,
+    `${path}.certificatesCountLabel`,
+  );
+
+  if (coursesCountLabel !== "35") {
+    throw new ContentValidationError(`${path}.coursesCountLabel`, "must remain 35 per C3 rules");
+  }
+  if (technologiesCountLabel !== "18+") {
+    throw new ContentValidationError(
+      `${path}.technologiesCountLabel`,
+      "must remain 18+ per spec §8.2",
+    );
+  }
+  for (const [key, label] of Object.entries({
+    yearsExperienceCountLabel,
+    coursesCountLabel,
+    technologiesCountLabel,
+    projectsCountLabel,
+    certificatesCountLabel,
+  })) {
+    if (label !== undefined) {
+      assertNoForbiddenToken(label, `${path}.${key}`, FORBIDDEN_YEARS_PLACEHOLDER);
+      assertNoForbiddenToken(label, `${path}.${key}`, FORBIDDEN_PROJECTS_PLACEHOLDER);
+    }
+  }
+
+  return omitUndefined({
+    yearsExperienceCountLabel,
+    coursesCountLabel,
+    technologiesCountLabel,
+    projectsCountLabel,
+    certificatesCountLabel,
+  });
+}
+
+/** About section data (spec §8.2). */
+export function validateAboutSectionData(data: unknown): AboutSectionData {
+  const path = "AboutSectionData";
+  const raw = assertObject(data, path);
+  const professionalSummary = assertRequiredString(
+    raw.professionalSummary,
+    `${path}.professionalSummary`,
+  );
+
+  assertNoForbiddenToken(
+    professionalSummary,
+    `${path}.professionalSummary`,
+    FORBIDDEN_YEARS_PLACEHOLDER,
+  );
+  assertNoForbiddenToken(
+    professionalSummary,
+    `${path}.professionalSummary`,
+    FORBIDDEN_PROJECTS_PLACEHOLDER,
+  );
+
+  return omitUndefined({
+    professionalSummary,
+    yearsExperienceStartDate: assertYearMonthDate(
+      raw.yearsExperienceStartDate,
+      `${path}.yearsExperienceStartDate`,
+    ),
+    stats: validateAboutStats(raw.stats, `${path}.stats`),
+    mainFields: assertRequiredStringArray(raw.mainFields, `${path}.mainFields`),
+    professionalFocus: assertOptionalString(raw.professionalFocus, `${path}.professionalFocus`),
   });
 }
 
