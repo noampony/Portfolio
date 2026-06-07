@@ -249,7 +249,7 @@ Task focus: professional summary + only-known stats + main fields as accessible 
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.2-about-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 5.3 — Add Visual Styling and Responsive Behavior + Reveal Animation to About
+## ✅ Task 5.3 — Add Visual Styling and Responsive Behavior + Reveal Animation to About
 
 ```text
 Implement ONLY Task 5.3 — "Style and Add Responsive Behavior + Reveal Animation to About" — for the Noam Pony portfolio. Depends on Task 5.2.
