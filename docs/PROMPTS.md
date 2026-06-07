@@ -237,7 +237,7 @@ Task focus: encode stats per C3 rules — coursesCountLabel=35; certificates sub
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.1-about-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 5.2 — Implement the About Layout and Stats/Fields Display
+## ✅ Task 5.2 — Implement the About Layout and Stats/Fields Display
 
 ```text
 Implement ONLY Task 5.2 — "Implement the About Layout and Stats/Fields Display" — for the Noam Pony portfolio. Depends on Task 5.1.
