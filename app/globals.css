@@ -213,7 +213,8 @@ html {
 }
 
 .about-stat-card,
-.about-fields-panel {
+.about-fields-panel,
+.about-education-card {
   position: relative;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--border) 92%, var(--accent));
@@ -227,7 +228,7 @@ html {
 }
 
 .about-stat-card {
-  padding: 1rem;
+  padding: 0.75rem;
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -235,7 +236,8 @@ html {
 }
 
 .about-stat-card::before,
-.about-fields-panel::before {
+.about-fields-panel::before,
+.about-education-card::before {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -247,7 +249,8 @@ html {
   pointer-events: none;
 }
 
-.about-stat-card:hover {
+.about-stat-card:hover,
+.about-education-card:hover {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
   box-shadow:
     0 1.5rem 4.5rem rgb(0 0 0 / 0.34),
@@ -259,8 +262,8 @@ html {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
   flex: none;
   border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
   border-radius: 0.375rem;
@@ -270,13 +273,351 @@ html {
 }
 
 .about-fields-panel {
-  padding: 1.25rem;
+  padding: 1rem;
+}
+
+.about-education-card {
+  padding: 0.875rem 1rem;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.about-education-label {
+  margin: 0 0 0.625rem;
+  font-family: var(--font-mono), var(--font-mono-fallback);
+  font-size: var(--type-small);
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.about-education-body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.about-education-timeline {
+  display: flex;
+  width: 0.625rem;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.35rem;
+}
+
+.about-education-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 42%, transparent);
+}
+
+.about-education-line {
+  width: 1px;
+  flex: 1;
+  min-height: 1.5rem;
+  margin-top: 0.25rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 55%, var(--border)),
+    color-mix(in srgb, var(--border) 88%, transparent)
+  );
+}
+
+.about-education-content {
+  min-width: 0;
+}
+
+.about-layout-copy {
+  min-height: 100%;
+}
+
+.about-layout-sidebar {
+  min-height: 100%;
+}
+
+.about-fields-panel--stretch {
+  height: 100%;
+}
+
+.about-education-title-row,
+.about-education-honor-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3125rem 0.375rem;
+}
+
+.about-education-honor-row {
+  margin-top: 0.625rem;
+}
+
+.about-education-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  margin: 0;
+  font-size: var(--type-body);
+  font-weight: 600;
+  line-height: var(--leading-body);
+  color: var(--text-primary);
+}
+
+.about-education-title > span {
+  flex: 1;
+  min-width: 0;
+}
+
+.about-education-dates {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-mono), var(--font-mono-fallback);
+  font-size: var(--type-small);
+  line-height: var(--leading-small);
+  color: var(--accent);
+}
+
+.about-education-summary {
+  margin: 0.5rem 0 0;
+  font-size: var(--type-small);
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.about-education-honor-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--border));
+  border-radius: 0.375rem;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 16%, var(--bg-surface-raised)),
+      color-mix(in srgb, var(--gradient-to) 10%, var(--bg-surface-raised))
+    );
+  padding: 0.3125rem 0.625rem;
+  color: var(--accent-hover);
+  font-size: var(--type-small);
+  font-weight: 600;
+  line-height: var(--leading-small);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+    0 0 1rem color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.about-cert-trigger {
+  display: inline-flex;
+  width: 1.375rem;
+  height: 1.375rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.125rem;
+  border: 1px solid color-mix(in srgb, white 10%, var(--border));
+  border-radius: 0.3125rem;
+  background: color-mix(in srgb, var(--bg-surface) 42%, transparent);
+  backdrop-filter: blur(10px);
+  color: color-mix(in srgb, var(--accent) 78%, var(--text-muted));
+  padding: 0;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 11%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.18);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.about-cert-trigger-icon {
+  width: 0.6875rem;
+  height: 0.6875rem;
+  flex: none;
+}
+
+.about-cert-trigger:hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface) 38%);
+  color: var(--accent-hover);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
+    0 0 0.75rem color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.about-cert-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.about-education-honor-row .about-cert-trigger {
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-cert-trigger:hover {
+    transform: translateY(-0.0625rem);
+  }
+}
+
+.cert-viewer-dialog {
+  width: min(94vw, 44rem);
+  max-height: min(92vh, 44rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, var(--accent));
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow:
+    0 1.5rem 4rem rgb(0 0 0 / 0.45),
+    0 0 2rem color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.cert-viewer-dialog::backdrop {
+  background: rgb(0 0 0 / 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.cert-viewer-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(92vh, 44rem);
+}
+
+.cert-viewer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 92%, var(--accent));
+  padding: 1rem 1rem 0.875rem;
+}
+
+.cert-viewer-heading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.cert-viewer-icon {
+  display: inline-flex;
+  margin-top: 0.125rem;
+  color: var(--accent);
+}
+
+.cert-viewer-title {
+  margin: 0;
+  font-size: var(--type-body);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+
+.cert-viewer-close {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, var(--accent));
+  border-radius: 0.375rem;
+  background: var(--bg-surface-raised);
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.cert-viewer-close:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  color: var(--text-primary);
+}
+
+.cert-viewer-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cert-viewer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.cert-viewer-frame-wrap {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 92%, var(--accent));
+  border-radius: 0.375rem;
+  background: var(--bg-surface-raised);
+}
+
+.cert-viewer-frame {
+  display: block;
+  width: 100%;
+  height: min(62vh, 34rem);
+  border: 0;
+  background: white;
+}
+
+.cert-viewer-open-link {
+  align-self: flex-start;
+  font-size: var(--type-small);
+  line-height: var(--leading-small);
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.cert-viewer-open-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.cert-viewer-open-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+
+.cert-viewer-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 7rem;
+  margin-bottom: 0.875rem;
+  border: 1px dashed color-mix(in srgb, var(--border) 88%, var(--accent));
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--bg-surface-raised) 88%, var(--accent));
+  color: color-mix(in srgb, var(--accent) 55%, var(--text-muted));
+}
+
+.cert-viewer-preview svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.cert-viewer-placeholder {
+  margin: 0;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 .about-field-badge {
   position: relative;
   display: inline-flex;
-  min-height: 2.25rem;
+  min-height: 2rem;
   align-items: center;
   border: 1px solid color-mix(in srgb, var(--border) 88%, var(--accent));
   border-radius: 0.375rem;
@@ -339,12 +680,14 @@ html {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .about-stat-card:hover {
+  .about-stat-card:hover,
+  .about-education-card:hover {
     transform: translateY(-0.25rem);
   }
 
   .about-stat-card:hover::before,
-  .about-fields-panel:hover::before {
+  .about-fields-panel:hover::before,
+  .about-education-card:hover::before {
     animation: about-shimmer-pass 900ms ease-out;
   }
 

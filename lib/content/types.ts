@@ -44,12 +44,32 @@ export type AboutStats = {
   certificatesCountLabel?: string;
 };
 
+/** Education certificate reference for the About section viewer (file wired later). */
+export type EducationCertificateRef = {
+  id: string;
+  title: string;
+  viewLabel: string;
+  file?: AssetReference;
+};
+
+/** Education highlight shown in the About section. */
+export type AboutEducation = {
+  dateRange: string;
+  degree: string;
+  institution: string;
+  summary: string;
+  honor?: string;
+  degreeCertificate: EducationCertificateRef;
+  honorCertificate?: EducationCertificateRef;
+};
+
 /** About section data (spec §8.2). */
 export type AboutSectionData = {
   professionalSummary: string;
   yearsExperienceStartDate: YearMonthDate;
   stats: AboutStats;
   mainFields: string[];
+  education: AboutEducation;
   professionalFocus?: string;
 };
 

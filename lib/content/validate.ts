@@ -6,10 +6,12 @@
  */
 
 import type {
+  AboutEducation,
   AboutSectionData,
   AboutStats,
   Contact,
   Course,
+  EducationCertificateRef,
   Experience,
   ExperienceEndDate,
   Profile,
@@ -246,6 +248,41 @@ function validateAboutStats(value: unknown, path: string): AboutStats {
   });
 }
 
+function validateEducationCertificateRef(
+  value: unknown,
+  path: string,
+): EducationCertificateRef {
+  const raw = assertObject(value, path);
+
+  return omitUndefined({
+    id: assertRequiredString(raw.id, `${path}.id`),
+    title: assertRequiredString(raw.title, `${path}.title`),
+    viewLabel: assertRequiredString(raw.viewLabel, `${path}.viewLabel`),
+    file: assertOptionalString(raw.file, `${path}.file`),
+  });
+}
+
+function validateAboutEducation(value: unknown, path: string): AboutEducation {
+  const raw = assertObject(value, path);
+  const honor = assertOptionalString(raw.honor, `${path}.honor`);
+
+  return omitUndefined({
+    dateRange: assertRequiredString(raw.dateRange, `${path}.dateRange`),
+    degree: assertRequiredString(raw.degree, `${path}.degree`),
+    institution: assertRequiredString(raw.institution, `${path}.institution`),
+    summary: assertRequiredString(raw.summary, `${path}.summary`),
+    honor,
+    degreeCertificate: validateEducationCertificateRef(
+      raw.degreeCertificate,
+      `${path}.degreeCertificate`,
+    ),
+    honorCertificate:
+      raw.honorCertificate === undefined
+        ? undefined
+        : validateEducationCertificateRef(raw.honorCertificate, `${path}.honorCertificate`),
+  });
+}
+
 /** About section data (spec §8.2). */
 export function validateAboutSectionData(data: unknown): AboutSectionData {
   const path = "AboutSectionData";
@@ -274,6 +311,7 @@ export function validateAboutSectionData(data: unknown): AboutSectionData {
     ),
     stats: validateAboutStats(raw.stats, `${path}.stats`),
     mainFields: assertRequiredStringArray(raw.mainFields, `${path}.mainFields`),
+    education: validateAboutEducation(raw.education, `${path}.education`),
     professionalFocus: assertOptionalString(raw.professionalFocus, `${path}.professionalFocus`),
   });
 }

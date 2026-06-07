@@ -24,20 +24,17 @@ function calculateFullYearsSince(startDate: string, currentDate = new Date()): n
   return Math.max(0, hasReachedStartMonth ? yearDelta : yearDelta - 1);
 }
 
-function formatYearsExperience(years: number): string {
-  return years === 1 ? "1 year" : `${years} years`;
-}
-
 const yearsExperienceCountLabel = String(
   calculateFullYearsSince(profile.yearsExperienceStartDate),
 );
-const yearsExperienceText = formatYearsExperience(Number(yearsExperienceCountLabel));
 
 const aboutData = {
   professionalSummary:
-    `Experienced cloud backend software developer with a degree in Computer Science and ` +
-    `${yearsExperienceText} of hands-on experience and 35 professional courses during my role ` +
-    "as a software developer to continuously enhance my technical and soft skills.",
+    "I'm a cloud backend engineer specializing in extreme-scale, real-time systems on AWS. " +
+    "At Check Point I've built microservices from the ground up that process billions of entities a week.\n\n" +
+    "I'm driven by continuous learning - 35+ professional courses - and by mentoring others, " +
+    "including a year leading a developers team as a volunteer.\n\n" +
+    "I build systems that work: fast, reliable, and scalable.",
   yearsExperienceStartDate: profile.yearsExperienceStartDate,
   stats: {
     yearsExperienceCountLabel,
@@ -45,6 +42,27 @@ const aboutData = {
     technologiesCountLabel: profile.technologiesCountLabel,
   },
   mainFields: profile.mainFields,
+  education: {
+    dateRange: "Oct 2019 – Oct 2023",
+    degree: "B.Sc. Computer Science",
+    institution: "The Academic College Of Tel Aviv – Yaffo",
+    honor: "Included in Dean's List",
+    summary:
+      "Focused on backend systems, Python, and cybersecurity throughout my degree, " +
+      "while also completing professional courses outside the academy during this time.",
+    degreeCertificate: {
+      id: "bsc-degree",
+      title: "B.Sc. Computer Science",
+      viewLabel: "View degree certificate",
+      file: "/certificates/graduation-certificate.pdf",
+    },
+    honorCertificate: {
+      id: "deans-list",
+      title: "Dean's List",
+      viewLabel: "View Dean's List certificate",
+      file: "/certificates/deans-list-certificate.pdf",
+    },
+  },
 } as const;
 
 export const about: AboutSectionData = validateAboutSectionData(aboutData);
