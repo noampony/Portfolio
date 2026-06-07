@@ -152,6 +152,28 @@ html {
   }
 }
 
+/* Hero CTA icons — decorative hover bounce, disabled under reduced motion (§7.3). */
+@keyframes hero-cta-icon-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  35% {
+    transform: translateY(-0.16rem);
+  }
+
+  70% {
+    transform: translateY(0.06rem);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .hero-cta-icon-bounce {
+    animation: hero-cta-icon-bounce 0.72s ease-in-out infinite;
+  }
+}
+
 body {
   min-height: 100vh;
   margin: 0;

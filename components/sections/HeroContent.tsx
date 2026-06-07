@@ -14,7 +14,10 @@ const heroTextLines = profile.heroText.split("\n").filter(Boolean);
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 const ctaBaseClasses =
-  "inline-flex min-h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-md px-5 py-2.5 text-body font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base";
+  "group inline-flex min-h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-md px-5 py-2.5 text-body font-medium outline-none transition-[background-color,border-color,box-shadow,color,transform] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.015]";
+
+const ctaIconClasses =
+  "hero-cta-icon-bounce shrink-0";
 
 const paragraphContainerVariants = {
   hidden: {},
@@ -40,6 +43,7 @@ function DownloadIcon() {
     <svg
       aria-hidden="true"
       focusable="false"
+      className={ctaIconClasses}
       width="18"
       height="18"
       viewBox="0 0 24 24"
@@ -52,6 +56,28 @@ function DownloadIcon() {
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="7 10 12 15 17 10" />
       <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
+function ContactIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      className={ctaIconClasses}
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+      <path d="M8 9h8" />
+      <path d="M8 13h5" />
     </svg>
   );
 }
@@ -251,7 +277,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             type="button"
             className={cn(
               ctaBaseClasses,
-              "w-full bg-accent text-accent-contrast hover:bg-accent-hover sm:w-auto"
+              "w-full bg-accent text-accent-contrast shadow-[0_0_0_rgba(45,212,191,0)] hover:bg-accent-hover hover:shadow-[0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
             )}
           >
             {PRIMARY_CTA_LABEL}
@@ -261,10 +287,11 @@ export function HeroContent({ initials }: HeroContentProps) {
             type="button"
             className={cn(
               ctaBaseClasses,
-              "w-full border border-border bg-bg-surface-raised text-text-primary hover:border-accent hover:text-accent sm:w-auto"
+              "w-full border border-border bg-bg-surface-raised text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,var(--bg-surface-raised))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] sm:w-auto"
             )}
           >
             {SECONDARY_CTA_LABEL}
+            <ContactIcon />
           </button>
         </motion.div>
       </div>
