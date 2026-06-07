@@ -5,8 +5,8 @@ import { motion, useAnimation, useReducedMotion } from "framer-motion";
 
 /**
  * Portfolio-themed Python snippets for the decorative Hero backdrop.
- * Exact content is TBD (spec §19.2) — these defaults are owner-confirmable
- * placeholders only. Never use real or work-derived code (spec §15.2).
+ * Exact content is TBD (spec §19.2), so these are generic, non-confidential
+ * examples only. Never use real or work-derived code (spec §15.2).
  */
 const SNIPPET_POOL = [
   `name = "Noam Pony"\nrole = "Backend Developer"\nlocation = "Israel"`,
@@ -18,15 +18,11 @@ const SNIPPET_POOL = [
   `courses_completed = 35\ntech_stack_count = "18+"`,
   `skills = [\n    "Python",\n    "AWS",\n    "Docker",\n    "CI/CD",\n    "Testing",\n]`,
   `main_fields = [\n    "Backend Development",\n    "Cloud / AWS",\n    "DevOps",\n]`,
-  `def open_contact() -> str:\n    return "Let's work together!"`,
   `class DeveloperProfile:\n    name: str = "Noam Pony"\n    title: str = "Backend Developer"`,
   `experience_start = "2022-10"`,
   `def build_backend() -> str:\n    return "scalable & reliable systems"`,
   `learning_path = {\n    "courses": 35,\n    "focus": "cloud backend",\n}`,
-  `project_preview = "#projects"\ncourses_hub = "#courses"`,
   `certificates_note = (\n    "Certificates are a subset"\n    " of completed courses."\n)`,
-  `resume_action = "Download CV"\nresume_path = "/resume.pdf"`,
-  `contact_message = (\n    "Have something interesting"\n    " to work on? Contact me."\n)`,
   `stack = ["Python", "Automation", "System Design"]`,
   `def welcome_visitor() -> str:\n    return "Thanks for stopping by!"`,
   `site_theme = "dark developer aesthetic"`,
@@ -45,7 +41,7 @@ const DRIFT_MIN_SPEED = 1.4;
 const DRIFT_MAX_SPEED = 4.6;
 
 const blockClassName =
-  "absolute left-0 top-0 m-0 max-w-[15rem] whitespace-pre-wrap rounded-md border border-border bg-bg-surface p-3 font-mono text-small leading-snug text-[color-mix(in_srgb,var(--text-muted)_45%,var(--bg-surface))] will-change-transform lg:max-w-[17rem] xl:max-w-[18rem]";
+  "absolute left-0 top-0 m-0 max-w-[15rem] whitespace-pre-wrap rounded-md border border-[color-mix(in_srgb,var(--border)_55%,transparent)] bg-[color-mix(in_srgb,var(--bg-surface)_42%,transparent)] p-3 font-mono text-small leading-snug text-[color-mix(in_srgb,var(--text-muted)_34%,var(--bg-surface))] will-change-transform lg:max-w-[17rem] xl:max-w-[18rem]";
 
 type Zone = {
   xMin: number;
@@ -286,8 +282,7 @@ function subscribeToResize(onStoreChange: () => void): () => void {
 
 function getViewportBlockCount(): number {
   if (typeof window === "undefined") return 0;
-  if (window.innerWidth < 768) return 0;
-  if (window.innerWidth < 1024) return 6;
+  if (window.innerWidth < 1024) return 0;
   if (window.innerWidth < 1280) return 8;
   if (window.innerWidth < 1536) return 10;
   return 12;
@@ -342,7 +337,7 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
         await controls.start({
           x: `${cycle.end.x}vw`,
           y: `${cycle.end.y}vh`,
-          opacity: [0, 1, 1, 0],
+          opacity: [0, 0.38, 0.38, 0],
           transition: {
             x: { duration: totalDuration, ease: "linear" },
             y: { duration: totalDuration, ease: "linear" },
@@ -373,6 +368,7 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
         className={blockClassName}
         style={{
           transform: `translate(${staticPosition.x}vw, ${staticPosition.y}vh)`,
+          opacity: 0.28,
         }}
       >
         <code>{code}</code>
@@ -402,7 +398,8 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
  */
 export function FloatingCode() {
   const isClient = useIsClient();
-  const prefersReducedMotion = useReducedMotion() ?? false;
+  const reducedMotionPreference = useReducedMotion();
+  const prefersReducedMotion = reducedMotionPreference !== false;
   const blockCount = useBlockCount();
   const blockSeeds = useMemo(
     () => (blockCount > 0 ? createBlockSeeds(blockCount) : []),
@@ -414,7 +411,7 @@ export function FloatingCode() {
   }
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 max-md:hidden">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 max-lg:hidden">
       {blockSeeds.map((seed, index) => (
         <FloatingCodeBlock
           key={index}

@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content/data/profile";
 import { cn } from "@/lib/utils";
 
 const PRIMARY_CTA_LABEL = "Resume";
 const SECONDARY_CTA_LABEL = "Contact";
-const TYPEWRITER_CHAR_MS = 88;
 
 const heroTextLines = profile.heroText.split("\n").filter(Boolean);
 
@@ -30,7 +28,7 @@ const paragraphContainerVariants = {
 };
 
 const paragraphItemVariants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0.9, y: 4 },
   visible: {
     opacity: 1,
     y: 0,
@@ -82,71 +80,19 @@ function ContactIcon() {
   );
 }
 
-function useTypewriter(text: string, enabled: boolean, charDelayMs: number, skip: boolean) {
-  const [displayed, setDisplayed] = useState("");
-  const [complete, setComplete] = useState(false);
-
-  useEffect(() => {
-    if (skip || !enabled) {
-      return;
-    }
-
-    let index = 0;
-    let timer: number | undefined;
-
-    const step = () => {
-      index += 1;
-      setDisplayed(text.slice(0, index));
-
-      if (index >= text.length) {
-        setComplete(true);
-        return;
-      }
-
-      timer = window.setTimeout(step, charDelayMs);
-    };
-
-    timer = window.setTimeout(step, charDelayMs);
-
-    return () => {
-      if (timer !== undefined) {
-        window.clearTimeout(timer);
-      }
-    };
-  }, [text, enabled, charDelayMs, skip]);
-
-  if (skip) {
-    return { displayed: text, complete: true };
-  }
-
-  if (!enabled) {
-    return { displayed: "", complete: false };
-  }
-
-  return { displayed, complete };
-}
-
 type HeroContentProps = {
   initials: string;
 };
 
 /**
- * Animated Hero copy — typewriter name, staggered reveals, reduced-motion fallbacks (§7.3).
+ * Animated Hero copy — subtle reveals with reduced-motion fallbacks (§7.3).
  */
 export function HeroContent({ initials }: HeroContentProps) {
-  const prefersReducedMotion = useReducedMotion() ?? false;
-  const [greetingReady, setGreetingReady] = useState(prefersReducedMotion);
+  const reducedMotionPreference = useReducedMotion();
+  const prefersReducedMotion = reducedMotionPreference !== false;
+  const contentRevealed = true;
 
-  const { displayed: displayedName, complete: nameComplete } = useTypewriter(
-    profile.name,
-    greetingReady,
-    TYPEWRITER_CHAR_MS,
-    prefersReducedMotion
-  );
-
-  const contentRevealed = prefersReducedMotion || greetingReady;
-
-  // Placeholder (no image) — kept as a square avatar, independent of the framed portrait.
+  // Fallback avatar — kept as a square avatar, independent of the framed portrait.
   const profileImageClasses = cn(
     "shrink-0 object-contain",
     "mx-auto h-52 w-auto sm:h-60",
@@ -191,56 +137,41 @@ export function HeroContent({ initials }: HeroContentProps) {
           >
             <motion.span
               className="mb-2 block text-body font-medium tracking-wide text-text-secondary sm:mb-3 sm:text-h2 lg:text-[1.875rem]"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+              initial={prefersReducedMotion ? false : { opacity: 0.9, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: easeOut }}
-              onAnimationComplete={() => {
-                if (!prefersReducedMotion) {
-                  setGreetingReady(true);
-                }
-              }}
             >
               Hello! I&apos;m
             </motion.span>
             <span className="inline-flex items-baseline">
               <span className="relative inline-block">
                 <span className="hero-name-glow bg-gradient-to-r from-gradient-from to-gradient-to bg-clip-text text-transparent">
-                  {displayedName}
+                  {profile.name}
                 </span>
-                {nameComplete && !prefersReducedMotion ? (
-                  <span
-                    aria-hidden="true"
-                    className="hero-name-shine absolute inset-0"
-                  >
-                    {displayedName}
-                  </span>
-                ) : null}
-              </span>
-              {!nameComplete && !prefersReducedMotion ? (
                 <span
                   aria-hidden="true"
-                  className="hero-type-cursor ml-1 inline-block h-[0.82em] w-[2px] translate-y-[0.06em] rounded-full bg-gradient-to-b from-gradient-from to-gradient-to"
-                />
-              ) : null}
+                  className="hero-name-shine absolute inset-0"
+                >
+                  {profile.name}
+                </span>
+              </span>
             </span>
           </h1>
 
           <motion.p
             className="m-0 text-h2 font-medium text-text-secondary sm:text-h1 lg:text-[2.25rem]"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-            animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            initial={prefersReducedMotion ? false : { opacity: 0.9, y: 4 }}
+            animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0.9, y: 4 }}
             transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.12 }}
           >
             <span className="relative inline-block">
               {profile.title}
-              {nameComplete && !prefersReducedMotion ? (
-                <span
-                  aria-hidden="true"
-                  className="hero-name-shine hero-name-shine--delayed absolute inset-0"
-                >
-                  {profile.title}
-                </span>
-              ) : null}
+              <span
+                aria-hidden="true"
+                className="hero-name-shine hero-name-shine--delayed absolute inset-0"
+              >
+                {profile.title}
+              </span>
             </span>
           </motion.p>
 
@@ -259,8 +190,8 @@ export function HeroContent({ initials }: HeroContentProps) {
 
           <motion.p
             className="m-0 text-body text-text-secondary sm:text-lg"
-            initial={prefersReducedMotion ? false : { opacity: 0 }}
-            animate={contentRevealed ? { opacity: 1 } : { opacity: 0 }}
+            initial={prefersReducedMotion ? false : { opacity: 0.9 }}
+            animate={contentRevealed ? { opacity: 1 } : { opacity: 0.9 }}
             transition={{ duration: 0.4, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.38 }}
           >
             {profile.location}
@@ -269,8 +200,8 @@ export function HeroContent({ initials }: HeroContentProps) {
 
         <motion.div
           className="order-3 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap md:order-none"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-          animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          initial={prefersReducedMotion ? false : { opacity: 0.9, y: 4 }}
+          animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0.9, y: 4 }}
           transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.48 }}
         >
           <button
@@ -298,8 +229,8 @@ export function HeroContent({ initials }: HeroContentProps) {
 
       <motion.div
         className="order-2 flex shrink-0 items-start justify-center md:order-none md:justify-end"
-        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
-        animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+        initial={prefersReducedMotion ? false : { opacity: 0.9, scale: 0.98 }}
+        animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0.9, scale: 0.98 }}
         transition={{ duration: 0.55, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.16 }}
       >
         {profile.profileImage ? (

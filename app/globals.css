@@ -133,25 +133,6 @@ html {
   }
 }
 
-/* Hero typewriter cursor — decorative; disabled under reduced motion (§7.3). */
-@keyframes hero-type-cursor-blink {
-  0%,
-  45% {
-    opacity: 1;
-  }
-
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-type-cursor {
-    animation: hero-type-cursor-blink 1s step-end infinite;
-  }
-}
-
 /* Hero CTA icons — decorative hover bounce, disabled under reduced motion (§7.3). */
 @keyframes hero-cta-icon-bounce {
   0%,
