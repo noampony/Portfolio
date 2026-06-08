@@ -12,7 +12,7 @@ import type { EducationCertificateRef } from "@/lib/content/types";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const ABOUT_ACCENT_LINE_START_X = -128;
-const COUNT_DURATION_MS = 1500;
+const COUNT_DURATION_MS = 2250;
 
 type StatItem = {
   id: string;
@@ -47,7 +47,7 @@ const revealVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: easeOut },
+    transition: { duration: 1.05, ease: easeOut },
   },
 };
 
@@ -56,14 +56,14 @@ const accentLineRevealVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.7, ease: easeOut },
+    transition: { duration: 1.05, ease: easeOut },
   },
 };
 
 const staggerContainerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.12, delayChildren: 0.08 },
+    transition: { staggerChildren: 0.18, delayChildren: 0.12 },
   },
 };
 
@@ -73,7 +73,7 @@ const cardRevealVariants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.55, ease: easeOut },
+    transition: { duration: 0.83, ease: easeOut },
   },
 };
 

@@ -23,8 +23,8 @@ const paragraphContainerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.22,
+      staggerChildren: 0.15,
+      delayChildren: 0.33,
     },
   },
 };
@@ -34,7 +34,7 @@ const paragraphItemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: easeOut },
+    transition: { duration: 0.68, ease: easeOut },
   },
 };
 
@@ -193,7 +193,7 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="mb-2 block text-body font-medium tracking-wide text-text-secondary sm:mb-3 sm:text-h2 lg:text-[1.875rem]"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: easeOut }}
+              transition={{ duration: 0.75, ease: easeOut }}
               onAnimationComplete={() => {
                 if (!prefersReducedMotion) {
                   setGreetingReady(true);
@@ -229,7 +229,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             className="m-0 text-h2 font-medium text-text-secondary sm:text-h1 lg:text-[2.25rem]"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
             animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.12 }}
+            transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.18 }}
           >
             <span className="relative inline-block">
               {profile.title}
@@ -261,7 +261,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             className="m-0 text-body text-text-secondary sm:text-lg"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={contentRevealed ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.4, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.38 }}
+            transition={{ duration: 0.6, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.57 }}
           >
             {profile.location}
           </motion.p>
@@ -271,7 +271,7 @@ export function HeroContent({ initials }: HeroContentProps) {
           className="order-3 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap md:order-none"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
           animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-          transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.48 }}
+          transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.72 }}
         >
           <button
             type="button"
@@ -300,7 +300,7 @@ export function HeroContent({ initials }: HeroContentProps) {
         className="order-2 flex shrink-0 items-start justify-center md:order-none md:justify-end"
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
-        transition={{ duration: 0.55, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.16 }}
+        transition={{ duration: 0.83, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.24 }}
       >
         {profile.profileImage ? (
           <div className={profileFrameClasses}>
