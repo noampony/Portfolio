@@ -1,3 +1,7 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
+
 import type { Experience } from "@/lib/content/types";
 import { cn } from "@/lib/utils";
 
@@ -9,11 +13,30 @@ import { cn } from "@/lib/utils";
  * is invented and no empty artifact is shown (tasks/README Rule 5). Screenshots
  * are intentionally never rendered (§8.3 — optional + confidentiality).
  *
- * The card is a server component: no client JS ships and the duration of an
- * ongoing role is computed at build time, matching the site's build-time date
- * convention (see lib/content/data/about.ts). Entrance/scroll animation is
- * deliberately deferred to Task 6.3.
+ * Styling/animation (Task 6.3): the glass card, accent rail and node mirror the
+ * About section's card system so the timeline reads as part of the same site.
+ * The scroll reveal is a Framer Motion `whileInView` fade-up gated on
+ * `useReducedMotion` (spec §7.3/§7.5): under reduced motion no entrance runs and
+ * the content is rendered in its final, fully-visible state. Only opacity and
+ * transform animate, so there is no layout shift (§14.8). The card markup is still
+ * server-rendered into the initial HTML, so the text is present for crawlers and
+ * assistive tech regardless of JavaScript.
+ *
+ * The "Present" duration is computed at build time by the parent server
+ * component and passed in via `duration`, so the displayed value is stable and
+ * never produces a client/server hydration mismatch.
  */
+
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
+const entryRevealVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: easeOut, delay: Math.min(index * 0.07, 0.25) },
+  }),
+};
 
 const MONTH_LABELS = [
   "Jan",
@@ -40,41 +63,20 @@ function formatMonthYear(value: string): string {
   return label ? `${label} ${year}` : value;
 }
 
-/** Whole months between a start year-month and now (build time for static pages). */
-function monthsElapsedSince(start: string, now = new Date()): number {
-  const [startYear, startMonth] = start.split("-").map(Number);
-  if (!startYear || !startMonth) {
-    return 0;
-  }
-  const months = (now.getFullYear() - startYear) * 12 + (now.getMonth() + 1 - startMonth);
-  return Math.max(0, months);
-}
-
-/** Human-readable span (e.g. `3 yrs 8 mos`) from a whole-month count. */
-function formatDuration(totalMonths: number): string {
-  const years = Math.floor(totalMonths / 12);
-  const months = totalMonths % 12;
-  const parts: string[] = [];
-  if (years > 0) {
-    parts.push(`${years} yr${years === 1 ? "" : "s"}`);
-  }
-  if (months > 0) {
-    parts.push(`${months} mo${months === 1 ? "" : "s"}`);
-  }
-  return parts.length > 0 ? parts.join(" ") : "1 mo";
-}
-
 type TimelineEntryProps = {
   experience: Experience;
   /** The ongoing role — visually emphasised and badged "Current". */
   isCurrent: boolean;
-  /** Last item drops the connecting rail so the line ends on the final node. */
-  isLast: boolean;
-  /** Stable index used to label the card's heading for assistive tech. */
+  /** Stable index used to label the card's heading and stagger the reveal. */
   index: number;
+  /** Build-time-resolved duration label (e.g. `3 yrs 8 mos`), or null to omit. */
+  duration: string | null;
 };
 
-export function TimelineEntry({ experience, isCurrent, isLast, index }: TimelineEntryProps) {
+export function TimelineEntry({ experience, isCurrent, index, duration }: TimelineEntryProps) {
+  const reduceMotion = useReducedMotion();
+  const animate = !reduceMotion;
+
   const {
     organization,
     organizationType,
@@ -82,7 +84,6 @@ export function TimelineEntry({ experience, isCurrent, isLast, index }: Timeline
     employmentType,
     startDate,
     endDate,
-    durationLabel,
     description,
     technologies,
     teamSize,
@@ -91,31 +92,24 @@ export function TimelineEntry({ experience, isCurrent, isLast, index }: Timeline
 
   const headingId = `experience-entry-${index}`;
 
-  // Prefer the owner-provided duration label (spec §8.3 wording); otherwise
-  // compute it dynamically for an ongoing role (§8.3.2). Completed roles with
-  // no provided label simply show their date range — no derived value invented.
-  const duration =
-    durationLabel ?? (endDate === "Present" ? formatDuration(monthsElapsedSince(startDate)) : null);
-
   return (
-    <li
-      className={cn(
-        "relative border-l border-border pl-6 sm:pl-8",
-        isLast ? "border-l-transparent pb-0" : "pb-8 sm:pb-10",
-      )}
+    <motion.li
+      className="experience-entry"
+      custom={index}
+      variants={entryRevealVariants}
+      initial={animate ? "hidden" : false}
+      whileInView={animate ? "visible" : undefined}
+      viewport={{ once: true, margin: "-80px" }}
     >
       {/* Timeline node — decorative; the heading conveys the entry to AT. */}
       <span
         aria-hidden="true"
-        className={cn(
-          "absolute left-0 top-5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-accent",
-          isCurrent ? "bg-accent" : "bg-bg-base",
-        )}
+        className={cn("experience-node", isCurrent && "experience-node--current")}
       />
 
       <article
         aria-labelledby={headingId}
-        className="rounded-lg border border-border bg-bg-surface p-5 sm:p-6"
+        className={cn("experience-card", isCurrent && "experience-card--current")}
       >
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
           <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
@@ -165,10 +159,7 @@ export function TimelineEntry({ experience, isCurrent, isLast, index }: Timeline
         {technologies && technologies.length > 0 ? (
           <ul aria-label="Technologies used" className="mt-3 flex flex-wrap gap-1.5">
             {technologies.map((tech) => (
-              <li
-                key={tech}
-                className="rounded border border-border bg-bg-base px-2 py-0.5 font-mono text-small text-text-secondary"
-              >
+              <li key={tech} className="experience-tag">
                 {tech}
               </li>
             ))}
@@ -190,7 +181,7 @@ export function TimelineEntry({ experience, isCurrent, isLast, index }: Timeline
           </p>
         ) : null}
       </article>
-    </li>
+    </motion.li>
   );
 }
 
