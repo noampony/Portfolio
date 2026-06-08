@@ -138,8 +138,8 @@ export function MobileNav({ className }: { className?: string }) {
                     aria-current={active ? "page" : undefined}
                     onClick={close}
                     className={cn(
-                      "block rounded-sm px-3 py-2 text-body text-text-secondary outline-none transition-colors hover:text-accent focus-visible:ring-2 focus-visible:ring-accent",
-                      active && "font-medium text-accent",
+                      "block rounded-md px-3 py-2 text-body text-text-secondary outline-none transition-colors hover:text-accent focus-visible:ring-2 focus-visible:ring-accent",
+                      active && "nav-spotlight font-medium text-accent",
                     )}
                     {...(item.external
                       ? { target: "_blank", rel: "noopener noreferrer" }

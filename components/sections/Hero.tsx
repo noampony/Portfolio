@@ -41,7 +41,7 @@ export function Hero() {
         <FloatingCode />
       </div>
 
-      <div className="mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-7xl flex-col justify-center px-6 py-10 md:py-12 lg:py-16">
+      <div className="mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-7xl flex-col justify-center px-6 py-10 sm:px-10 md:px-16 md:py-12 lg:py-16">
         <HeroContent initials={initials} />
       </div>
     </section>
