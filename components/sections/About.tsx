@@ -67,6 +67,182 @@ const cardRevealVariants = {
   },
 };
 
+type BackgroundGraph = {
+  title: string;
+  xLabel: string;
+  yLabel: string;
+  points: string;
+  bars?: number[];
+  className: string;
+};
+
+const backgroundGraphs: BackgroundGraph[] = [
+  {
+    title: "Courses Finished",
+    xLabel: "Career",
+    yLabel: "Count",
+    points: "14,70 30,62 46,50 62,35 78,26 94,14",
+    bars: [24, 32, 46, 58, 72],
+    className: "about-graph-card--courses",
+  },
+  {
+    title: "Systems Reliability",
+    xLabel: "Iterations",
+    yLabel: "Signal",
+    points: "14,58 28,50 42,53 56,38 70,30 84,24 96,18",
+    bars: [34, 42, 38, 54, 64],
+    className: "about-graph-card--reliability",
+  },
+  {
+    title: "Cold Coffee Cups",
+    xLabel: "Debug Sprints",
+    yLabel: "Caffeine",
+    points: "14,64 26,48 38,59 50,35 62,45 76,24 94,18",
+    bars: [38, 50, 44, 68, 76],
+    className: "about-graph-card--coffee",
+  },
+  {
+    title: "Backend Throughput",
+    xLabel: "Deploys",
+    yLabel: "Load",
+    points: "12,66 24,56 38,60 52,42 66,34 80,28 96,20",
+    bars: [30, 36, 49, 61, 69],
+    className: "about-graph-card--throughput",
+  },
+  {
+    title: "API Latency Drop",
+    xLabel: "Releases",
+    yLabel: "ms",
+    points: "12,22 26,30 40,28 54,42 68,48 82,58 98,64",
+    bars: [72, 63, 58, 46, 35],
+    className: "about-graph-card--latency",
+  },
+  {
+    title: "Cloud Services Mapped",
+    xLabel: "Labs",
+    yLabel: "AWS",
+    points: "14,66 28,58 42,52 56,38 70,32 84,22 98,16",
+    bars: [26, 34, 44, 57, 71],
+    className: "about-graph-card--cloud",
+  },
+  {
+    title: "PR Review Velocity",
+    xLabel: "Weeks",
+    yLabel: "Flow",
+    points: "12,60 26,46 40,50 54,36 68,40 82,26 98,22",
+    bars: [40, 51, 47, 60, 66],
+    className: "about-graph-card--reviews",
+  },
+  {
+    title: "Bug Hunts Won",
+    xLabel: "Sprints",
+    yLabel: "Fixes",
+    points: "14,62 28,54 42,42 56,48 70,30 84,25 98,18",
+    bars: [32, 41, 55, 48, 70],
+    className: "about-graph-card--bugs",
+  },
+  {
+    title: "Learning Momentum",
+    xLabel: "Months",
+    yLabel: "Hours",
+    points: "12,68 26,55 40,58 54,44 68,34 82,28 98,15",
+    bars: [25, 37, 43, 59, 78],
+    className: "about-graph-card--learning",
+  },
+  {
+    title: "Deploy Confidence",
+    xLabel: "Checks",
+    yLabel: "Pass",
+    points: "14,56 28,48 42,44 56,36 70,28 84,24 98,18",
+    bars: [44, 50, 56, 64, 72],
+    className: "about-graph-card--deploys",
+  },
+  {
+    title: "Keyboard Shortcuts Learned",
+    xLabel: "Years",
+    yLabel: "Speed",
+    points: "12,64 26,57 40,43 54,46 68,31 82,27 98,19",
+    bars: [31, 43, 52, 61, 73],
+    className: "about-graph-card--shortcuts",
+  },
+  {
+    title: "Docker Layers Tamed",
+    xLabel: "Images",
+    yLabel: "Size",
+    points: "12,26 26,34 40,32 54,45 68,50 82,59 98,65",
+    bars: [68, 61, 54, 43, 34],
+    className: "about-graph-card--docker",
+  },
+  {
+    title: "Focus Mode Sessions",
+    xLabel: "Blocks",
+    yLabel: "Depth",
+    points: "14,65 28,49 42,52 56,37 70,33 84,21 98,17",
+    bars: [36, 49, 45, 63, 75],
+    className: "about-graph-card--focus",
+  },
+  {
+    title: "Terminal Tabs Open",
+    xLabel: "Day",
+    yLabel: "Tabs",
+    points: "12,58 26,42 40,54 54,31 68,44 82,26 98,35",
+    bars: [47, 62, 50, 74, 57],
+    className: "about-graph-card--terminal",
+  },
+];
+
+function AboutBackgroundGraphs() {
+  return (
+    <div aria-hidden="true" className="about-graphs-layer">
+      {backgroundGraphs.map((graph) => (
+        <div key={graph.title} className={`about-graph-card ${graph.className}`}>
+          <div className="about-graph-title">{graph.title}</div>
+          <svg className="about-graph-svg" viewBox="0 0 112 82" focusable="false">
+            <path className="about-graph-grid" d="M14 18H102M14 34H102M14 50H102M14 66H102" />
+            <path className="about-graph-axis" d="M14 10V68H104M14 68L18 64M14 68L18 72M104 68L100 64M104 68L100 72" />
+            {graph.bars?.map((height, index) => {
+              const x = 24 + index * 15;
+              const y = 68 - height * 0.58;
+
+              return (
+                <rect
+                  key={`${graph.title}-${height}`}
+                  className="about-graph-bar"
+                  x={x}
+                  y={y}
+                  width="5"
+                  height={68 - y}
+                  rx="1.5"
+                />
+              );
+            })}
+            <polyline className="about-graph-line" points={graph.points} />
+            {graph.points.split(" ").map((point) => {
+              const [cx, cy] = point.split(",");
+
+              return (
+                <circle
+                  key={`${graph.title}-${point}`}
+                  className="about-graph-dot"
+                  cx={cx}
+                  cy={cy}
+                  r="1.8"
+                />
+              );
+            })}
+            <text className="about-graph-y-label" x="5" y="13">
+              {graph.yLabel}
+            </text>
+            <text className="about-graph-x-label" x="78" y="79">
+              {graph.xLabel}
+            </text>
+          </svg>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function DeanListIcon() {
   return (
     <svg
@@ -165,8 +341,9 @@ export function About() {
       />
       <div aria-hidden="true" className="about-grid-wash" />
       <div aria-hidden="true" className="about-scanline" />
+      <AboutBackgroundGraphs />
 
-      <div className="about-layout mx-auto grid w-full max-w-7xl gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-stretch lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
+      <div className="about-layout relative z-10 mx-auto grid w-full max-w-7xl gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-stretch lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
         <motion.div
           className="about-copy-panel about-layout-copy flex h-full flex-col justify-center max-w-measure"
           initial={animate ? "hidden" : false}

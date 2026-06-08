@@ -311,19 +311,19 @@ export function HeroContent({ initials }: HeroContentProps) {
              * spills outside. Fill + border fade in over the lower half only, leaving
              * the cropped head "popping out" of an unframed top.
              */}
-            {/* Dark-blue gradient fill — clipped to the oval, fills the lower ~70%. */}
+            {/* Glass version of the original blue fill — same oval and gradient stop. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%]"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-28px_76px_rgba(96,165,250,0.14),0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-2xl"
               style={{
                 background:
-                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.5) 70%)",
+                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.3) 70%)",
               }}
             />
-            {/* Border line — masked to the lower half so the head stays unframed. */}
+            {/* Original lower-half border treatment, softened into a glass edge. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.7)]"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.62)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_34px_rgba(96,165,250,0.22)]"
               style={{
                 WebkitMaskImage:
                   "linear-gradient(to bottom, transparent 40%, #000 62%)",
