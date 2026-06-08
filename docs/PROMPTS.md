@@ -290,7 +290,7 @@ Task focus: encode the 4 entries with §8.3 values; STRIP tracking params (lipi 
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/6.1-experience-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 6.2 — Implement the Experience Timeline Layout
+## ✅ Task 6.2 — Implement the Experience Timeline Layout
 
 ```text
 Implement ONLY Task 6.2 — "Implement the Experience Timeline Layout" — for the Noam Pony portfolio. Depends on Task 6.1.
