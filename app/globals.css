@@ -196,11 +196,98 @@ html {
   transform: translateX(-35%);
 }
 
+.about-graphs-layer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+
+.about-graph-card {
+  position: absolute;
+  width: clamp(11.25rem, 15vw, 15rem);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--accent) 13%, var(--bg-surface)), transparent 42%),
+    linear-gradient(145deg, color-mix(in srgb, var(--bg-surface) 88%, var(--accent)), var(--bg-surface-raised));
+  padding: 0.625rem;
+  color: color-mix(in srgb, var(--text-secondary) 80%, var(--accent));
+  opacity: 0.34;
+  box-shadow:
+    0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+  transform: translate3d(0, 0, 0);
+  backdrop-filter: blur(14px) saturate(130%);
+}
+
+.about-graph-title {
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+  font-family: var(--font-mono), var(--font-mono-fallback);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--accent-hover) 78%, var(--text-secondary));
+}
+
+.about-graph-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.about-graph-grid,
+.about-graph-axis,
+.about-graph-line {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.about-graph-grid {
+  stroke: color-mix(in srgb, var(--text-muted) 26%, transparent);
+  stroke-width: 0.65;
+}
+
+.about-graph-axis {
+  stroke: color-mix(in srgb, var(--text-secondary) 58%, transparent);
+  stroke-width: 1.15;
+}
+
+.about-graph-bar {
+  fill: color-mix(in srgb, var(--gradient-to) 38%, transparent);
+}
+
+.about-graph-line {
+  stroke: color-mix(in srgb, var(--accent) 86%, white);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 0.25rem color-mix(in srgb, var(--accent) 46%, transparent));
+}
+
+.about-graph-dot {
+  fill: var(--accent-hover);
+}
+
+.about-graph-x-label,
+.about-graph-y-label {
+  fill: color-mix(in srgb, var(--text-muted) 82%, var(--accent));
+  font-family: var(--font-mono), var(--font-mono-fallback);
+  font-size: 0.4375rem;
+  letter-spacing: 0;
+}
+
 .about-copy-panel {
   position: relative;
 }
 
-.about-copy-panel::before {
+.about-copy-accent-line {
   position: absolute;
   top: 0.2rem;
   bottom: 0.15rem;
@@ -209,7 +296,7 @@ html {
   border-radius: 999px;
   background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--gradient-to) 70%, var(--accent)));
   box-shadow: 0 0 1.25rem color-mix(in srgb, var(--accent) 32%, transparent);
-  content: "";
+  pointer-events: none;
 }
 
 .about-stat-card,
@@ -217,14 +304,17 @@ html {
 .about-education-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--border) 92%, var(--accent));
+  border: 1px solid color-mix(in srgb, white 18%, var(--accent) 20%);
   border-radius: var(--radius);
   background:
-    linear-gradient(145deg, color-mix(in srgb, var(--bg-surface) 94%, var(--accent)), var(--bg-surface) 58%),
-    var(--bg-surface);
+    radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.11), transparent 32%),
+    linear-gradient(145deg, rgb(255 255 255 / 0.085), rgb(45 212 191 / 0.035) 46%, rgb(59 130 246 / 0.03)),
+    rgb(11 15 20 / 0.12);
   box-shadow:
-    0 1.25rem 4rem rgb(0 0 0 / 0.24),
-    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+    0 1.25rem 3.5rem rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 -1px 0 rgb(45 212 191 / 0.08);
+  backdrop-filter: blur(24px) saturate(175%);
 }
 
 .about-stat-card {
@@ -242,20 +332,33 @@ html {
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--accent) 18%, transparent) 46%, transparent 58%);
+    linear-gradient(120deg, transparent 0%, rgb(255 255 255 / 0.16) 44%, rgb(45 212 191 / 0.08) 50%, transparent 60%);
   opacity: 0;
   transform: translateX(-80%);
   content: "";
   pointer-events: none;
 }
 
+.about-stat-card::after,
+.about-fields-panel::after,
+.about-education-card::after {
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--radius) - 1px);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.085), transparent 38%),
+    linear-gradient(90deg, rgb(45 212 191 / 0.055), transparent 34%, rgb(59 130 246 / 0.04));
+  content: "";
+  pointer-events: none;
+}
+
 .about-stat-card:hover,
 .about-education-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
+  border-color: color-mix(in srgb, white 24%, var(--accent) 42%);
   box-shadow:
-    0 1.5rem 4.5rem rgb(0 0 0 / 0.34),
-    0 0 2.5rem color-mix(in srgb, var(--accent) 10%, transparent),
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+    0 1.5rem 4rem rgb(0 0 0 / 0.24),
+    0 0 2.25rem color-mix(in srgb, var(--accent) 10%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.22);
 }
 
 .about-stat-icon {
@@ -267,7 +370,8 @@ html {
   flex: none;
   border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
   border-radius: 0.375rem;
-  background: color-mix(in srgb, var(--bg-surface-raised) 76%, var(--accent));
+  background: color-mix(in srgb, var(--bg-surface-raised) 62%, transparent);
+  backdrop-filter: blur(10px);
   color: var(--accent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, white 9%, transparent);
 }
@@ -410,22 +514,26 @@ html {
 
 .about-cert-trigger {
   display: inline-flex;
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.625rem;
+  height: 1.625rem;
   flex: none;
   align-items: center;
   justify-content: center;
   margin-top: 0.125rem;
-  border: 1px solid color-mix(in srgb, white 10%, var(--border));
-  border-radius: 0.3125rem;
-  background: color-mix(in srgb, var(--bg-surface) 42%, transparent);
-  backdrop-filter: blur(10px);
-  color: color-mix(in srgb, var(--accent) 78%, var(--text-muted));
+  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--border));
+  border-radius: 0.375rem;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 16%, var(--bg-surface-raised)),
+      color-mix(in srgb, var(--gradient-to) 10%, var(--bg-surface-raised))
+    );
+  color: var(--accent-hover);
   padding: 0;
   cursor: pointer;
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 11%, transparent),
-    0 1px 2px rgb(0 0 0 / 0.18);
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+    0 0 1rem color-mix(in srgb, var(--accent) 16%, transparent);
   transition:
     border-color 160ms ease,
     background-color 160ms ease,
@@ -435,18 +543,23 @@ html {
 }
 
 .about-cert-trigger-icon {
-  width: 0.6875rem;
-  height: 0.6875rem;
+  width: 0.8125rem;
+  height: 0.8125rem;
   flex: none;
 }
 
 .about-cert-trigger:hover {
-  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
-  background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface) 38%);
-  color: var(--accent-hover);
+  border-color: color-mix(in srgb, var(--accent) 68%, var(--border));
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 24%, var(--bg-surface-raised)),
+      color-mix(in srgb, var(--gradient-to) 16%, var(--bg-surface-raised))
+    );
+  color: var(--text-primary);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
-    0 0 0.75rem color-mix(in srgb, var(--accent) 14%, transparent);
+    0 0 1.25rem color-mix(in srgb, var(--accent) 24%, transparent);
 }
 
 .about-cert-trigger:focus-visible {
@@ -468,19 +581,26 @@ html {
   width: min(94vw, 44rem);
   max-height: min(92vh, 44rem);
   margin: auto;
+  overflow: hidden;
   padding: 0;
-  border: 1px solid color-mix(in srgb, var(--border) 88%, var(--accent));
+  border: 1px solid color-mix(in srgb, white 18%, var(--accent) 20%);
   border-radius: var(--radius);
-  background: var(--bg-surface);
+  background:
+    radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.07), transparent 32%),
+    linear-gradient(145deg, rgb(255 255 255 / 0.05), rgb(45 212 191 / 0.025) 46%, rgb(59 130 246 / 0.02)),
+    rgb(11 15 20 / 0.18);
   color: var(--text-primary);
   box-shadow:
-    0 1.5rem 4rem rgb(0 0 0 / 0.45),
-    0 0 2rem color-mix(in srgb, var(--accent) 8%, transparent);
+    0 1.5rem 4rem rgb(0 0 0 / 0.5),
+    0 0 2rem color-mix(in srgb, var(--accent) 8%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 -1px 0 rgb(45 212 191 / 0.07);
+  backdrop-filter: blur(28px) saturate(170%);
 }
 
 .cert-viewer-dialog::backdrop {
-  background: rgb(0 0 0 / 0.62);
-  backdrop-filter: blur(2px);
+  background: rgb(0 0 0 / 0.3);
+  backdrop-filter: blur(6px);
 }
 
 .cert-viewer-panel {
@@ -491,7 +611,7 @@ html {
 
 .cert-viewer-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
   border-bottom: 1px solid color-mix(in srgb, var(--border) 92%, var(--accent));
@@ -501,14 +621,18 @@ html {
 .cert-viewer-heading {
   display: flex;
   min-width: 0;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
 }
 
 .cert-viewer-icon {
   display: inline-flex;
-  margin-top: 0.125rem;
   color: var(--accent);
+}
+
+.cert-viewer-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .cert-viewer-title {
@@ -571,23 +695,41 @@ html {
 }
 
 .cert-viewer-open-link {
+  display: inline-flex;
   align-self: flex-start;
-  font-size: var(--type-small);
-  line-height: var(--leading-small);
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid color-mix(in srgb, white 16%, var(--accent) 26%);
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--accent) 10%, rgb(255 255 255 / 0.04));
   color: var(--accent);
+  font-size: var(--type-small);
+  font-weight: 500;
+  line-height: var(--leading-small);
   text-decoration: none;
-  transition: color 160ms ease;
+  backdrop-filter: blur(8px) saturate(160%);
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
 }
 
 .cert-viewer-open-link:hover {
+  border-color: color-mix(in srgb, var(--accent-hover) 60%, var(--border));
+  background: color-mix(in srgb, var(--accent) 18%, rgb(255 255 255 / 0.05));
   color: var(--accent-hover);
-  text-decoration: underline;
+}
+
+.cert-viewer-open-link-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
 }
 
 .cert-viewer-open-link:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 0.125rem;
 }
 
 .cert-viewer-preview {
@@ -701,6 +843,12 @@ html {
       animation-range: entry 8% cover 72%;
       animation-timeline: view();
     }
+  }
+}
+
+@media (max-width: 767px) {
+  .about-graphs-layer {
+    display: none;
   }
 }
 

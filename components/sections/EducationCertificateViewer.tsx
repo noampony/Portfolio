@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type MouseEvent } from "react";
 
 import type { EducationCertificateRef } from "@/lib/content/types";
 
@@ -22,10 +22,29 @@ function CertificateDocumentIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <path d="M9 13h6" />
-      <path d="M9 17h4" />
+      <circle cx="12" cy="9" r="6" />
+      <path d="m9 14.5-1.6 6.2a.5.5 0 0 0 .73.55L12 19.4l3.87 1.85a.5.5 0 0 0 .73-.55L15 14.5" />
+      <path d="m10.1 9 1.3 1.3 2.5-2.6" />
+    </svg>
+  );
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      className="cert-viewer-open-link-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
     </svg>
   );
 }
@@ -80,6 +99,12 @@ export function EducationCertificateViewer({
     onClose();
   };
 
+  const handleBackdropClick = (event: MouseEvent<HTMLDialogElement>) => {
+    if (event.target === event.currentTarget) {
+      handleClose();
+    }
+  };
+
   return (
     <dialog
       ref={dialogRef}
@@ -87,6 +112,7 @@ export function EducationCertificateViewer({
       aria-labelledby={certificate ? "cert-viewer-title" : undefined}
       onCancel={handleClose}
       onClose={handleClose}
+      onClick={handleBackdropClick}
     >
       {certificate ? (
         <div className="cert-viewer-panel">
@@ -96,7 +122,7 @@ export function EducationCertificateViewer({
                 <CertificateDocumentIcon />
               </span>
               <h2 id="cert-viewer-title" className="cert-viewer-title">
-                {certificate.title}
+                {certificate.title} Certificate
               </h2>
             </div>
             <button
@@ -124,6 +150,7 @@ export function EducationCertificateViewer({
                   rel="noopener noreferrer"
                   className="cert-viewer-open-link"
                 >
+                  <ExternalLinkIcon />
                   Open PDF in new tab
                 </a>
               </>

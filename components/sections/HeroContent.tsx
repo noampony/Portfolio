@@ -23,8 +23,8 @@ const paragraphContainerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.22,
+      staggerChildren: 0.15,
+      delayChildren: 0.33,
     },
   },
 };
@@ -34,7 +34,7 @@ const paragraphItemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: easeOut },
+    transition: { duration: 0.68, ease: easeOut },
   },
 };
 
@@ -193,7 +193,7 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="mb-2 block text-body font-medium tracking-wide text-text-secondary sm:mb-3 sm:text-h2 lg:text-[1.875rem]"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: easeOut }}
+              transition={{ duration: 0.75, ease: easeOut }}
               onAnimationComplete={() => {
                 if (!prefersReducedMotion) {
                   setGreetingReady(true);
@@ -229,7 +229,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             className="m-0 text-h2 font-medium text-text-secondary sm:text-h1 lg:text-[2.25rem]"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
             animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.12 }}
+            transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.18 }}
           >
             <span className="relative inline-block">
               {profile.title}
@@ -261,7 +261,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             className="m-0 text-body text-text-secondary sm:text-lg"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={contentRevealed ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.4, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.38 }}
+            transition={{ duration: 0.6, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.57 }}
           >
             {profile.location}
           </motion.p>
@@ -271,13 +271,13 @@ export function HeroContent({ initials }: HeroContentProps) {
           className="order-3 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap md:order-none"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
           animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-          transition={{ duration: 0.45, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.48 }}
+          transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.72 }}
         >
           <button
             type="button"
             className={cn(
               ctaBaseClasses,
-              "w-full bg-accent text-accent-contrast shadow-[0_0_0_rgba(45,212,191,0)] hover:bg-accent-hover hover:shadow-[0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
+              "w-full border border-white/10 bg-accent text-accent-contrast shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_0_0_rgba(45,212,191,0)] backdrop-blur hover:bg-accent-hover hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
             )}
           >
             {PRIMARY_CTA_LABEL}
@@ -287,7 +287,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             type="button"
             className={cn(
               ctaBaseClasses,
-              "w-full border border-border bg-bg-surface-raised text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,var(--bg-surface-raised))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] sm:w-auto"
+              "w-full border border-border bg-bg-surface-raised/90 text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] backdrop-blur hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.9))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] supports-[backdrop-filter]:bg-bg-surface-raised/75 supports-[backdrop-filter]:hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.75))] sm:w-auto"
             )}
           >
             {SECONDARY_CTA_LABEL}
@@ -300,7 +300,7 @@ export function HeroContent({ initials }: HeroContentProps) {
         className="order-2 flex shrink-0 items-start justify-center md:order-none md:justify-end"
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
-        transition={{ duration: 0.55, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.16 }}
+        transition={{ duration: 0.83, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.24 }}
       >
         {profile.profileImage ? (
           <div className={profileFrameClasses}>
@@ -311,19 +311,19 @@ export function HeroContent({ initials }: HeroContentProps) {
              * spills outside. Fill + border fade in over the lower half only, leaving
              * the cropped head "popping out" of an unframed top.
              */}
-            {/* Dark-blue gradient fill — clipped to the oval, fills the lower ~70%. */}
+            {/* Glass version of the original blue fill — same oval and gradient stop. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%]"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-28px_76px_rgba(96,165,250,0.14),0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-2xl"
               style={{
                 background:
-                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.5) 70%)",
+                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.3) 70%)",
               }}
             />
-            {/* Border line — masked to the lower half so the head stays unframed. */}
+            {/* Original lower-half border treatment, softened into a glass edge. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.7)]"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.62)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_34px_rgba(96,165,250,0.22)]"
               style={{
                 WebkitMaskImage:
                   "linear-gradient(to bottom, transparent 40%, #000 62%)",
