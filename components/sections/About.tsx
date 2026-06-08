@@ -710,7 +710,7 @@ export function About() {
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="about-section relative isolate overflow-hidden border-t border-border bg-bg-base px-6 py-16 sm:px-10 md:px-16 lg:py-24"
+      className="about-section relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
     >
       <div
         aria-hidden="true"
@@ -720,7 +720,7 @@ export function About() {
       <div aria-hidden="true" className="about-scanline" />
       <AboutBackgroundGraphs />
 
-      <div className="about-layout relative z-10 mx-auto grid w-full max-w-7xl gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-stretch lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
+      <div className="site-shell about-layout relative z-10 grid gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-stretch lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
         <motion.div
           className="about-copy-panel about-layout-copy h-full max-w-measure"
           initial={animate ? "hidden" : false}
