@@ -215,82 +215,12 @@ html {
     linear-gradient(145deg, color-mix(in srgb, var(--bg-surface) 88%, var(--accent)), var(--bg-surface-raised));
   padding: 0.625rem;
   color: color-mix(in srgb, var(--text-secondary) 80%, var(--accent));
-  opacity: 0.22;
+  opacity: 0.34;
   box-shadow:
     0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
     inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
   transform: translate3d(0, 0, 0);
   backdrop-filter: blur(14px) saturate(130%);
-}
-
-.about-graph-card--courses {
-  top: 7%;
-  left: 3%;
-}
-
-.about-graph-card--reliability {
-  top: 15%;
-  right: 5%;
-}
-
-.about-graph-card--coffee {
-  bottom: 9%;
-  left: 9%;
-}
-
-.about-graph-card--throughput {
-  right: 13%;
-  bottom: 13%;
-}
-
-.about-graph-card--latency {
-  top: 35%;
-  left: -2%;
-}
-
-.about-graph-card--cloud {
-  top: 39%;
-  right: -1%;
-}
-
-.about-graph-card--reviews {
-  top: 3%;
-  left: 30%;
-}
-
-.about-graph-card--bugs {
-  top: 64%;
-  right: 2%;
-}
-
-.about-graph-card--learning {
-  bottom: 2%;
-  left: 34%;
-}
-
-.about-graph-card--deploys {
-  top: 51%;
-  left: 20%;
-}
-
-.about-graph-card--shortcuts {
-  top: 55%;
-  right: 27%;
-}
-
-.about-graph-card--docker {
-  top: 27%;
-  left: 43%;
-}
-
-.about-graph-card--focus {
-  bottom: 33%;
-  left: 3%;
-}
-
-.about-graph-card--terminal {
-  bottom: 37%;
-  right: 10%;
 }
 
 .about-graph-title {
@@ -374,17 +304,17 @@ html {
 .about-education-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, white 12%, var(--accent) 24%);
+  border: 1px solid color-mix(in srgb, white 18%, var(--accent) 20%);
   border-radius: var(--radius);
   background:
-    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 34%),
-    linear-gradient(145deg, color-mix(in srgb, var(--bg-surface-raised) 20%, transparent), color-mix(in srgb, var(--bg-surface) 20%, transparent)),
-    color-mix(in srgb, var(--bg-base) 20%, transparent);
+    radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.11), transparent 32%),
+    linear-gradient(145deg, rgb(255 255 255 / 0.085), rgb(45 212 191 / 0.035) 46%, rgb(59 130 246 / 0.03)),
+    rgb(11 15 20 / 0.12);
   box-shadow:
-    0 1.25rem 4rem rgb(0 0 0 / 0.24),
-    inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
-    inset 0 -1px 0 color-mix(in srgb, var(--accent) 7%, transparent);
-  backdrop-filter: blur(18px) saturate(150%);
+    0 1.25rem 3.5rem rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 -1px 0 rgb(45 212 191 / 0.08);
+  backdrop-filter: blur(24px) saturate(175%);
 }
 
 .about-stat-card {
@@ -402,20 +332,33 @@ html {
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--accent) 18%, transparent) 46%, transparent 58%);
+    linear-gradient(120deg, transparent 0%, rgb(255 255 255 / 0.16) 44%, rgb(45 212 191 / 0.08) 50%, transparent 60%);
   opacity: 0;
   transform: translateX(-80%);
   content: "";
   pointer-events: none;
 }
 
+.about-stat-card::after,
+.about-fields-panel::after,
+.about-education-card::after {
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--radius) - 1px);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.085), transparent 38%),
+    linear-gradient(90deg, rgb(45 212 191 / 0.055), transparent 34%, rgb(59 130 246 / 0.04));
+  content: "";
+  pointer-events: none;
+}
+
 .about-stat-card:hover,
 .about-education-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
+  border-color: color-mix(in srgb, white 24%, var(--accent) 42%);
   box-shadow:
-    0 1.5rem 4.5rem rgb(0 0 0 / 0.34),
-    0 0 2.5rem color-mix(in srgb, var(--accent) 10%, transparent),
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+    0 1.5rem 4rem rgb(0 0 0 / 0.24),
+    0 0 2.25rem color-mix(in srgb, var(--accent) 10%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.22);
 }
 
 .about-stat-icon {
@@ -849,151 +792,7 @@ html {
   }
 }
 
-@keyframes about-graph-drift-a {
-  0% {
-    transform: translate3d(-8vw, -6vh, 0) rotate(-3deg);
-  }
-
-  22% {
-    transform: translate3d(34vw, 14vh, 0) rotate(2deg);
-  }
-
-  46% {
-    transform: translate3d(13vw, 48vh, 0) rotate(-1deg);
-  }
-
-  72% {
-    transform: translate3d(56vw, 31vh, 0) rotate(3deg);
-  }
-
-  100% {
-    transform: translate3d(-8vw, -6vh, 0) rotate(-3deg);
-  }
-}
-
-@keyframes about-graph-drift-b {
-  0% {
-    transform: translate3d(8vw, 8vh, 0) rotate(2deg);
-  }
-
-  24% {
-    transform: translate3d(-29vw, 23vh, 0) rotate(-3deg);
-  }
-
-  52% {
-    transform: translate3d(-7vw, 55vh, 0) rotate(1deg);
-  }
-
-  78% {
-    transform: translate3d(-47vw, 12vh, 0) rotate(-2deg);
-  }
-
-  100% {
-    transform: translate3d(8vw, 8vh, 0) rotate(2deg);
-  }
-}
-
-@keyframes about-graph-drift-c {
-  0% {
-    transform: translate3d(0, 42vh, 0) rotate(3deg);
-  }
-
-  20% {
-    transform: translate3d(28vw, 4vh, 0) rotate(-2deg);
-  }
-
-  48% {
-    transform: translate3d(-18vw, -16vh, 0) rotate(1deg);
-  }
-
-  76% {
-    transform: translate3d(37vw, -3vh, 0) rotate(-3deg);
-  }
-
-  100% {
-    transform: translate3d(0, 42vh, 0) rotate(3deg);
-  }
-}
-
-@keyframes about-graph-drift-d {
-  0% {
-    transform: translate3d(16vw, -10vh, 0) rotate(-1deg);
-  }
-
-  18% {
-    transform: translate3d(-22vw, 32vh, 0) rotate(2deg);
-  }
-
-  45% {
-    transform: translate3d(21vw, 58vh, 0) rotate(-3deg);
-  }
-
-  73% {
-    transform: translate3d(-35vw, 6vh, 0) rotate(1deg);
-  }
-
-  100% {
-    transform: translate3d(16vw, -10vh, 0) rotate(-1deg);
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .about-graph-card--courses {
-    animation: about-graph-drift-a 36s linear infinite;
-  }
-
-  .about-graph-card--reliability {
-    animation: about-graph-drift-b 42s linear infinite;
-  }
-
-  .about-graph-card--coffee {
-    animation: about-graph-drift-c 38s linear infinite;
-  }
-
-  .about-graph-card--throughput {
-    animation: about-graph-drift-d 48s linear -12s infinite;
-  }
-
-  .about-graph-card--latency {
-    animation: about-graph-drift-c 44s linear -8s infinite;
-  }
-
-  .about-graph-card--cloud {
-    animation: about-graph-drift-d 50s linear -18s infinite;
-  }
-
-  .about-graph-card--reviews {
-    animation: about-graph-drift-b 40s linear -6s infinite;
-  }
-
-  .about-graph-card--bugs {
-    animation: about-graph-drift-d 52s linear -24s infinite;
-  }
-
-  .about-graph-card--learning {
-    animation: about-graph-drift-a 46s linear -14s infinite;
-  }
-
-  .about-graph-card--deploys {
-    animation: about-graph-drift-b 54s linear -20s infinite;
-  }
-
-  .about-graph-card--shortcuts {
-    animation: about-graph-drift-c 48s linear -10s infinite;
-  }
-
-  .about-graph-card--docker {
-    animation: about-graph-drift-d 42s linear -22s infinite;
-  }
-
-  .about-graph-card--focus {
-    animation: about-graph-drift-b 56s linear -16s infinite;
-  }
-
-  .about-graph-card--terminal {
-    animation: about-graph-drift-c 46s linear -26s infinite;
-  }
-
   .about-stat-card:hover,
   .about-education-card:hover {
     transform: translateY(-0.25rem);

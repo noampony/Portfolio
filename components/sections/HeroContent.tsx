@@ -277,7 +277,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             type="button"
             className={cn(
               ctaBaseClasses,
-              "w-full bg-accent text-accent-contrast shadow-[0_0_0_rgba(45,212,191,0)] hover:bg-accent-hover hover:shadow-[0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
+              "w-full border border-white/10 bg-accent text-accent-contrast shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_0_0_rgba(45,212,191,0)] backdrop-blur hover:bg-accent-hover hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
             )}
           >
             {PRIMARY_CTA_LABEL}
@@ -287,7 +287,7 @@ export function HeroContent({ initials }: HeroContentProps) {
             type="button"
             className={cn(
               ctaBaseClasses,
-              "w-full border border-border bg-bg-surface-raised text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,var(--bg-surface-raised))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] sm:w-auto"
+              "w-full border border-border bg-bg-surface-raised/90 text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] backdrop-blur hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.9))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] supports-[backdrop-filter]:bg-bg-surface-raised/75 supports-[backdrop-filter]:hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.75))] sm:w-auto"
             )}
           >
             {SECONDARY_CTA_LABEL}
