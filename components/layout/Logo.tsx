@@ -8,8 +8,8 @@ import Image from "next/image";
  * (an `aria-label`), so the image is decorative here (`alt=""`). `priority` is
  * set because the mark is in the always-visible header, not lazy content.
  *
- * The asset is tightly cropped to the wordmark (~3.86:1); rendered at 32px tall
- * (≈124px wide) to sit cleanly in the bar.
+ * The asset is tightly cropped to the wordmark (~3.86:1); rendered at 28px tall
+ * (≈108px wide) so the sticky bar stays compact.
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -17,10 +17,10 @@ export function Logo({ className }: { className?: string }) {
       src="/logo.png"
       alt=""
       aria-hidden="true"
-      width={124}
-      height={32}
+      width={108}
+      height={28}
       priority
-      className={className}
+      className={["h-7 w-[108px] object-contain", className].filter(Boolean).join(" ")}
     />
   );
 }

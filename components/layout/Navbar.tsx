@@ -34,7 +34,7 @@ function isActive(item: NavItem, pathname: string): boolean {
 }
 
 const linkClasses =
-  "rounded-full px-3 py-1.5 text-body text-text-secondary outline-none transition-colors hover:text-accent focus-visible:ring-2 focus-visible:ring-accent";
+  "rounded-full px-3 py-1 text-small text-text-secondary outline-none transition-colors hover:text-accent focus-visible:ring-2 focus-visible:ring-accent";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -62,7 +62,7 @@ export function Navbar() {
       <div aria-hidden className="navbar-cursor-spotlight" />
       <nav
         aria-label="Primary"
-        className="relative z-10 mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 sm:px-10 md:px-16"
+        className="site-shell relative z-10 flex flex-wrap items-center gap-x-6 gap-y-1 py-2"
       >
         <Link
           href="/"
@@ -86,7 +86,7 @@ export function Navbar() {
                         ? `${item.label} — ${item.disabledReason}`
                         : undefined
                     }
-                    className="cursor-not-allowed rounded-full px-3 py-1.5 text-body text-text-muted"
+                    className="cursor-not-allowed rounded-full px-3 py-1 text-small text-text-muted"
                   >
                     {item.label}
                     {item.disabledReason ? (
