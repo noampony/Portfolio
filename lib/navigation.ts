@@ -1,24 +1,22 @@
 /**
  * Single source of truth for the site's primary navigation (spec §5.1–§5.4, §5.7).
  *
- * The navbar is fully data-driven from {@link NAV_ITEMS}. To honor the
- * "no broken links" rule (tasks/README Dependency Rule + Global Definition of
- * Done), this list contains **only items whose targets already exist at the
- * current commit**. Items are added/enabled by later tasks as their targets ship:
+ * The navbar is fully data-driven from {@link NAV_ITEMS}. The navbar links to the
+ * site's top-level destinations (dedicated pages), not to homepage sections —
+ * keeping the nav unambiguous once the Projects and Courses pages exist. To honor
+ * the "no broken links" rule (tasks/README Dependency Rule + Global Definition of
+ * Done), items whose target pages don't exist yet ship as `disabled` placeholders
+ * (non-interactive, accessibly labelled) rather than dead/`#` links — and are
+ * enabled by later tasks as their targets ship:
  *
- *   - `Home`      → `/#home` (Hero anchor, Task 4.1).
- *   - `About`     → `#about`       — appended by Task 5.2 when the About section ships.
- *   - `Experience`→ `#experience`  — appended by Task 6.2.
- *   - `Projects`  → `#projects`    — appended by Task 7.2 (homepage preview anchor per §5.3;
- *                   re-pointed to a dedicated page only if Phase 15 builds one).
- *   - `Courses`   → `#courses`     — appended by Task 8.2 (homepage preview anchor per §5.3;
- *                   re-pointed to a dedicated page only if Phase 16 builds one).
- *   - `Skills`    → `#skills`      — appended by Task 9.2.
+ *   - `Home`      → `/` (the homepage). A real route so it highlights as the active
+ *                   page and lets users return home from the Projects/Courses pages.
+ *   - `Projects`  → dedicated `/projects` page (Phase 15). Disabled placeholder until then.
+ *   - `Courses`   → dedicated `/courses` page (Phase 16). Disabled placeholder until then.
  *   - `Resume`    → behavior is **TBD** (§5.7); wired in Task 10.2. §5.1 requires the item
  *                   in the navbar, so it ships now as a `disabled` placeholder with an
  *                   accessible label — never as a dead/`#` target. Task 10.2 flips
  *                   `disabled` off and sets the resolved `href`.
- *   - `Contact`   → `#contact`     — appended by Task 11.2.
  *
  * Active-state highlighting (§5.4) is route-based only here. Scroll-spy section
  * highlighting is explicitly out of scope for this task (a later task may add it).
@@ -48,8 +46,21 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { id: "home", label: "Home", href: "/#home" },
-  { id: "about", label: "About", href: "/#about" },
+  { id: "home", label: "Home", href: "/" },
+  {
+    id: "projects",
+    label: "Projects",
+    href: null,
+    disabled: true,
+    disabledReason: "coming soon",
+  },
+  {
+    id: "courses",
+    label: "Courses",
+    href: null,
+    disabled: true,
+    disabledReason: "coming soon",
+  },
   {
     id: "resume",
     label: "Resume",
