@@ -7,6 +7,7 @@
 
 import { profile } from "./data/profile";
 import { about } from "./data/about";
+import { experiences } from "./data/experience";
 import {
   sampleExperienceReviewed,
   sampleExperienceUnreviewed,
@@ -53,6 +54,21 @@ function assertConfidentialityFilter(): void {
   }
 }
 
+/** Verify the real Experience data is gated correctly (Task 6.1, spec §15.4). */
+function assertExperienceConfidentialityGate(): void {
+  const published = filterConfidentialityReviewed(experiences);
+  if (published.some((entry) => entry.confidentialityReviewed !== true)) {
+    throw new Error(
+      "Content validator self-check failed: published experience output contains an unreviewed entry.",
+    );
+  }
+  if (published.length < 1) {
+    throw new Error(
+      "Content validator self-check failed: expected at least one published experience entry.",
+    );
+  }
+}
+
 if (!profile.name) {
   throw new Error("Content validator self-check failed: profile data failed to load.");
 }
@@ -60,3 +76,4 @@ if (!about.professionalSummary) {
   throw new Error("Content validator self-check failed: about data failed to load.");
 }
 assertConfidentialityFilter();
+assertExperienceConfidentialityGate();

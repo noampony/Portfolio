@@ -278,7 +278,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.4-abo
 # Phase 6 — Experience Section
 Phase file: [tasks/phase-06-experience.md](../tasks/phase-06-experience.md)
 
-## ⬜ Task 6.1 — Define Experience Data with Confidentiality Flags
+## ✅ Task 6.1 — Define Experience Data with Confidentiality Flags
 
 ```text
 Implement ONLY Task 6.1 — "Define Experience Data with Confidentiality Flags" — for the Noam Pony portfolio. Depends on Tasks 5.4, 3.2.
