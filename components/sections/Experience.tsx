@@ -1,3 +1,4 @@
+import { ExperienceTimeline } from "@/components/ui/ExperienceTimeline";
 import { TimelineEntry } from "@/components/ui/TimelineEntry";
 import { experiences } from "@/lib/content/data/experience";
 import { filterConfidentialityReviewed } from "@/lib/content/loaders";
@@ -83,6 +84,28 @@ function resolveDuration(entry: ExperienceModel): string | null {
   return null;
 }
 
+/** The month an entry's tenure ends — its end date, or its start if open/undated. */
+function entryEndMonth(entry: ExperienceModel): string {
+  if (!entry.endDate || entry.endDate === "Present") {
+    return entry.startDate;
+  }
+  return entry.endDate;
+}
+
+/**
+ * Whether `entry` ran concurrently with the ongoing role (spec §8.3 — several
+ * roles overlap in time). The current role is open-ended from its start, so any
+ * other entry that ends strictly after the current role began was held in
+ * parallel with it. Marked entries get a "Concurrent" badge so the timeline does
+ * not read as a purely sequential history.
+ */
+function overlapsCurrentRole(entry: ExperienceModel, current?: ExperienceModel): boolean {
+  if (!current || entry === current) {
+    return false;
+  }
+  return entryEndMonth(entry).localeCompare(current.startDate) > 0;
+}
+
 export function Experience() {
   const reviewed = filterConfidentialityReviewed(experiences);
   const entries = [...reviewed].sort(byMostRecent);
@@ -91,6 +114,9 @@ export function Experience() {
   if (entries.length === 0) {
     return null;
   }
+
+  // The ongoing role anchors the "concurrent" markers (computed once, at build).
+  const currentRole = entries.find((entry) => entry.endDate === "Present");
 
   return (
     <section
@@ -128,17 +154,18 @@ export function Experience() {
           Backend engineering and team leadership — most recent first.
         </p>
 
-        <ol className="experience-timeline mt-10 max-w-3xl sm:mt-12">
+        <ExperienceTimeline>
           {entries.map((entry, index) => (
             <TimelineEntry
               key={`${entry.organization}-${entry.role}-${entry.startDate}`}
               experience={entry}
               isCurrent={entry.endDate === "Present"}
+              concurrent={overlapsCurrentRole(entry, currentRole)}
               index={index}
               duration={resolveDuration(entry)}
             />
           ))}
-        </ol>
+        </ExperienceTimeline>
       </div>
     </section>
   );
