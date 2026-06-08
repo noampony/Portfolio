@@ -8,7 +8,8 @@ import Image from "next/image";
  * (an `aria-label`), so the image is decorative here (`alt=""`). `priority` is
  * set because the mark is in the always-visible header, not lazy content.
  *
- * The intrinsic mark is ~1.85:1; rendered at 32px tall to sit cleanly in the bar.
+ * The asset is tightly cropped to the wordmark (~3.86:1); rendered at 32px tall
+ * (≈124px wide) to sit cleanly in the bar.
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -16,7 +17,7 @@ export function Logo({ className }: { className?: string }) {
       src="/logo.png"
       alt=""
       aria-hidden="true"
-      width={59}
+      width={124}
       height={32}
       priority
       className={className}
