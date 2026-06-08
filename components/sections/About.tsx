@@ -850,8 +850,8 @@ export function About() {
             </div>
             <ul aria-label="Main professional fields" className="mt-3 flex flex-wrap gap-1.5">
               {about.mainFields.map((field) => (
-                <li key={field}>
-                  <span className="about-field-badge">{field}</span>
+                <li key={field} className="flex grow">
+                  <span className="about-field-badge w-full justify-center">{field}</span>
                 </li>
               ))}
             </ul>

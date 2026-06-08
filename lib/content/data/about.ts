@@ -54,13 +54,13 @@ const aboutData = {
       id: "bsc-degree",
       title: "B.Sc. Computer Science",
       viewLabel: "View degree certificate",
-      file: "/certificates/graduation-certificate.pdf",
+      file: "/certificates/noam-pony-graduation-certificate.pdf",
     },
     honorCertificate: {
       id: "deans-list",
       title: "Dean's List",
       viewLabel: "View Dean's List certificate",
-      file: "/certificates/deans-list-certificate.pdf",
+      file: "/certificates/noam-pony-deans-list-certificate.pdf",
     },
   },
 } as const;

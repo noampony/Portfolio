@@ -23,13 +23,14 @@ const profileData = {
     "Backend Development",
     "Python",
     "Cloud / AWS",
+    "Generative AI",
+    "Agentic AI",
+    "Databases",
     "Docker",
     "CI/CD",
-    "Automation",
-    "Cybersecurity",
     "DevOps",
-    "Testing",
     "System Design",
+    "Cybersecurity",
   ],
 } as const;
 
