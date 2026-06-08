@@ -302,7 +302,7 @@ Task focus: timeline/card layout showing org, role, dates, description for each 
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/6.2-experience-timeline`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 6.3 — Style, Make Responsive, and Animate the Timeline
+## ✅ Task 6.3 — Style, Make Responsive, and Animate the Timeline
 
 ```text
 Implement ONLY Task 6.3 — "Style, Make Responsive, and Animate the Timeline" — for the Noam Pony portfolio. Depends on Task 6.2.

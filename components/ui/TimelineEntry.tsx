@@ -67,13 +67,21 @@ type TimelineEntryProps = {
   experience: Experience;
   /** The ongoing role — visually emphasised and badged "Current". */
   isCurrent: boolean;
+  /** True when this role overlapped the ongoing role — badged "Concurrent". */
+  concurrent: boolean;
   /** Stable index used to label the card's heading and stagger the reveal. */
   index: number;
   /** Build-time-resolved duration label (e.g. `3 yrs 8 mos`), or null to omit. */
   duration: string | null;
 };
 
-export function TimelineEntry({ experience, isCurrent, index, duration }: TimelineEntryProps) {
+export function TimelineEntry({
+  experience,
+  isCurrent,
+  concurrent,
+  index,
+  duration,
+}: TimelineEntryProps) {
   const reduceMotion = useReducedMotion();
   const animate = !reduceMotion;
 
@@ -104,7 +112,11 @@ export function TimelineEntry({ experience, isCurrent, index, duration }: Timeli
       {/* Timeline node — decorative; the heading conveys the entry to AT. */}
       <span
         aria-hidden="true"
-        className={cn("experience-node", isCurrent && "experience-node--current")}
+        className={cn(
+          "experience-node",
+          isCurrent && "experience-node--current",
+          concurrent && "experience-node--concurrent",
+        )}
       />
 
       <article
@@ -116,9 +128,19 @@ export function TimelineEntry({ experience, isCurrent, index, duration }: Timeli
             {role}
           </h3>
           {isCurrent ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-small font-medium text-accent">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-accent bg-accent/10 px-2 py-0.5 text-small font-medium text-accent">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />
               Current
+            </span>
+          ) : null}
+          {concurrent ? (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-surface-raised px-2 py-0.5 text-small font-medium text-text-secondary"
+              title="Held concurrently with my current role"
+            >
+              <ParallelIcon />
+              Concurrent
+              <span className="sr-only"> with my current role</span>
             </span>
           ) : null}
           {employmentType ? (
@@ -157,13 +179,16 @@ export function TimelineEntry({ experience, isCurrent, index, duration }: Timeli
         ) : null}
 
         {technologies && technologies.length > 0 ? (
-          <ul aria-label="Technologies used" className="mt-3 flex flex-wrap gap-1.5">
-            {technologies.map((tech) => (
-              <li key={tech} className="experience-tag">
-                {tech}
-              </li>
-            ))}
-          </ul>
+          <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+            <span className="text-small text-text-muted">Built with</span>
+            <ul aria-label="Technologies used" className="flex flex-wrap gap-1.5">
+              {technologies.map((tech) => (
+                <li key={tech} className="experience-tag">
+                  {tech}
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
 
         {link ? (
@@ -182,6 +207,26 @@ export function TimelineEntry({ experience, isCurrent, index, duration }: Timeli
         ) : null}
       </article>
     </motion.li>
+  );
+}
+
+/** Two parallel tracks — a decorative cue that the role ran alongside another. */
+function ParallelIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 20 13 6M11 20 19 6" />
+    </svg>
   );
 }
 

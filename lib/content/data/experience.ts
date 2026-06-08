@@ -41,7 +41,7 @@ const experienceData = [
     technologies: ["Bubble.io"],
     link: "https://www.linkedin.com/feed/update/urn:li:activity:7305508419812126722/",
     description:
-      "Led a team of 3–5 volunteer developers building a web app for a non-profit organization with Bubble.io.",
+      "Led a team of 3–5 volunteer developers building a web app for a non-profit organization on Bubble.io, a no-code development platform.",
     confidentialityReviewed: true,
   },
   {
@@ -52,6 +52,7 @@ const experienceData = [
     employmentType: "Self-employed",
     startDate: "2022-02",
     endDate: "2023-03",
+    durationLabel: "1 year, 1 month",
     description: "Taught private C# programming lessons to high school students.",
     confidentialityReviewed: true,
   },
