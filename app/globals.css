@@ -287,7 +287,7 @@ html {
   position: relative;
 }
 
-.about-copy-panel::before {
+.about-copy-accent-line {
   position: absolute;
   top: 0.2rem;
   bottom: 0.15rem;
@@ -296,7 +296,7 @@ html {
   border-radius: 999px;
   background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--gradient-to) 70%, var(--accent)));
   box-shadow: 0 0 1.25rem color-mix(in srgb, var(--accent) 32%, transparent);
-  content: "";
+  pointer-events: none;
 }
 
 .about-stat-card,

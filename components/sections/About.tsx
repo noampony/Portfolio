@@ -11,6 +11,7 @@ import { about } from "@/lib/content/data/about";
 import type { EducationCertificateRef } from "@/lib/content/types";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const ABOUT_ACCENT_LINE_START_X = -128;
 const COUNT_DURATION_MS = 1500;
 
 type StatItem = {
@@ -46,6 +47,15 @@ const revealVariants = {
   visible: {
     opacity: 1,
     y: 0,
+    transition: { duration: 0.7, ease: easeOut },
+  },
+};
+
+const accentLineRevealVariants = {
+  hidden: { opacity: 0, x: ABOUT_ACCENT_LINE_START_X },
+  visible: {
+    opacity: 1,
+    x: 0,
     transition: { duration: 0.7, ease: easeOut },
   },
 };
@@ -711,28 +721,38 @@ export function About() {
       <AboutBackgroundGraphs />
 
       <div className="about-layout relative z-10 mx-auto grid w-full max-w-7xl gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-stretch lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
-        <motion.div
-          className="about-copy-panel about-layout-copy flex h-full flex-col justify-center max-w-measure"
-          initial={animate ? "hidden" : false}
-          whileInView={animate ? "visible" : undefined}
-          viewport={{ once: true, margin: "-80px" }}
-          variants={revealVariants}
-        >
-          <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://ABOUT</p>
-          <h2
-            id="about-heading"
-            className="m-0 text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
+        <div className="about-copy-panel about-layout-copy h-full max-w-measure">
+          <motion.span
+            aria-hidden="true"
+            className="about-copy-accent-line"
+            initial={animate ? "hidden" : false}
+            whileInView={animate ? "visible" : undefined}
+            viewport={{ once: true, margin: "-80px" }}
+            variants={accentLineRevealVariants}
+          />
+          <motion.div
+            className="flex h-full flex-col justify-center"
+            initial={animate ? "hidden" : false}
+            whileInView={animate ? "visible" : undefined}
+            viewport={{ once: true, margin: "-80px" }}
+            variants={revealVariants}
           >
-            I Design High-Scale Cloud Backends That Don&apos;t Blink Under Real-World Load.
-          </h2>
-          <div className="mt-5 space-y-4 text-body text-text-secondary sm:text-[1.0625rem]">
-            {about.professionalSummary.split("\n\n").map((paragraph) => (
-              <p key={paragraph} className="m-0">
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </motion.div>
+            <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://ABOUT</p>
+            <h2
+              id="about-heading"
+              className="m-0 text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
+            >
+              I Design High-Scale Cloud Backends That Don&apos;t Blink Under Real-World Load.
+            </h2>
+            <div className="mt-5 space-y-4 text-body text-text-secondary sm:text-[1.0625rem]">
+              {about.professionalSummary.split("\n\n").map((paragraph) => (
+                <p key={paragraph} className="m-0">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </motion.div>
+        </div>
 
         <div className="about-layout-sidebar grid h-full gap-3 sm:gap-3.5 lg:grid-rows-[auto_auto_minmax(0,1fr)]">
           <motion.div
