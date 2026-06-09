@@ -1196,18 +1196,8 @@ html {
   pointer-events: none;
 }
 
-/* Root (the B.Sc. degree) — an origin marker: a ring with a solid centre. */
-.git-dot--root {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-}
-
-.git-dot--root::after {
-  content: "";
-  position: absolute;
-  inset: 0.22rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 60%, var(--border));
-}
+/* Root (the B.Sc. degree) — rendered as a plain commit dot, identical to every other
+   node so the timeline reads consistently (no special origin marker). */
 
 /* Glass card — matches the About card surface for a consistent treatment. */
 .experience-card {
@@ -1361,9 +1351,36 @@ html {
   }
 }
 
+/* "Live" heartbeat for the current-role card — the whole card (accent edge + ambient
+   glow) breathes in sync with its commit dot, so the active role reads as alive rather
+   than just having a static accent border. In sync (2.4s) with git-dot-glow-pulse. */
+@keyframes experience-card-live {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+    box-shadow:
+      0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
+      0 0 1.5rem color-mix(in srgb, var(--accent) 12%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.18);
+  }
+
+  50% {
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--border));
+    box-shadow:
+      0 1.25rem 3.5rem rgb(0 0 0 / 0.26),
+      0 0 2.75rem color-mix(in srgb, var(--accent) 34%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.22);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .experience-card:hover {
     transform: translateY(-0.25rem);
+  }
+
+  /* The whole current-role card pulses (not only its dot), reading as "live". */
+  .experience-card--current {
+    animation: experience-card-live 2.4s ease-in-out infinite;
   }
 
   .experience-card:hover::before {
@@ -1407,7 +1424,7 @@ html {
     --tree-cgap: clamp(1.5rem, 5vw, 4rem); /* gutter between the two branch columns */
     --tree-fork-h: 2.5rem; /* height of the fork zone */
     --tree-fork-r: 1rem; /* fork corner radius */
-    --tree-a-rise: clamp(1.5rem, 4vw, 3rem); /* how much higher branch A ends */
+    --tree-a-rise: clamp(3rem, 7vw, 6rem); /* how much higher branch A (current role) ends */
     --tree-card-max: 30rem; /* stem/root reading width */
 
     position: relative;
@@ -1417,7 +1434,9 @@ html {
     row-gap: var(--tree-rg);
     max-width: 64rem;
     margin: 0 auto;
-    padding: 0;
+    /* Leave breathing room above the (raised) branch-A card so it never crowds the
+       section description; tracks --tree-a-rise so the gap stays stable as it changes. */
+    padding: calc(var(--tree-a-rise) + 1.5rem) 0 0;
     list-style: none;
   }
 
@@ -1534,18 +1553,8 @@ html {
     border-color: color-mix(in srgb, var(--accent) 55%, transparent);
   }
 
-  /* Root (degree) — origin marker: a ring with a solid centre. */
-  .tree-dot--root {
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-  }
-
-  .tree-dot--root::after {
-    content: "";
-    position: absolute;
-    inset: 0.22rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--accent) 60%, var(--border));
-  }
+  /* Root (degree) — a plain commit dot, identical to every other node (no special
+     origin marker), so the education node matches the rest of the tree. */
 
   /* Connectors — thin teal lines. Each gap-bridging connector sits in the row below its
      gap and bleeds up by --tree-rg, so it spans exactly card-edge → card-edge. */
@@ -1605,16 +1614,23 @@ html {
     border-bottom: var(--tree-line-w) solid var(--tree-line);
   }
 
-  /* Left: A's line continues down at 25%, curves in along the bottom to 50%. */
+  /* Left: A's line continues down at 25%, curves in along the bottom to 50%. The box is
+     nudged left by half the line width and widened to match, so the drawn border-left
+     centres exactly on 25% (the branch-A connector's centre) while its right edge stays
+     on the 50% spine — eliminating the 1px sideways jog that made the join look broken. */
   .tree-fork::before {
-    left: 25%;
+    left: calc(25% - var(--tree-line-w) / 2);
+    width: calc(25% + var(--tree-line-w) / 2);
     border-left: var(--tree-line-w) solid var(--tree-line);
     border-bottom-left-radius: var(--tree-fork-r);
   }
 
-  /* Right: B's line continues down at 75%, curves in along the bottom to 50%. */
+  /* Right: B's line continues down at 75%, curves in along the bottom to 50%. Widened by
+     half the line width so the drawn border-right centres exactly on 75% (the branch-B
+     connector's centre), keeping the vertical continuous through the join. */
   .tree-fork::after {
     left: 50%;
+    width: calc(25% + var(--tree-line-w) / 2);
     border-right: var(--tree-line-w) solid var(--tree-line);
     border-bottom-right-radius: var(--tree-fork-r);
   }

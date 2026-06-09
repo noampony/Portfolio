@@ -142,7 +142,9 @@ export function Experience() {
           Where I&apos;ve Built and Led
         </h2>
         <p className="mt-4 max-w-measure text-body text-text-secondary">
-          Backend engineering and team leadership — most recent first.
+          Backend engineering and team leadership — most recent first. Read it like a git
+          history: the degree is the root commit at the bottom, roles build up the main
+          branch, and parallel roles fork off to the side before merging back into today.
         </p>
 
         <ExperienceGitGraph graph={graph} />
