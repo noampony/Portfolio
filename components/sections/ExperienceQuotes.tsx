@@ -278,7 +278,13 @@ type QuoteCardContentProps = {
 function QuoteCardContent({ quote }: QuoteCardContentProps) {
   return (
     <>
+      <span aria-hidden="true" className="experience-quote-mark experience-quote-mark--open">
+        ❝
+      </span>
       <p className="experience-quote-text">{quote.text}</p>
+      <span aria-hidden="true" className="experience-quote-mark experience-quote-mark--close">
+        ❞
+      </span>
       <p className="experience-quote-author">— {quote.author}</p>
     </>
   );

@@ -46,6 +46,7 @@ const aboutData = {
     dateRange: "Oct 2019 – Oct 2023",
     degree: "B.Sc. Computer Science",
     institution: "The Academic College Of Tel Aviv – Yaffo",
+    institutionLogo: "/logos/academic-college-tel-aviv-yaffo.svg",
     honor: "Included in Dean's List",
     summary:
       "Focused on backend systems, Python, and cybersecurity throughout my degree, " +

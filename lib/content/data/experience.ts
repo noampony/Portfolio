@@ -21,6 +21,7 @@ const experienceData = [
   {
     // §8.3.2 — current role. Scale metric published in the owner-approved generic form.
     organization: "Check Point Software Technologies",
+    organizationLogo: "/logos/check-point.svg",
     role: "Backend Software Developer – Cloud",
     startDate: "2022-10",
     endDate: "Present",
@@ -38,8 +39,13 @@ const experienceData = [
     endDate: "2025-10",
     durationLabel: "1 year, 1 month",
     teamSize: "3–5 volunteer developers",
-    technologies: ["Bubble.io"],
     link: "https://www.linkedin.com/feed/update/urn:li:activity:7305508419812126722/",
+    certificate: {
+      id: "max-impact-appreciation",
+      title: "Certificate of Appreciation",
+      viewLabel: "View Max Impact Certificate of Appreciation",
+      file: "/certificates/noam-pony-certificate-of-appreciation.pdf",
+    },
     description:
       "As a volunteer Team Lead at Max Impact, I led a team of junior developers in building a web platform that helps a non-profit organization provide better support for at-risk teenage girls. Beyond delivering the product, I mentored aspiring developers, helping them gain real industry experience and launch their careers, while combining technology with meaningful social impact.",
     confidentialityReviewed: true,
@@ -59,6 +65,7 @@ const experienceData = [
   {
     // §8.3.3 — earlier Check Point role; title supplied by the owner (was §19.5 TBD).
     organization: "Check Point Software Technologies",
+    organizationLogo: "/logos/check-point.svg",
     role: "Malware Analyst",
     startDate: "2021-12",
     endDate: "2022-10",

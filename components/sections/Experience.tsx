@@ -134,18 +134,20 @@ export function Experience() {
       <ExperienceQuotes />
 
       <div className="site-shell relative z-10">
-        <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://EXPERIENCE</p>
-        <h2
-          id="experience-heading"
-          className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-        >
-          Where I&apos;ve Built and Led
-        </h2>
-        <p className="mt-4 max-w-measure text-body text-text-secondary">
-          Backend engineering and team leadership — most recent first. Read it like a git
-          history: the degree is the root commit at the bottom, roles build up the main
-          branch, and parallel roles fork off to the side before merging back into today.
-        </p>
+        {/* Intro block carries the same colourful left accent line as the About section. */}
+        <div className="relative">
+          <span aria-hidden="true" className="about-copy-accent-line" />
+          <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://EXPERIENCE</p>
+          <h2
+            id="experience-heading"
+            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
+          >
+            Where I&apos;ve Built and Led
+          </h2>
+          <p className="mt-4 max-w-measure text-body text-text-secondary">
+            Backend engineering and team leadership — most recent first.
+          </p>
+        </div>
 
         <ExperienceGitGraph graph={graph} />
       </div>

@@ -270,6 +270,7 @@ function validateAboutEducation(value: unknown, path: string): AboutEducation {
     dateRange: assertRequiredString(raw.dateRange, `${path}.dateRange`),
     degree: assertRequiredString(raw.degree, `${path}.degree`),
     institution: assertRequiredString(raw.institution, `${path}.institution`),
+    institutionLogo: assertOptionalString(raw.institutionLogo, `${path}.institutionLogo`),
     summary: assertRequiredString(raw.summary, `${path}.summary`),
     honor,
     degreeCertificate: validateEducationCertificateRef(
@@ -324,6 +325,7 @@ export function validateExperience(data: unknown): Experience {
   return omitUndefined({
     organization: assertRequiredString(raw.organization, `${path}.organization`),
     organizationType: assertOptionalString(raw.organizationType, `${path}.organizationType`),
+    organizationLogo: assertOptionalString(raw.organizationLogo, `${path}.organizationLogo`),
     role: assertRequiredString(raw.role, `${path}.role`),
     employmentType: assertOptionalString(raw.employmentType, `${path}.employmentType`),
     startDate: assertYearMonthDate(raw.startDate, `${path}.startDate`),
@@ -334,6 +336,10 @@ export function validateExperience(data: unknown): Experience {
     teamSize: assertOptionalString(raw.teamSize, `${path}.teamSize`),
     link: assertOptionalString(raw.link, `${path}.link`),
     screenshots: assertOptionalStringArray(raw.screenshots, `${path}.screenshots`),
+    certificate:
+      raw.certificate === undefined
+        ? undefined
+        : validateEducationCertificateRef(raw.certificate, `${path}.certificate`),
     confidentialityReviewed: assertRequiredBoolean(
       raw.confidentialityReviewed,
       `${path}.confidentialityReviewed`,
@@ -516,6 +522,7 @@ export function validateExperienceList(data: unknown): Experience[] {
     return omitUndefined({
       organization: assertRequiredString(raw.organization, `${path}.organization`),
       organizationType: assertOptionalString(raw.organizationType, `${path}.organizationType`),
+      organizationLogo: assertOptionalString(raw.organizationLogo, `${path}.organizationLogo`),
       role: assertRequiredString(raw.role, `${path}.role`),
       employmentType: assertOptionalString(raw.employmentType, `${path}.employmentType`),
       startDate: assertYearMonthDate(raw.startDate, `${path}.startDate`),
@@ -526,6 +533,10 @@ export function validateExperienceList(data: unknown): Experience[] {
       teamSize: assertOptionalString(raw.teamSize, `${path}.teamSize`),
       link: assertOptionalString(raw.link, `${path}.link`),
       screenshots: assertOptionalStringArray(raw.screenshots, `${path}.screenshots`),
+      certificate:
+        raw.certificate === undefined
+          ? undefined
+          : validateEducationCertificateRef(raw.certificate, `${path}.certificate`),
       confidentialityReviewed: assertRequiredBoolean(
         raw.confidentialityReviewed,
         `${path}.confidentialityReviewed`,

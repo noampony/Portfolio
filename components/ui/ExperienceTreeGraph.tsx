@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 
-import { NodeCard, rowRevealVariants } from "@/components/ui/ExperienceCard";
+import { NodeCard, treeCellRevealVariants } from "@/components/ui/ExperienceCard";
 import type { ExperienceGraph, GraphNode } from "@/lib/content/experienceGraph";
 import type { EducationCertificateRef } from "@/lib/content/types";
 import { cn } from "@/lib/utils";
@@ -97,12 +97,17 @@ export function ExperienceTreeGraph({
             key={node.id}
             className={cn("experience-tree-cell", `experience-tree-cell--${modifier}`)}
             custom={reveal}
-            variants={rowRevealVariants}
+            variants={treeCellRevealVariants}
             initial={animate ? "hidden" : false}
             whileInView={animate ? "visible" : undefined}
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: true, margin: "240px 0px 240px 0px" }}
           >
             <div className="experience-tree-cardwrap">
+              {/* The current role's branch is still live — a short fading line above the
+                  card signals it continues beyond the top of the graph. */}
+              {modifier === "branch-a" ? (
+                <span aria-hidden="true" className="tree-continuation" />
+              ) : null}
               <span
                 aria-hidden="true"
                 className={cn(

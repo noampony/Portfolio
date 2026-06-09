@@ -67,6 +67,7 @@ export function EducationCertificateTrigger({
       onClick={() => onOpen(certificate)}
     >
       <CertificateDocumentIcon />
+      <span className="about-cert-trigger-label">Preview certificate</span>
     </button>
   );
 }

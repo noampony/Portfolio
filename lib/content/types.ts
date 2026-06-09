@@ -57,6 +57,8 @@ export type AboutEducation = {
   dateRange: string;
   degree: string;
   institution: string;
+  /** Optional institution logo (served from `/public`). */
+  institutionLogo?: AssetReference;
   summary: string;
   honor?: string;
   degreeCertificate: EducationCertificateRef;
@@ -77,6 +79,8 @@ export type AboutSectionData = {
 export type Experience = {
   organization: string;
   organizationType?: string;
+  /** Optional organization logo (served from `/public`). */
+  organizationLogo?: AssetReference;
   role: string;
   employmentType?: string;
   startDate: YearMonthDate;
@@ -87,6 +91,8 @@ export type Experience = {
   teamSize?: string;
   link?: string;
   screenshots?: AssetReference[];
+  /** Optional certificate shown in the in-page viewer (e.g. a Certificate of Appreciation). */
+  certificate?: EducationCertificateRef;
   /** Whether content has been reviewed for public sharing (§15.4). */
   confidentialityReviewed: boolean;
 };

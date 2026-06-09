@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { EducationCertificateTrigger } from "@/components/sections/EducationCertificateViewer";
 import type { GraphNode } from "@/lib/content/experienceGraph";
 import type { AboutEducation, EducationCertificateRef, Experience } from "@/lib/content/types";
@@ -26,6 +28,26 @@ export const rowRevealVariants = {
   visible: (index: number) => ({
     opacity: 1,
     transition: { duration: 0.6, ease: easeOut, delay: Math.min(index * 0.07, 0.25) },
+  }),
+};
+
+/**
+ * Large-screen tree reveal: cards rise and settle as you scroll in, staggered by their
+ * `reveal` index so the tree "grows" upward from the root. Only the cards transform — the
+ * connector lines are separate, statically-placed grid items — and the move is small and
+ * fades in, so the commit dots re-seat onto their lines as each card settles. Off under
+ * reduced motion (the cell renders in its final state). The `custom` value is the stagger
+ * index (root → stem → branches).
+ */
+export const treeCellRevealVariants = {
+  hidden: { opacity: 0, y: 22, scale: 0.965 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    // Slow, gentle settle (~80% longer than a typical reveal); the early trigger lives in
+    // the cell's `viewport` margin (ExperienceTreeGraph) so it starts well before scroll-in.
+    transition: { duration: 1.3, ease: easeOut, delay: Math.min(index * 0.16, 0.7) },
   }),
 };
 
@@ -61,6 +83,32 @@ type NodeCardProps = {
 };
 
 /**
+ * Organization / institution logo badge, pinned to the card's top-right corner (see the
+ * `.experience-org-logo` rule). The asset is decorative (the org/degree name carries the
+ * accessible label); it renders at a fixed height with its natural aspect ratio preserved
+ * (`aspect-ratio:auto`), so wide wordmarks aren't squashed.
+ */
+function OrgLogo({ src }: { src: string }) {
+  return (
+    <span className="experience-org-logo">
+      <Image
+        src={src}
+        alt=""
+        aria-hidden="true"
+        width={120}
+        height={40}
+        // Logos are SVG (and first-party): serve the raw file rather than routing it
+        // through the image optimizer, which rejects SVG unless `dangerouslyAllowSVG`.
+        unoptimized
+        // Fixed height, width follows each logo's *natural* aspect ratio (aspect-ratio:auto
+        // overrides next/image's width/height-derived ratio) so wide wordmarks aren't squashed.
+        className="h-6 w-auto object-contain [aspect-ratio:auto]"
+      />
+    </span>
+  );
+}
+
+/**
  * Renders the right card for a graph node — the education root or a role card. The
  * `node.card.kind` discriminator picks the body; both layouts call this so the switch
  * lives in one place.
@@ -82,6 +130,7 @@ export function NodeCard({ node, headingId, onOpenCertificate }: NodeCardProps) 
       duration={node.card.duration}
       isCurrent={node.isCurrent}
       headingId={headingId}
+      onOpenCertificate={onOpenCertificate}
     />
   );
 }
@@ -91,6 +140,7 @@ type ExperienceCardBodyProps = {
   duration: string | null;
   isCurrent: boolean;
   headingId: string;
+  onOpenCertificate: (certificate: EducationCertificateRef) => void;
 };
 
 /** The role card — mirrors the former TimelineEntry card (concurrency badge dropped:
@@ -100,10 +150,12 @@ export function ExperienceCardBody({
   duration,
   isCurrent,
   headingId,
+  onOpenCertificate,
 }: ExperienceCardBodyProps) {
   const {
     organization,
     organizationType,
+    organizationLogo,
     role,
     employmentType,
     startDate,
@@ -112,6 +164,7 @@ export function ExperienceCardBody({
     technologies,
     teamSize,
     link,
+    certificate,
   } = experience;
 
   return (
@@ -119,7 +172,13 @@ export function ExperienceCardBody({
       aria-labelledby={headingId}
       className={cn("experience-card", isCurrent && "experience-card--current")}
     >
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+      {organizationLogo ? <OrgLogo src={organizationLogo} /> : null}
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-x-2 gap-y-1.5",
+          organizationLogo && "pr-24",
+        )}
+      >
         <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
           {role}
         </h3>
@@ -130,9 +189,12 @@ export function ExperienceCardBody({
           </span>
         ) : null}
         {employmentType ? (
-          <span className="inline-flex items-center rounded-full border border-border bg-bg-surface-raised px-2 py-0.5 text-small text-text-secondary">
+          <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
             {employmentType}
           </span>
+        ) : null}
+        {certificate ? (
+          <EducationCertificateTrigger certificate={certificate} onOpen={onOpenCertificate} />
         ) : null}
       </div>
 
@@ -210,11 +272,17 @@ export function EducationRootCard({
 }: EducationRootCardProps) {
   return (
     <article aria-labelledby={headingId} className="experience-card">
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+      {education.institutionLogo ? <OrgLogo src={education.institutionLogo} /> : null}
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-x-2 gap-y-1.5",
+          education.institutionLogo && "pr-24",
+        )}
+      >
         <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
           {education.degree} – {education.institution}
         </h3>
-        <span className="inline-flex items-center rounded-full border border-border bg-bg-surface-raised px-2 py-0.5 text-small text-text-secondary">
+        <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
           Education
         </span>
         <EducationCertificateTrigger
