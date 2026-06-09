@@ -1145,6 +1145,16 @@ html {
   }
 }
 
+/* Raster logos that carry an opaque (white) background: sit them on a white chip so the
+   logo's own background merges into the badge instead of showing as a white box. */
+.experience-card .experience-org-logo--light {
+  border-color: color-mix(in srgb, white 22%, var(--border));
+  background: #fff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 0 0 1px rgb(0 0 0 / 0.04);
+}
+
 /* Glass card — matches the About card surface for a consistent treatment. */
 .experience-card {
   position: relative;

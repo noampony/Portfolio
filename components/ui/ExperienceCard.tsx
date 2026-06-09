@@ -89,8 +89,12 @@ type NodeCardProps = {
  * (`aspect-ratio:auto`), so wide wordmarks aren't squashed.
  */
 function OrgLogo({ src }: { src: string }) {
+  // Raster logos (jpg/png) usually ship with an opaque (often white) background, so they
+  // read best on a light chip; SVG logos are transparent and tuned for the dark card.
+  const isRaster = /\.(png|jpe?g|webp)$/i.test(src);
+
   return (
-    <span className="experience-org-logo">
+    <span className={cn("experience-org-logo", isRaster && "experience-org-logo--light")}>
       <Image
         src={src}
         alt=""
