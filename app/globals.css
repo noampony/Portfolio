@@ -1385,6 +1385,271 @@ html {
   }
 }
 
+/* ===== Experience tree — large screens (≥ md) ======================================
+   The big-screen alternative to the git tree above: an upward-growing tree whose root
+   (the degree) is centred at the bottom, a stem rising to the branch-point card, then a
+   fork into a single left branch (the current role — ends highest) and a two-card right
+   branch (the side roles). The small git tree (.git-graph) stays for < md.
+
+   Rendering is gated in JS (useMediaQuery, min-width:768px) and this block is gated to
+   the same width as a safety net. Layout is a 2-equal-column grid, so the branch lines
+   sit at fixed reference positions — col centres at 25% / 75%, spine at 50% — and need
+   no JS measurement. Vertical connector extents come from grid track sizing plus
+   negative-margin bleed into the row gaps, so they stay glued to cards of any height
+   with no layout shift. Connectors/dots are decorative (aria-hidden). Reuses the git
+   line token, glass card and dot keyframes. */
+
+@media (min-width: 768px) {
+  .experience-tree {
+    --tree-line-w: 2px;
+    --tree-line: color-mix(in srgb, var(--accent) 60%, var(--border));
+    --tree-rg: 2.75rem; /* vertical gap that each connector bridges */
+    --tree-cgap: clamp(1.5rem, 5vw, 4rem); /* gutter between the two branch columns */
+    --tree-fork-h: 2.5rem; /* height of the fork zone */
+    --tree-fork-r: 1rem; /* fork corner radius */
+    --tree-a-rise: clamp(1.5rem, 4vw, 3rem); /* how much higher branch A ends */
+    --tree-card-max: 30rem; /* stem/root reading width */
+
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0;
+    row-gap: var(--tree-rg);
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Cards — placed explicitly so DOM order can stay chronological while the visual
+     order is 2-D. Branch cards are narrower than their column by --tree-cgap, leaving a
+     gutter at the central spine; the card centre stays on the column centre (25%/75%). */
+  .experience-tree-cell {
+    min-width: 0;
+    list-style: none;
+  }
+
+  .experience-tree-cardwrap {
+    position: relative; /* dot anchor — its box is the card box */
+    width: 100%;
+  }
+
+  .experience-tree-cell--branch-a,
+  .experience-tree-cell--branch-b-top,
+  .experience-tree-cell--branch-b-bottom {
+    width: calc(100% - var(--tree-cgap));
+    justify-self: center;
+  }
+
+  /* Branch A spans the two branch rows as a flex column: card on top, then a flex
+     filler line down to the fork (see .tree-conn--branch-a-fill). */
+  .experience-tree-cell--branch-a {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Branch A ends a touch higher than branch B's top card. */
+  .experience-tree-cell--branch-a .experience-tree-cardwrap {
+    margin-top: calc(-1 * var(--tree-a-rise));
+  }
+
+  .experience-tree-cell--branch-b-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .experience-tree-cell--branch-b-bottom {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .experience-tree-cell--stem,
+  .experience-tree-cell--root {
+    grid-column: 1 / 3;
+    justify-self: center;
+    width: 100%;
+    max-width: var(--tree-card-max);
+  }
+
+  .experience-tree-cell--stem {
+    grid-row: 4;
+  }
+
+  .experience-tree-cell--root {
+    grid-row: 5;
+  }
+
+  /* Commit dots — sit on the card edge where a connector meets it. */
+  .tree-dot {
+    position: absolute;
+    left: 50%;
+    z-index: 2;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid var(--accent);
+    border-radius: 999px;
+    background: var(--bg-base);
+    box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 28%, transparent);
+    pointer-events: none;
+  }
+
+  .tree-dot--bottom {
+    bottom: 0;
+    transform: translate(-50%, 50%);
+  }
+
+  .tree-dot--top {
+    top: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Current role — larger, filled, with a relay of pulsing rings (reduced-motion-safe;
+     the static fallback is still a prominent glowing dot). */
+  .tree-dot--current {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-width: 2.5px;
+    background: var(--accent);
+    box-shadow:
+      0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
+      0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
+      0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  .tree-dot--current::after,
+  .tree-dot--current::before {
+    content: "";
+    position: absolute;
+    inset: -0.22rem;
+    border-radius: 999px;
+    border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tree-dot--current::before {
+    inset: -0.28rem;
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  /* Root (degree) — origin marker: a ring with a solid centre. */
+  .tree-dot--root {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  }
+
+  .tree-dot--root::after {
+    content: "";
+    position: absolute;
+    inset: 0.22rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 60%, var(--border));
+  }
+
+  /* Connectors — thin teal lines. Each gap-bridging connector sits in the row below its
+     gap and bleeds up by --tree-rg, so it spans exactly card-edge → card-edge. */
+  .tree-conn {
+    align-self: start;
+    width: var(--tree-line-w);
+    background: var(--tree-line);
+    justify-self: center;
+    pointer-events: none;
+  }
+
+  /* Branch A's descender: a flex filler inside the branch-A cell, centred on col-1
+     (25%). It grows to whatever height branch B's stack imposes and bleeds down one gap
+     into the fork, so it stays glued to the card bottom with no height math. */
+  .tree-conn--branch-a-fill {
+    flex: 1 1 auto;
+    min-height: var(--tree-rg);
+    align-self: center;
+    margin-bottom: calc(-1 * var(--tree-rg));
+  }
+
+  /* Between the two branch-B cards (col-2 centre, 75%). */
+  .tree-conn--branch-b-riser {
+    grid-column: 2;
+    grid-row: 2;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  /* Branch B's lower card down to the fork. */
+  .tree-conn--branch-b {
+    grid-column: 2;
+    grid-row: 3;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  /* Fork zone — curves the two branch lines (25% / 75%) into the central spine (50%),
+     using mirrored bordered quarter-elbows like the git-tree fork. */
+  .tree-fork {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    position: relative;
+    align-self: start;
+    height: var(--tree-fork-h);
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .tree-fork::before,
+  .tree-fork::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 25%;
+    border-bottom: var(--tree-line-w) solid var(--tree-line);
+  }
+
+  /* Left: A's line continues down at 25%, curves in along the bottom to 50%. */
+  .tree-fork::before {
+    left: 25%;
+    border-left: var(--tree-line-w) solid var(--tree-line);
+    border-bottom-left-radius: var(--tree-fork-r);
+  }
+
+  /* Right: B's line continues down at 75%, curves in along the bottom to 50%. */
+  .tree-fork::after {
+    left: 50%;
+    border-right: var(--tree-line-w) solid var(--tree-line);
+    border-bottom-right-radius: var(--tree-fork-r);
+  }
+
+  /* Central tap (50%): fork bottom down to the stem card. */
+  .tree-conn--tap {
+    grid-column: 1 / 3;
+    grid-row: 4;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  /* Stem card down to the root card (50%). */
+  .tree-conn--stem {
+    grid-column: 1 / 3;
+    grid-row: 5;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tree-dot--current {
+      animation: git-dot-glow-pulse 2.4s ease-in-out infinite;
+    }
+
+    .tree-dot--current::after {
+      animation: experience-node-ring 2.4s ease-out infinite;
+    }
+
+    .tree-dot--current::before {
+      animation: experience-node-ring 2.4s ease-out 1.2s infinite;
+    }
+  }
+}
+
 body {
   min-height: 100vh;
   margin: 0;
