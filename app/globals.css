@@ -1372,6 +1372,8 @@ html {
     --tree-fork-r: 1rem; /* fork corner radius */
     --tree-a-rise: clamp(3rem, 7vw, 6rem); /* how much higher branch A (current role) ends */
     --tree-card-max: 30rem; /* stem/root reading width */
+    --tree-merge-h: 3rem; /* space above branch-A for the top merge zone (= branch-A top y) */
+    --tree-merge-y: 1.25rem; /* y of the merge bar (from the tree's top edge) */
 
     position: relative;
     display: grid;
@@ -1380,9 +1382,10 @@ html {
     row-gap: var(--tree-rg);
     max-width: 64rem;
     margin: 0 auto;
-    /* Leave breathing room above the (raised) branch-A card so it never crowds the
-       section description; tracks --tree-a-rise so the gap stays stable as it changes. */
-    padding: calc(var(--tree-a-rise) + 1.5rem) 0 0;
+    /* Top padding holds both the breathing room above the (raised) branch-A card and the
+       top merge zone (--tree-merge-h above branch-A, which sits --tree-a-rise above the
+       row). Tracks both so the gap stays stable as they change. */
+    padding: calc(var(--tree-a-rise) + var(--tree-merge-h)) 0 0;
     list-style: none;
   }
 
@@ -1512,15 +1515,31 @@ html {
     pointer-events: none;
   }
 
-  /* Continuation stub above the current-role (branch-A) card: a short line that fades out
-     upward, reading as "this branch keeps going" beyond the top of the graph. Anchored to
-     the card's top edge (bottom: 100% of the cardwrap), centred on the card/dot. */
-  .tree-continuation {
+  /* ----- Top continuation -----------------------------------------------------------
+     Absolutely positioned over the tree's top padding (so it never affects the grid).
+     Coordinates are measured from the tree's top edge; branch-A's card top sits at
+     --tree-merge-h. A line rises from branch-A's live HEAD dot (on the card's top edge,
+     25%) and continues up, fading out — the current role's branch is still live. */
+
+  /* Solid part: from the Backend card top (--tree-merge-h) up to --tree-merge-y. */
+  .tree-merge-stem {
     position: absolute;
-    left: 50%;
-    bottom: 100%;
+    left: 25%;
+    top: var(--tree-merge-y);
+    height: calc(var(--tree-merge-h) - var(--tree-merge-y));
     width: var(--tree-line-w);
-    height: 2rem;
+    transform: translateX(-50%);
+    background: var(--tree-line);
+    pointer-events: none;
+  }
+
+  /* Fading part: continues up from --tree-merge-y to the top edge and fades out. */
+  .tree-merge-head {
+    position: absolute;
+    left: 25%;
+    top: 0;
+    height: var(--tree-merge-y);
+    width: var(--tree-line-w);
     transform: translateX(-50%);
     background: linear-gradient(to top, var(--tree-line), transparent);
     pointer-events: none;

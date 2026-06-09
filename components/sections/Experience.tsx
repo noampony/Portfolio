@@ -1,3 +1,4 @@
+import { ExperienceIntro } from "@/components/sections/ExperienceIntro";
 import { ExperienceQuotes } from "@/components/sections/ExperienceQuotes";
 import { ExperienceGitGraph } from "@/components/ui/ExperienceGitGraph";
 import { about } from "@/lib/content/data/about";
@@ -134,20 +135,7 @@ export function Experience() {
       <ExperienceQuotes />
 
       <div className="site-shell relative z-10">
-        {/* Intro block carries the same colourful left accent line as the About section. */}
-        <div className="relative">
-          <span aria-hidden="true" className="about-copy-accent-line" />
-          <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://EXPERIENCE</p>
-          <h2
-            id="experience-heading"
-            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-          >
-            Where I&apos;ve Built and Led
-          </h2>
-          <p className="mt-4 max-w-measure text-body text-text-secondary">
-            Backend engineering and team leadership — most recent first.
-          </p>
-        </div>
+        <ExperienceIntro />
 
         <ExperienceGitGraph graph={graph} />
       </div>

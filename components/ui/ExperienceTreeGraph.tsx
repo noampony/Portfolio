@@ -56,11 +56,13 @@ function placeNode(node: GraphNode, sideOrder: string[]): CellPlacement {
     return { modifier: "stem", dotAccent: "", dotAtTop: false, reveal: 1 };
   }
   if (node.lane === "main") {
-    // The remaining main-lane role — branch A (the current role).
+    // The remaining main-lane role — branch A (the current role). Its commit dot sits at
+    // the TOP of the card: it's the live "HEAD" where the upward branch + the merge of the
+    // side branch (Team Leader) meet (the downward line to history exits the card bottom).
     return {
       modifier: "branch-a",
       dotAccent: node.isCurrent ? "tree-dot--current" : "",
-      dotAtTop: false,
+      dotAtTop: true,
       reveal: 3,
     };
   }
@@ -103,11 +105,6 @@ export function ExperienceTreeGraph({
             viewport={{ once: true, margin: "240px 0px 240px 0px" }}
           >
             <div className="experience-tree-cardwrap">
-              {/* The current role's branch is still live — a short fading line above the
-                  card signals it continues beyond the top of the graph. */}
-              {modifier === "branch-a" ? (
-                <span aria-hidden="true" className="tree-continuation" />
-              ) : null}
               <span
                 aria-hidden="true"
                 className={cn(
@@ -116,6 +113,11 @@ export function ExperienceTreeGraph({
                   dotAccent,
                 )}
               />
+              {/* Branch A carries its live HEAD dot at the top, plus a plain commit dot at
+                  the bottom where the line to history exits — matching the other cards. */}
+              {modifier === "branch-a" ? (
+                <span aria-hidden="true" className="tree-dot tree-dot--bottom" />
+              ) : null}
               <NodeCard node={node} headingId={headingId} onOpenCertificate={onOpenCertificate} />
             </div>
             {/* Branch A's descender stretches to branch B's taller stack and stays
@@ -133,6 +135,13 @@ export function ExperienceTreeGraph({
       <li aria-hidden="true" className="tree-fork" />
       <li aria-hidden="true" className="tree-conn tree-conn--tap" />
       <li aria-hidden="true" className="tree-conn tree-conn--stem" />
+
+      {/* Continuation above the current role: a line rising from branch-A's live HEAD dot
+          (top of the Backend card, 25%) that continues up and fades out past the top of
+          the graph — signalling the branch is still live. Absolutely positioned over the
+          tree's top padding so it doesn't affect the grid. */}
+      <li aria-hidden="true" className="tree-merge-stem" />
+      <li aria-hidden="true" className="tree-merge-head" />
     </ol>
   );
 }
