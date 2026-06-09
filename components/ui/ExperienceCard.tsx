@@ -182,12 +182,6 @@ export function ExperienceCardBody({
         <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
           {role}
         </h3>
-        {isCurrent ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent bg-accent/10 px-2 py-0.5 text-small font-medium text-accent">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />
-            Current
-          </span>
-        ) : null}
         {employmentType ? (
           <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
             {employmentType}
@@ -198,8 +192,8 @@ export function ExperienceCardBody({
         ) : null}
       </div>
 
-      <p className="mt-1 text-body text-text-secondary">
-        <span className="font-medium text-text-primary">{organization}</span>
+      <p className="mt-1 text-small text-text-secondary">
+        <span className="font-medium">{organization}</span>
         {organizationType ? <span className="text-text-muted"> · {organizationType}</span> : null}
       </p>
 
@@ -280,7 +274,10 @@ export function EducationRootCard({
         )}
       >
         <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
-          {education.degree} – {education.institution}
+          <span className="block">{education.degree}</span>
+          <span className="mt-0.5 block text-small font-normal text-text-secondary">
+            {education.institution}
+          </span>
         </h3>
         <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
           Education

@@ -22,7 +22,7 @@ const experienceData = [
     // §8.3.2 — current role. Scale metric published in the owner-approved generic form.
     organization: "Check Point Software Technologies",
     organizationLogo: "/logos/check-point.svg",
-    role: "Backend Software Developer – Cloud",
+    role: "Cloud Backend Software Developer",
     startDate: "2022-10",
     endDate: "Present",
     description:
