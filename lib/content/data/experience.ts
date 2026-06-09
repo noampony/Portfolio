@@ -25,7 +25,7 @@ const experienceData = [
     startDate: "2022-10",
     endDate: "Present",
     description:
-      "Build and own cloud microservices that secure communications across Outlook, Gmail, Teams, and Slack — designing real-time, multi-tenant systems on AWS (DynamoDB, SQS, ElasticSearch, ElastiCache) that process over 2 billion entities.",
+      "I've been developing and owning cloud-based backend services for a large-scale email security product, designing and building multiple high-traffic systems from the ground up using Python, Docker, AWS, and modern cloud technologies. I worked closely with developers, QA, and product teams to deliver reliable solutions at scale, while leading monitoring and operational improvements across the team. Along the way, I developed deep expertise in AI-assisted and agentic development workflows. I became a go-to person for service ownership, troubleshooting, and knowledge sharing across the team.",
     confidentialityReviewed: true,
   },
   {
@@ -41,7 +41,7 @@ const experienceData = [
     technologies: ["Bubble.io"],
     link: "https://www.linkedin.com/feed/update/urn:li:activity:7305508419812126722/",
     description:
-      "Led a team of 3–5 volunteer developers building a web app for a non-profit organization on Bubble.io, a no-code development platform.",
+      "As a volunteer Team Lead at Max Impact, I led a team of junior developers in building a web platform that helps a non-profit organization provide better support for at-risk teenage girls. Beyond delivering the product, I mentored aspiring developers, helping them gain real industry experience and launch their careers, while combining technology with meaningful social impact.",
     confidentialityReviewed: true,
   },
   {
