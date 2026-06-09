@@ -33,7 +33,7 @@ const experienceData = [
     // §8.3.1 — public-safe volunteer leadership; LinkedIn URL stored tracking-param-free.
     organization: "Max Impact",
     organizationType: "Non-Profit Association",
-    organizationLogo: "/logos/max-impact.jpeg",
+    organizationLogo: "/logos/max-impact.png",
     role: "Team Leader",
     employmentType: "Volunteer",
     startDate: "2024-09",
