@@ -975,159 +975,171 @@ html {
   }
 }
 
-/* ===== Experience timeline (spec §8.3) =============================================
-   A reverse-chronological timeline. The glass card, accent rail and nodes mirror the
-   About card system (.about-stat-card / .about-education-card / .about-education-line)
-   so the section reads as part of the same site. The scroll-reveal itself is handled
-   by Framer Motion in TimelineEntry.tsx (reduced-motion-safe). The decorative effects
-   below — hover lift, shimmer, current-node pulse — are gated behind
-   `prefers-reduced-motion: no-preference` and use only transform/opacity (§7.3/§14.8). */
+/* ===== Experience git tree (spec §8.3) =============================================
+   A git commit graph reading bottom → top: a main branch (left lane) running straight
+   up, a side branch that forks right at "Malware Analyst" and merges back into the
+   current role at the top. The glass card mirrors the About card system so the section
+   reads as part of the same site. Each row is a 2-column grid — a fixed-width graph
+   gutter (lane lines + fork/merge elbows + commit dot) on the left and the card on the
+   right — so the lanes stay aligned regardless of card height, with no JS measurement
+   and no layout shift. The per-row reveal is a reduced-motion-safe Framer Motion fade-
+   up in ExperienceGitNode.tsx; the decorative card hover/shimmer and current-dot pulse
+   below are gated behind `prefers-reduced-motion: no-preference` and use only
+   transform/opacity (§7.3/§14.8). */
 
-.experience-timeline {
-  position: relative;
-}
-
-/* The ordered list itself carries no visual chrome — the rail and terminals are
-   owned by the wrapper so the <ol> contains only its <li> entries. */
-.experience-list {
+.git-graph {
+  --git-gutter: 2.5rem;
+  --git-lane-main: 0.75rem;
+  --git-lane-side: 1.85rem;
+  --git-branch-dx: calc(var(--git-lane-side) - var(--git-lane-main));
+  --git-dot-top: 2.1rem;
+  --git-line-w: 2px;
+  --git-col-gap: 0.75rem;
+  --git-line: color-mix(in srgb, var(--accent) 60%, var(--border));
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* Timeline row: hosts the gradient rail (::before) and reserves room for the node. */
-.experience-entry {
+@media (min-width: 640px) {
+  .git-graph {
+    --git-gutter: 3rem;
+    --git-lane-main: 0.95rem;
+    --git-lane-side: 2.35rem;
+    --git-dot-top: 2.4rem;
+    --git-col-gap: 1rem;
+  }
+}
+
+/* One node per row: [graph gutter] [card]. The gutter stretches to the full row
+   height so its lanes meet the next row's lanes; row spacing lives on the card cell. */
+.git-graph-row {
   position: relative;
-  padding-left: 2rem;
-  padding-bottom: 1.75rem;
+  display: grid;
+  grid-template-columns: var(--git-gutter) minmax(0, 1fr);
+  column-gap: var(--git-col-gap);
   list-style: none;
 }
 
+/* Horizontal connector — runs from the commit dot (`--git-connector-start`) across
+   the column-gap to the card's left edge. The start x is set by the lane modifier
+   class below so the line always originates exactly at the dot, not the gutter edge. */
+.git-graph-row::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--git-dot-top) - var(--git-line-w) / 2);
+  left: var(--git-connector-start);
+  width: calc(var(--git-gutter) - var(--git-connector-start) + var(--git-col-gap));
+  height: var(--git-line-w);
+  background: var(--git-line);
+  pointer-events: none;
+}
+
+/* Lane-specific connector origin — anchors the connector at the dot's lane x. */
+.git-graph-row--main {
+  --git-connector-start: var(--git-lane-main);
+}
+
+.git-graph-row--side {
+  --git-connector-start: var(--git-lane-side);
+}
+
+.git-graph-cell {
+  min-width: 0;
+  padding-bottom: 1.75rem;
+}
+
 @media (min-width: 640px) {
-  .experience-entry {
-    padding-left: 2.5rem;
+  .git-graph-cell {
     padding-bottom: 2.25rem;
   }
 }
 
-/* The rail — a single continuous line behind every row. A muted track sits
-   below an accent "progress" line that fills on scroll (driven by Framer Motion
-   in ExperienceTimeline.tsx). Both share this geometry so they stay aligned.
-   `top`/`bottom` land on the centres of the two end-cap dots (each end-cap is
-   `min-height: 1.5rem`, so its dot centre is 0.75rem from the wrapper edge),
-   which makes the line begin on the "Now" terminal and end on the "Start" one
-   regardless of how many roles render. The node sits at `left: 0.5rem`, so the
-   2px line is offset half its own width. */
-.experience-rail {
+/* The last row is the root (degree) — nothing hangs below it. */
+.git-graph-row:last-child .git-graph-cell {
+  padding-bottom: 0;
+}
+
+/* Graph gutter — the positioning context for the absolutely-placed lane lines, the
+   fork/merge elbows and the commit dot. Stretches to the full row height. */
+.git-graph-gutter {
+  position: relative;
+  display: block;
+  align-self: stretch;
+}
+
+/* Lane lines. Each lane is split at the dot (`--git-dot-top`) into a top half
+   (cell top → dot) and a bottom half (dot → cell bottom); adjacent rows' halves
+   meet, so a lane reads as one continuous vertical line down the gutter. */
+.git-line {
   position: absolute;
-  left: calc(0.5rem - 1px);
-  top: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 0;
-  width: 2px;
-  border-radius: 999px;
+  width: var(--git-line-w);
+  background: var(--git-line);
   pointer-events: none;
 }
 
-.experience-rail-track {
-  background: color-mix(in srgb, var(--border) 92%, transparent);
+.git-line--main {
+  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
 }
 
-/* Accent fill — collapsed by default (no-JS shows only the track); Framer Motion
-   scales it from the top as the section scrolls (or to full under reduced motion). */
-.experience-rail-progress {
-  transform: scaleY(0);
-  transform-origin: top center;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--accent) 85%, white),
-    color-mix(in srgb, var(--accent) 62%, var(--border))
-  );
-  box-shadow: 0 0 0.55rem color-mix(in srgb, var(--accent) 38%, transparent);
+.git-line--side {
+  left: calc(var(--git-lane-side) - var(--git-line-w) / 2);
 }
 
-/* Timeline terminals — explicit "Now" (top, most recent) and "Start" (bottom,
-   earliest) markers that bookend the rail. Each reserves 1.5rem of height so its
-   dot centre lands 0.75rem from the wrapper edge, matching the rail's anchors. */
-.experience-endcap {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 1.5rem;
-  padding-left: 2rem;
+.git-line--top {
+  top: 0;
+  height: var(--git-dot-top);
 }
 
-@media (min-width: 640px) {
-  .experience-endcap {
-    padding-left: 2.5rem;
-  }
+.git-line--bottom {
+  top: var(--git-dot-top);
+  bottom: 0;
 }
 
-.experience-endcap--now {
-  margin-bottom: 0.5rem;
+/* Continuation line — drawn above the topmost (current) node to signal that the
+   main branch is still live and continues beyond the graph's top edge. Fades from
+   the lane colour at the dot upward to transparent, reading as "this branch keeps
+   going" — matching the visual language of git UIs. */
+.git-line--continuation {
+  top: 0;
+  height: var(--git-dot-top);
+  background: linear-gradient(to bottom, transparent 0%, var(--git-line) 100%);
 }
 
-.experience-endcap--start {
-  margin-top: 0.25rem;
-}
-
-.experience-endcap-dot {
+/* Fork / merge elbows — one bordered box per corner draws the quarter-curve between
+   the main lane and the side lane, so the two legs join by construction. The box's
+   right border is the side-lane riser and stays collinear with the straight
+   `.git-line--side` segments (both centred on `--git-lane-side`). */
+.git-elbow {
   position: absolute;
-  left: 0.5rem;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 999px;
+  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
+  width: calc(var(--git-branch-dx) + var(--git-line-w));
+  border: 0 solid var(--git-line);
+  pointer-events: none;
 }
 
-/* "Now" — a live, filled accent terminal (the most-recent point). */
-.experience-endcap--now .experience-endcap-dot {
-  width: 0.85rem;
-  height: 0.85rem;
-  background: var(--accent);
-  box-shadow:
-    0 0 0 0.18rem color-mix(in srgb, var(--accent) 16%, transparent),
-    0 0 0.9rem color-mix(in srgb, var(--accent) 50%, transparent);
+/* Split — forks up-and-right out of the branch-point dot into the side lane above. */
+.git-elbow--split {
+  top: 0;
+  height: var(--git-dot-top);
+  border-right-width: var(--git-line-w);
+  border-bottom-width: var(--git-line-w);
+  border-bottom-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
 }
 
-/* "Start" — an origin marker: a ring with a solid centre, reading as a beginning. */
-.experience-endcap--start .experience-endcap-dot {
-  width: 0.95rem;
-  height: 0.95rem;
-  background: var(--bg-base);
-  border: 2px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+/* Merge — the side lane curves down-and-left into the merge-point (current) dot. */
+.git-elbow--merge {
+  top: var(--git-dot-top);
+  bottom: 0;
+  border-right-width: var(--git-line-w);
+  border-top-width: var(--git-line-w);
+  border-top-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
 }
 
-.experience-endcap--start .experience-endcap-dot::after {
-  content: "";
+/* Commit dot — sits on its lane, vertically aligned with the card's title row. */
+.git-dot {
   position: absolute;
-  inset: 0.22rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 60%, var(--border));
-}
-
-.experience-endcap-label {
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: var(--type-small);
-  line-height: 1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.experience-endcap--now .experience-endcap-label {
-  color: var(--accent);
-}
-
-.experience-endcap--start .experience-endcap-label {
-  color: var(--text-muted);
-}
-
-/* Node — a dot sitting on the rail, vertically aligned with the card's title row. */
-.experience-node {
-  position: absolute;
-  left: 0.5rem;
-  top: 2.1rem;
+  top: var(--git-dot-top);
   z-index: 1;
   width: 0.875rem;
   height: 0.875rem;
@@ -1136,39 +1148,65 @@ html {
   border-radius: 999px;
   background: var(--bg-base);
   box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 28%, transparent);
+  pointer-events: none;
 }
 
-@media (min-width: 640px) {
-  .experience-node {
-    top: 2.4rem;
-  }
+.git-dot--main {
+  left: var(--git-lane-main);
 }
 
-/* Current role — filled, glowing node with a radiating ring (transform/opacity only). */
-.experience-node--current {
+.git-dot--side {
+  left: var(--git-lane-side);
+}
+
+/* Current role (the "Now" merge point) — noticeably larger, fully filled and
+   glowing. Two concentric rings pulse outward in relay so there is always one
+   in flight: a persistent "live" heartbeat. Static fallback (reduced-motion) is
+   still visually prominent — bigger dot + strong halo. */
+.git-dot--current {
   background: var(--accent);
+  width: 1.1rem;
+  height: 1.1rem;
+  border-width: 2.5px;
   box-shadow:
-    0 0 0 0.18rem color-mix(in srgb, var(--accent) 14%, transparent),
-    0 0 1rem color-mix(in srgb, var(--accent) 45%, transparent);
+    0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
+    0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
+    0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
-.experience-node--current::after {
+/* First ring — fires immediately. */
+.git-dot--current::after {
   content: "";
   position: absolute;
-  inset: -0.2rem;
+  inset: -0.22rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
-/* Concurrent role — a diamond marker (vs the round sequential nodes) signalling
-   the role branched off / ran in parallel with the ongoing one. */
-.experience-node--concurrent {
-  border-radius: 3px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  border-color: color-mix(in srgb, var(--accent) 70%, var(--border));
-  background: color-mix(in srgb, var(--accent) 22%, var(--bg-base));
+/* Second ring — fires offset so one ring is always expanding. */
+.git-dot--current::before {
+  content: "";
+  position: absolute;
+  inset: -0.28rem;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Root (the B.Sc. degree) — an origin marker: a ring with a solid centre. */
+.git-dot--root {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.git-dot--root::after {
+  content: "";
+  position: absolute;
+  inset: 0.22rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 60%, var(--border));
 }
 
 /* Glass card — matches the About card surface for a consistent treatment. */
@@ -1293,14 +1331,33 @@ html {
 
 @keyframes experience-node-ring {
   0% {
-    opacity: 0.6;
-    transform: scale(0.75);
+    opacity: 0.85;
+    transform: scale(1);
   }
 
-  70%,
+  75%,
   100% {
     opacity: 0;
-    transform: scale(1.8);
+    transform: scale(2.6);
+  }
+}
+
+/* Breathing glow on the dot itself — pulses the outer halo between a resting
+   intensity and a brighter flare in sync with the radiating rings. */
+@keyframes git-dot-glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
+      0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
+      0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 0.45rem color-mix(in srgb, var(--accent) 18%, transparent),
+      0 0 2rem color-mix(in srgb, var(--accent) 88%, transparent),
+      0 0 4.5rem color-mix(in srgb, var(--accent) 48%, transparent);
   }
 }
 
@@ -1313,8 +1370,18 @@ html {
     animation: experience-card-shimmer 900ms ease-out;
   }
 
-  .experience-node--current::after {
-    animation: experience-node-ring 2.8s ease-out infinite;
+  /* Dot breathes, two rings fire in relay (0s + 1.2s offset) — one ring is
+     always mid-expansion, creating a continuous "live" heartbeat effect. */
+  .git-dot--current {
+    animation: git-dot-glow-pulse 2.4s ease-in-out infinite;
+  }
+
+  .git-dot--current::after {
+    animation: experience-node-ring 2.4s ease-out infinite;
+  }
+
+  .git-dot--current::before {
+    animation: experience-node-ring 2.4s ease-out 1.2s infinite;
   }
 }
 
