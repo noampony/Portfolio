@@ -121,7 +121,7 @@ export function Experience() {
        * stay visible if scripting never runs; it is inert whenever JS runs.
        */}
       <noscript>
-        <style>{`.experience-card-body{opacity:1!important}.git-dot,.tree-dot{opacity:1!important}`}</style>
+        <style>{`.experience-flip-inner{display:block!important;transform:none!important}.experience-flip-face{transform:none!important;-webkit-backface-visibility:visible!important;backface-visibility:visible!important;min-height:0!important}.experience-flip-toggle,.experience-flip-hint{display:none!important}.git-dot,.tree-dot{opacity:1!important}`}</style>
       </noscript>
 
       {/* Decorative backdrop glow — tokens only, echoes the About/Hero atmosphere. */}

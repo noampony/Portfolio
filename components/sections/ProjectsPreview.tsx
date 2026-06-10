@@ -120,6 +120,7 @@ export function ProjectsPreview() {
           className="projects-reveal mt-4 max-w-measure text-body text-text-secondary"
         >
           A few backend systems I&apos;ve built and led.
+          <br />
           Tap a card to flip it over.
         </motion.p>
 

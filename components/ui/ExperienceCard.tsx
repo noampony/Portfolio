@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { motion, type MotionStyle, type MotionValue } from "framer-motion";
 
@@ -15,61 +15,32 @@ import { cn } from "@/lib/utils";
  * single implementation here means there is exactly one card markup + one `headingId`
  * scheme; because only one layout is mounted at a time, the `aria-labelledby` ids stay
  * unique.
+ *
+ * Each card is a click/tap-to-flip card (mirrors the Projects flip cards, §7.4): the
+ * FRONT shows the role/degree, organisation/institution and dates (with the computed
+ * period) centred and large, plus a "click to reveal" affordance; the BACK keeps the full
+ * detail layout (description, team, technologies, links). Certificate triggers are
+ * per-face: role cards show the same trigger row on both faces, while the education card
+ * pairs each trigger with its context (degree vs Dean's List) so two "Preview certificate"
+ * buttons are never ambiguous. The organisation-logo watermark appears on BOTH faces.
+ * The flip is a single transparent
+ * full-card toggle (a disclosure: `aria-expanded`/`aria-controls`); the faces toggle
+ * `inert` with the flip state so the hidden face's controls leave the tab + a11y tree,
+ * and the always-present `sr-only` heading names the card regardless of which face shows.
  */
 
 /**
  * Scroll-fill MotionValues for a card, threaded from the owning row/cell
- * (ExperienceGitNode / ExperienceTreeGraph): `frame` (0→1) fades the card edge in, then
- * `body` (0→1) fades the content. Undefined = render statically (fully drawn) — used for the
- * pre-mount / reduced-motion fallback. See `useScrollDraw` and `CardShell`.
+ * (ExperienceGitNode / ExperienceTreeGraph): `frame` (0→1) fades the whole card in, then
+ * `body` (0→1) fades the front content. Undefined = render statically (fully drawn) — used
+ * for the pre-mount / reduced-motion fallback. See `useScrollDraw`.
  */
 export type CardFill = {
   frame: MotionValue<number>;
   body: MotionValue<number>;
-  /** Content rise (px → 0) for the body's eased entrance; only the inner content moves, so
-   *  the card frame — and the commit dot anchored to its edge — stays put. */
+  /** Content rise (px → 0) for the front body's eased entrance. */
   bodyY: MotionValue<number>;
 };
-
-/**
- * Card shell shared by both card bodies. When `fill` is set it renders a `motion.article`
- * that fades the whole card in (`opacity` + the `--card-frame` edge var) as the fill front
- * arrives, with the content in a `motion.div` whose opacity (`fill.body`) follows closely
- * behind — so the card appears on scroll and its text lands just after, not a screen later.
- * When `fill` is undefined it renders a plain article/div that inherits the CSS defaults
- * (fully drawn) for the SSR / pre-mount / reduced-motion fallback.
- */
-function CardShell({
-  className,
-  headingId,
-  fill,
-  children,
-}: {
-  className: string;
-  headingId: string;
-  fill?: CardFill;
-  children: React.ReactNode;
-}) {
-  if (!fill) {
-    return (
-      <article aria-labelledby={headingId} className={className}>
-        <div className="experience-card-body">{children}</div>
-      </article>
-    );
-  }
-
-  return (
-    <motion.article
-      aria-labelledby={headingId}
-      className={className}
-      style={{ opacity: fill.frame, "--card-frame": fill.frame } as MotionStyle}
-    >
-      <motion.div className="experience-card-body" style={{ opacity: fill.body, y: fill.bodyY }}>
-        {children}
-      </motion.div>
-    </motion.article>
-  );
-}
 
 const MONTH_LABELS = [
   "Jan",
@@ -96,6 +67,210 @@ function formatMonthYear(value: string): string {
   return label ? `${label} ${year}` : value;
 }
 
+/** Decorative flip glyph (two curved arrows) reinforcing the "flip me" affordance. */
+function FlipGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-7.5-4" strokeLinecap="round" />
+      <path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 7.5 4" strokeLinecap="round" />
+      <path d="M21 3v4h-4M3 21v-4h4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/**
+ * The front body wrapper. With `fill` it fades + rises into place on scroll (mirroring the
+ * former card-body reveal); without it, a plain wrapper inherits the CSS fully-drawn default
+ * (SSR / pre-mount / reduced-motion).
+ */
+function FrontReveal({ fill, children }: { fill?: CardFill; children: ReactNode }) {
+  if (!fill) {
+    return <div className="experience-flip-front-inner">{children}</div>;
+  }
+  return (
+    <motion.div
+      className="experience-flip-front-inner"
+      style={{ opacity: fill.body, y: fill.bodyY }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+type ExperienceFlipCardProps = {
+  /** Id of the always-present `sr-only` heading that names the card. */
+  headingId: string;
+  /** The accessible heading text (role / degree). */
+  headingText: string;
+  fill?: CardFill;
+  /** Stronger accent + "live" breathing on the current-role card. */
+  current?: boolean;
+  /** Centred organisation-logo watermark behind both faces (served from `/public`). */
+  backgroundImage?: string;
+  /** Render the watermark larger / more opaque (e.g. the Check Point wordmark). */
+  prominentLogo?: boolean;
+  /** Render the watermark smaller / more transparent (e.g. the private-tutor mark). */
+  subduedLogo?: boolean;
+  /** Certificate trigger row at the top of the front face; omit when the entry has none. */
+  frontCertificates?: ReactNode;
+  /** Certificate trigger row at the top of the back face. Role cards reuse the front node;
+   *  the education card omits this and embeds its triggers inside `back` instead. */
+  backCertificates?: ReactNode;
+  /** Centred front content (role/company/dates). */
+  front: ReactNode;
+  /** Back content — the full detail layout. */
+  back: ReactNode;
+};
+
+/**
+ * The flip shell shared by the role and education cards. A single transparent full-card
+ * `<button>` toggles the flip (the faces are `pointer-events:none`, so clicks on empty space
+ * fall through to it while the certificate/link controls re-enable pointer events). The
+ * 3D flip, hover lift and shimmer are reduced-motion-gated in CSS (`.experience-flip*`).
+ */
+function ExperienceFlipCard({
+  headingId,
+  headingText,
+  fill,
+  current,
+  backgroundImage,
+  prominentLogo,
+  subduedLogo,
+  frontCertificates,
+  backCertificates,
+  front,
+  back,
+}: ExperienceFlipCardProps) {
+  const [flipped, setFlipped] = useState(false);
+  const backId = useId();
+  const innerRef = useRef<HTMLDivElement>(null);
+
+  // Flip when the card surface is clicked, but let clicks that land on an interactive
+  // control (certificate button, link) through to that control. This lives on the inner
+  // surface (above the toggle, so the controls stay clickable — a CSS pointer-events
+  // fall-through is unreliable inside the `preserve-3d` context). Keyboard/assistive-tech
+  // users flip via the real `<button>` toggle below; this is a mouse-only enhancement, so
+  // it is attached imperatively rather than as a JSX handler on a non-interactive element.
+  useEffect(() => {
+    const surface = innerRef.current;
+    if (!surface) {
+      return;
+    }
+    const handleClick = (event: MouseEvent) => {
+      if ((event.target as HTMLElement).closest("a, button")) {
+        return;
+      }
+      setFlipped((value) => !value);
+    };
+    surface.addEventListener("click", handleClick);
+    return () => surface.removeEventListener("click", handleClick);
+  }, []);
+
+  const logoStyle = backgroundImage
+    ? ({
+        "--card-logo": `url(${backgroundImage})`,
+        ...(prominentLogo
+          ? { "--card-logo-size": "clamp(10rem, 70%, 20rem)", "--card-logo-opacity": "0.18" }
+          : {}),
+        ...(subduedLogo
+          ? { "--card-logo-size": "clamp(4.5rem, 34%, 9rem)", "--card-logo-opacity": "0.06" }
+          : {}),
+      } as CSSProperties)
+    : undefined;
+
+  const body = (
+    <>
+      {/* The single accessible heading; never inert, so the card stays named on either face. */}
+      <h3 id={headingId} className="sr-only">
+        {headingText}
+      </h3>
+
+      <button
+        type="button"
+        className="experience-flip-toggle"
+        onClick={() => setFlipped((value) => !value)}
+        aria-expanded={flipped}
+        aria-controls={backId}
+      >
+        <span className="sr-only">
+          {headingText} — {flipped ? "hide details" : "show details"}
+        </span>
+      </button>
+
+      <div ref={innerRef} className="experience-flip-inner">
+        {/* Front — role/company/dates, centred and large. */}
+        <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
+          <span aria-hidden="true" className="experience-flip-logo" />
+          <FrontReveal fill={fill}>
+            {frontCertificates ? (
+              <div className="experience-flip-cert-row">{frontCertificates}</div>
+            ) : null}
+            <div aria-hidden="true" className="experience-flip-front-main">
+              {front}
+            </div>
+            <span aria-hidden="true" className="experience-flip-hint">
+              <span className="experience-flip-hint-icon">
+                <FlipGlyph />
+              </span>
+              Click to reveal details
+            </span>
+          </FrontReveal>
+        </div>
+
+        {/* Back — the full detail layout (same content as the former card body). */}
+        <div
+          id={backId}
+          aria-labelledby={headingId}
+          className="experience-flip-face experience-flip-back"
+          inert={!flipped || undefined}
+        >
+          <span aria-hidden="true" className="experience-flip-logo" />
+          <div className="experience-flip-back-inner">
+            {backCertificates ? (
+              <div className="experience-flip-cert-row experience-flip-cert-row--back">
+                {backCertificates}
+              </div>
+            ) : null}
+            {back}
+            <span aria-hidden="true" className="experience-flip-hint experience-flip-hint--back">
+              <span className="experience-flip-hint-icon">
+                <FlipGlyph />
+              </span>
+              Click to go back
+            </span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const className = cn("experience-flip", current && "experience-flip--current");
+
+  if (fill) {
+    return (
+      <motion.article
+        aria-labelledby={headingId}
+        className={className}
+        data-flipped={flipped}
+        style={{ opacity: fill.frame, "--card-frame": fill.frame, ...logoStyle } as MotionStyle}
+      >
+        {body}
+      </motion.article>
+    );
+  }
+
+  return (
+    <article
+      aria-labelledby={headingId}
+      className={className}
+      data-flipped={flipped}
+      style={logoStyle}
+    >
+      {body}
+    </article>
+  );
+}
+
 type NodeCardProps = {
   node: GraphNode;
   headingId: string;
@@ -103,36 +278,6 @@ type NodeCardProps = {
   /** Scroll-fill MotionValues; omit for the static (pre-mount / reduced-motion) fallback. */
   fill?: CardFill;
 };
-
-/**
- * Organization / institution logo badge, pinned to the card's top-right corner (see the
- * `.experience-org-logo` rule). The asset is decorative (the org/degree name carries the
- * accessible label); it renders at a fixed height with its natural aspect ratio preserved
- * (`aspect-ratio:auto`), so wide wordmarks aren't squashed.
- */
-function OrgLogo({ src }: { src: string }) {
-  // Raster logos (jpg/png) usually ship with an opaque (often white) background, so they
-  // read best on a light chip; SVG logos are transparent and tuned for the dark card.
-  const isRaster = /\.(png|jpe?g|webp)$/i.test(src);
-
-  return (
-    <span className={cn("experience-org-logo", isRaster && "experience-org-logo--light")}>
-      <Image
-        src={src}
-        alt=""
-        aria-hidden="true"
-        width={120}
-        height={40}
-        // Logos are SVG (and first-party): serve the raw file rather than routing it
-        // through the image optimizer, which rejects SVG unless `dangerouslyAllowSVG`.
-        unoptimized
-        // Fixed height, width follows each logo's *natural* aspect ratio (aspect-ratio:auto
-        // overrides next/image's width/height-derived ratio) so wide wordmarks aren't squashed.
-        className="h-6 w-auto object-contain [aspect-ratio:auto]"
-      />
-    </span>
-  );
-}
 
 /**
  * Renders the right card for a graph node — the education root or a role card. The
@@ -172,8 +317,7 @@ type ExperienceCardBodyProps = {
   fill?: CardFill;
 };
 
-/** The role card — mirrors the former TimelineEntry card (concurrency badge dropped:
- *  the side branch now expresses parallel roles visually). */
+/** A role card — front: role/org/dates (centred); back: the full detail layout. */
 export function ExperienceCardBody({
   experience,
   duration,
@@ -197,29 +341,55 @@ export function ExperienceCardBody({
     certificate,
   } = experience;
 
-  return (
-    <CardShell
-      headingId={headingId}
-      fill={fill}
-      className={cn("experience-card", isCurrent && "experience-card--current")}
-    >
-      {organizationLogo ? <OrgLogo src={organizationLogo} /> : null}
-      <div
-        className={cn(
-          "flex flex-wrap items-center gap-x-2 gap-y-1.5",
-          organizationLogo && "pr-24",
-        )}
-      >
-        <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
-          {role}
-        </h3>
+  const dateRange = (
+    <>
+      <time dateTime={startDate}>{formatMonthYear(startDate)}</time>
+      {endDate ? (
+        <>
+          {" – "}
+          {endDate === "Present" ? (
+            "Present"
+          ) : (
+            <time dateTime={endDate}>{formatMonthYear(endDate)}</time>
+          )}
+        </>
+      ) : null}
+    </>
+  );
+
+  const certificates = certificate ? (
+    <EducationCertificateTrigger certificate={certificate} onOpen={onOpenCertificate} />
+  ) : null;
+
+  const front = (
+    <>
+      <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
+      <p className="m-0 mt-2 text-body text-text-secondary">
+        <span className="font-medium">{organization}</span>
+        {organizationType ? <span className="text-text-muted"> · {organizationType}</span> : null}
+      </p>
+      <p className="m-0 mt-3 font-mono text-small text-text-muted">
+        {dateRange}
+        {duration ? (
+          <span className="mt-1 block text-text-secondary">{duration}</span>
+        ) : null}
+      </p>
+      {employmentType ? (
+        <span className="mt-3 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+          {employmentType}
+        </span>
+      ) : null}
+    </>
+  );
+
+  const back = (
+    <>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+        <p className="m-0 text-body font-semibold text-text-primary">{role}</p>
         {employmentType ? (
           <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
             {employmentType}
           </span>
-        ) : null}
-        {certificate ? (
-          <EducationCertificateTrigger certificate={certificate} onOpen={onOpenCertificate} />
         ) : null}
       </div>
 
@@ -229,17 +399,7 @@ export function ExperienceCardBody({
       </p>
 
       <p className="mt-1 font-mono text-small text-text-muted">
-        <time dateTime={startDate}>{formatMonthYear(startDate)}</time>
-        {endDate ? (
-          <>
-            {" – "}
-            {endDate === "Present" ? (
-              "Present"
-            ) : (
-              <time dateTime={endDate}>{formatMonthYear(endDate)}</time>
-            )}
-          </>
-        ) : null}
+        {dateRange}
         {duration ? <span className="text-text-secondary"> · {duration}</span> : null}
       </p>
 
@@ -278,7 +438,23 @@ export function ExperienceCardBody({
           </a>
         </p>
       ) : null}
-    </CardShell>
+    </>
+  );
+
+  return (
+    <ExperienceFlipCard
+      headingId={headingId}
+      headingText={role}
+      fill={fill}
+      current={isCurrent}
+      backgroundImage={organizationLogo}
+      prominentLogo={Boolean(organizationLogo?.includes("check-point"))}
+      subduedLogo={Boolean(organizationLogo?.includes("private-tutor"))}
+      frontCertificates={certificates}
+      backCertificates={certificates}
+      front={front}
+      back={back}
+    />
   );
 }
 
@@ -289,55 +465,97 @@ type EducationRootCardProps = {
   fill?: CardFill;
 };
 
-/** The root node — the B.Sc. degree, with the same in-page certificate viewer as the
- *  About section (degree + Dean's List). Content is pulled from `about.education`. */
+/** The root node — the B.Sc. degree — as a flip card with the same in-page certificate
+ *  viewer as the About section (degree + Dean's List). Content is pulled from
+ *  `about.education`. Each certificate trigger is paired with its context so the two
+ *  "Preview certificate" buttons stay unambiguous: the standalone trigger is the degree's
+ *  (the card itself), and the Dean's List trigger is joined to the honour badge. */
 export function EducationRootCard({
   education,
   headingId,
   onOpenCertificate,
   fill,
 }: EducationRootCardProps) {
-  return (
-    <CardShell headingId={headingId} fill={fill} className="experience-card">
-      {education.institutionLogo ? <OrgLogo src={education.institutionLogo} /> : null}
-      <div
-        className={cn(
-          "flex flex-wrap items-center gap-x-2 gap-y-1.5",
-          education.institutionLogo && "pr-24",
-        )}
-      >
-        <h3 className="m-0 text-body font-semibold text-text-primary" id={headingId}>
-          <span className="block">{education.degree}</span>
-          <span className="mt-0.5 block text-small font-normal text-text-secondary">
-            {education.institution}
-          </span>
-        </h3>
-        <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
-          Education
-        </span>
-        <EducationCertificateTrigger
-          certificate={education.degreeCertificate}
-          onOpen={onOpenCertificate}
-        />
-      </div>
-
-      <p className="mt-1 font-mono text-small text-text-muted">{education.dateRange}</p>
-
-      <p className="mt-3 text-body text-text-secondary">{education.summary}</p>
-
-      {education.honor && education.honorCertificate ? (
-        <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+  const honorGroup =
+    education.honor || education.honorCertificate ? (
+      <span className="experience-honor-group">
+        {education.honor ? (
           <span className="about-education-honor-badge">
             <DeanListIcon />
             {education.honor}
           </span>
+        ) : null}
+        {education.honorCertificate ? (
           <EducationCertificateTrigger
             certificate={education.honorCertificate}
             onOpen={onOpenCertificate}
           />
-        </div>
+        ) : null}
+      </span>
+    ) : null;
+
+  const frontCertificates = (
+    <>
+      <EducationCertificateTrigger
+        certificate={education.degreeCertificate}
+        onOpen={onOpenCertificate}
+      />
+      {honorGroup}
+    </>
+  );
+
+  const front = (
+    <>
+      <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{education.degree}</p>
+      <p className="m-0 mt-2 text-body text-text-secondary">{education.institution}</p>
+      <p className="m-0 mt-3 font-mono text-small text-text-muted">{education.dateRange}</p>
+      <span className="mt-3 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+        Education
+      </span>
+    </>
+  );
+
+  const back = (
+    <>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+        <p className="m-0 text-body font-semibold text-text-primary">
+          <span className="block">{education.degree}</span>
+          <span className="mt-0.5 block text-small font-normal text-text-secondary">
+            {education.institution}
+          </span>
+        </p>
+        <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+          Education
+        </span>
+      </div>
+
+      <p className="mt-1 font-mono text-small text-text-muted">{education.dateRange}</p>
+
+      <p className="mt-2">
+        <EducationCertificateTrigger
+          certificate={education.degreeCertificate}
+          onOpen={onOpenCertificate}
+        />
+      </p>
+
+      <p className="mt-3 text-body text-text-secondary">{education.summary}</p>
+
+      {honorGroup ? (
+        <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5">{honorGroup}</div>
       ) : null}
-    </CardShell>
+    </>
+  );
+
+  return (
+    <ExperienceFlipCard
+      headingId={headingId}
+      headingText={education.degree}
+      fill={fill}
+      backgroundImage={education.institutionLogo}
+      frontCertificates={frontCertificates}
+      front={front}
+      back={back}
+    />
   );
 }
 
