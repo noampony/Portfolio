@@ -331,7 +331,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/6.4-exp
 # Phase 7 — Projects Preview Section
 Phase file: [tasks/phase-07-projects-preview.md](../tasks/phase-07-projects-preview.md)
 
-## ⬜ Task 7.1 — Define Projects Preview Data with Confidentiality Flags
+## ✅ Task 7.1 — Define Projects Preview Data with Confidentiality Flags
 
 ```text
 Implement ONLY Task 7.1 — "Define Projects Preview Data with Confidentiality Flags" — for the Noam Pony portfolio. Depends on Tasks 6.4, 3.2.

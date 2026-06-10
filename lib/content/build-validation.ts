@@ -8,6 +8,7 @@
 import { profile } from "./data/profile";
 import { about } from "./data/about";
 import { experiences } from "./data/experience";
+import { projects } from "./data/projects";
 import {
   sampleExperienceReviewed,
   sampleExperienceUnreviewed,
@@ -16,6 +17,7 @@ import {
 } from "./fixtures";
 import {
   filterConfidentialityReviewed,
+  getUnreviewedWorkItems,
   validateExperience,
   validateProject,
 } from "./validate";
@@ -69,6 +71,28 @@ function assertExperienceConfidentialityGate(): void {
   }
 }
 
+/** Verify the real Project data is gated correctly (Task 7.1, spec §8.4, §15.4). */
+function assertProjectConfidentialityGate(): void {
+  const published = filterConfidentialityReviewed(projects);
+  if (published.some((entry) => entry.confidentialityReviewed !== true)) {
+    throw new Error(
+      "Content validator self-check failed: published project output contains an unreviewed entry.",
+    );
+  }
+  // Only the volunteer Students Tracking System is owner-safe; the three Check Point
+  // projects stay unreviewed until the owner confirms publishability.
+  if (published.length !== 1) {
+    throw new Error(
+      "Content validator self-check failed: expected exactly one published project (Students Tracking System).",
+    );
+  }
+  if (getUnreviewedWorkItems(projects).length !== 3) {
+    throw new Error(
+      "Content validator self-check failed: expected the three Check Point projects to remain unreviewed.",
+    );
+  }
+}
+
 if (!profile.name) {
   throw new Error("Content validator self-check failed: profile data failed to load.");
 }
@@ -77,3 +101,4 @@ if (!about.professionalSummary) {
 }
 assertConfidentialityFilter();
 assertExperienceConfidentialityGate();
+assertProjectConfidentialityGate();
