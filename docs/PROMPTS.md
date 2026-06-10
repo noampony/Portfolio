@@ -384,7 +384,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/7.4-pro
 # Phase 8 — Courses Preview Section
 Phase file: [tasks/phase-08-courses-preview.md](../tasks/phase-08-courses-preview.md)
 
-## ⬜ Task 8.1 — Define Courses Preview Data
+## ✅ Task 8.1 — Define Courses Preview Data
 
 ```text
 Implement ONLY Task 8.1 — "Define Courses Preview Data" — for the Noam Pony portfolio. Depends on Tasks 7.4, 3.2.
@@ -396,7 +396,7 @@ Task focus: encode the 5 courses with §8.5 fields; missing certs/images = ABSEN
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/8.1-courses-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 8.2 — Implement the Courses Preview (Learning-Path Style) Layout
+## ✅ Task 8.2 — Implement the Courses Preview (Learning-Path Style) Layout
 
 ```text
 Implement ONLY Task 8.2 — "Implement the Courses Preview (Learning-Path Style) Layout" — for the Noam Pony portfolio. Depends on Task 8.1.
@@ -408,7 +408,7 @@ Task focus: 3–5 course cards with §8.5 fields where data exists; consistent n
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/8.2-courses-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 8.3 — Style, Make Responsive, and Animate Course Cards
+## ✅ Task 8.3 — Style, Make Responsive, and Animate Course Cards
 
 ```text
 Implement ONLY Task 8.3 — "Style, Make Responsive, and Animate Course Cards" — for the Noam Pony portfolio. Depends on Task 8.2.

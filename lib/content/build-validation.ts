@@ -7,6 +7,7 @@
 
 import { profile } from "./data/profile";
 import { about } from "./data/about";
+import { courses } from "./data/courses";
 import { experiences } from "./data/experience";
 import { projects } from "./data/projects";
 import {
@@ -93,6 +94,15 @@ function assertProjectConfidentialityGate(): void {
   }
 }
 
+/** Verify the real Courses data validates and stays in the 3–5 homepage range (Task 8.1, §8.5). */
+function assertCoursesData(): void {
+  if (courses.length < 3 || courses.length > 5) {
+    throw new Error(
+      "Content validator self-check failed: courses must be 3–5 for the preview (spec §8.5).",
+    );
+  }
+}
+
 if (!profile.name) {
   throw new Error("Content validator self-check failed: profile data failed to load.");
 }
@@ -102,3 +112,4 @@ if (!about.professionalSummary) {
 assertConfidentialityFilter();
 assertExperienceConfidentialityGate();
 assertProjectConfidentialityGate();
+assertCoursesData();
