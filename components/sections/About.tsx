@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "reac
 import { motion, useAnimation, useInView, useReducedMotion } from "framer-motion";
 
 import { about } from "@/lib/content/data/about";
+import { cn } from "@/lib/utils";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const ABOUT_ACCENT_LINE_START_X = -128;
@@ -731,7 +732,7 @@ export function About() {
         <div className="about-layout-sidebar grid gap-3 sm:gap-3.5">
           <motion.div
             aria-label="About statistics"
-            className="grid gap-2 sm:grid-cols-3"
+            className="grid gap-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3"
             role="group"
             initial={animate ? "hidden" : false}
             whileInView={animate ? "visible" : undefined}
@@ -741,12 +742,15 @@ export function About() {
             {stats.map((stat) => (
               <motion.div
                 key={stat.id}
-                className="about-stat-card group"
+                className={cn(
+                  "about-stat-card group",
+                  stat.id === "years" && "lg:col-span-2 xl:col-span-1",
+                )}
                 variants={cardRevealVariants}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="m-0 whitespace-nowrap text-small text-text-muted">{stat.label}</p>
+                    <p className="m-0 text-small text-text-muted">{stat.label}</p>
                     <p className="m-0 mt-1 font-mono text-xl font-semibold text-accent transition-colors duration-200 group-hover:text-accent-hover sm:text-h2">
                       <AnimatedStatValue
                         value={stat.numericValue}
