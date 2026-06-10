@@ -79,16 +79,16 @@ function assertProjectConfidentialityGate(): void {
       "Content validator self-check failed: published project output contains an unreviewed entry.",
     );
   }
-  // Only the volunteer Students Tracking System is owner-safe; the three Check Point
-  // projects stay unreviewed until the owner confirms publishability.
-  if (published.length !== 1) {
+  // All four projects are owner-approved for publication (the Check Point three in
+  // generalized, public-safe form); none should remain gated.
+  if (getUnreviewedWorkItems(projects).length !== 0) {
     throw new Error(
-      "Content validator self-check failed: expected exactly one published project (Students Tracking System).",
+      "Content validator self-check failed: a project is unexpectedly still gated (confidentialityReviewed !== true).",
     );
   }
-  if (getUnreviewedWorkItems(projects).length !== 3) {
+  if (published.length < 1) {
     throw new Error(
-      "Content validator self-check failed: expected the three Check Point projects to remain unreviewed.",
+      "Content validator self-check failed: expected at least one published project.",
     );
   }
 }

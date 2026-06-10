@@ -343,7 +343,7 @@ Task focus: encode the 4 projects with §8.4 fields; confidentialityReviewed:fal
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/7.1-projects-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 7.2 — Implement the Projects Preview Layout
+## ✅ Task 7.2 — Implement the Projects Preview Layout
 
 ```text
 Implement ONLY Task 7.2 — "Implement the Projects Preview Layout" — for the Noam Pony portfolio. Depends on Task 7.1.
