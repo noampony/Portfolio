@@ -102,12 +102,14 @@ export type Project = {
   name: string;
   role: string;
   year?: string | number;
-  category: string[];
+  /** Optional — final categories are TBD (§19.6); omitted until owner-confirmed. */
+  category?: string[];
   shortDescription: string;
   problemSolved: string;
   solution?: string;
   techStack: string[];
-  backendFocus: string;
+  /** Optional — TBD for some entries (e.g. Students Tracking System, §8.4); omitted when absent. */
+  backendFocus?: string;
   whyImportant?: string;
   architecture?: string;
   database?: string[];
