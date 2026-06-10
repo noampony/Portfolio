@@ -19,6 +19,7 @@ import { inspirationalQuotes, type Quote } from "@/lib/content/data/quotes";
 const QUOTE_WIDTH_VW = 26;
 const QUOTE_HEIGHT_VH = 15;
 const QUOTE_VISIBLE_OPACITY = 0.44;
+const INITIAL_CARDS_VISIBLE = 3;
 
 type Zone = {
   xMin: number;
@@ -51,6 +52,7 @@ type QuoteSeed = {
   zone: Zone;
   layout: QuoteLayout;
   staticPosition: Point;
+  initialDelay: number;
 };
 
 function randomBetween(min: number, max: number): number {
@@ -114,10 +116,10 @@ function createQuoteCycle(zone: Zone, start?: Point): QuoteCycle {
   return {
     quote: pickQuote(),
     start: start ?? randomPointInZone(zone),
-    visibleDuration: randomBetween(3.5, 7.5),
-    fadeInDuration: randomBetween(0.9, 1.4),
-    fadeOutDuration: randomBetween(1.0, 1.6),
-    gapAfter: randomBetween(500, 1500),
+    visibleDuration: randomBetween(4.0, 8.0),
+    fadeInDuration: randomBetween(2.0, 3.5),
+    fadeOutDuration: randomBetween(2.0, 3.5),
+    gapAfter: randomBetween(500, 2000),
   };
 }
 
@@ -139,6 +141,7 @@ function createQuoteSeeds(count: number): QuoteSeed[] {
       zone,
       layout: createInitialLayout(zone),
       staticPosition: randomPointInZone(zone),
+      initialDelay: index < INITIAL_CARDS_VISIBLE ? 0 : randomBetween(3000, 11000),
     };
   });
 }
@@ -201,19 +204,19 @@ type FloatingQuoteCardProps = {
   reducedMotion: boolean;
   /** Measured pixel height of the quotes layer (the full section), see below. */
   layerHeight: number;
+  initialDelay: number;
 };
 
 /**
- * One independently cycling quote card — fades in while drifting, fades out while
- * still drifting, then respawns with a new quote at a new position in its zone.
+ * One independently cycling quote card — fades in and out at a fixed position,
+ * then respawns with a new quote at a new position in its zone.
  *
- * Horizontal positions stay in `vw` (the layer is full-bleed, so viewport width ≈ layer
- * width). Vertical positions are kept as abstract 0–100 units and mapped to the layer's
- * measured pixel height, so the cards spread across the *entire* (tall) Experience
- * section rather than only the first viewport-height of it. `layerHeight` is read through
- * a ref so a resize updates future drift cycles without restarting the running one.
+ * Horizontal positions stay in `vw`. Vertical positions are abstract 0–100 units
+ * mapped to the layer's measured pixel height so cards spread across the full
+ * (tall) Experience section. `layerHeight` is read through a ref so resizes
+ * update future cycles without restarting the running one.
  */
-function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion, layerHeight }: FloatingQuoteCardProps) {
+function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion, layerHeight, initialDelay }: FloatingQuoteCardProps) {
   const controls = useAnimation();
   const [quote, setQuote] = useState(initialLayout.quote);
   const zoneRef = useRef(zone);
@@ -239,6 +242,9 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion,
     const yPx = (unit: number) => `${(unit / 100) * heightRef.current}px`;
 
     async function runLifecycle() {
+      if (initialDelay > 0) await sleep(initialDelay);
+      if (cancelled) return;
+
       let cycle = createQuoteCycle(activeZone, startPosition);
 
       while (!cancelled) {
@@ -346,6 +352,7 @@ export function ExperienceQuotes() {
               staticPosition={seed.staticPosition}
               reducedMotion={prefersReducedMotion}
               layerHeight={layerHeight}
+              initialDelay={seed.initialDelay}
             />
           ))
         : null}

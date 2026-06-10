@@ -58,13 +58,22 @@ export function EducationCertificateTrigger({
   certificate,
   onOpen,
 }: EducationCertificateTriggerProps) {
+  const handleClick = () => {
+    // On narrow mobile screens, open the PDF directly — iframes can't render PDFs inline.
+    if (certificate.file && window.innerWidth <= 420) {
+      window.open(certificate.file, "_blank", "noopener,noreferrer");
+      return;
+    }
+    onOpen(certificate);
+  };
+
   return (
     <button
       type="button"
       className="about-cert-trigger"
       aria-label={certificate.viewLabel}
       title={certificate.viewLabel}
-      onClick={() => onOpen(certificate)}
+      onClick={handleClick}
     >
       <CertificateDocumentIcon />
       <span className="about-cert-trigger-label">Preview certificate</span>
@@ -145,9 +154,6 @@ export function EducationCertificateViewer({
                     className="cert-viewer-frame"
                   />
                 </div>
-                <p className="cert-viewer-mobile-note">
-                  PDF preview isn&apos;t supported on mobile — tap the button below to open it.
-                </p>
                 <a
                   href={certificate.file}
                   target="_blank"

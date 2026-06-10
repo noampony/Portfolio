@@ -74,10 +74,13 @@ type BlockLayout = {
   y: number;
 };
 
+const INITIAL_CARDS_VISIBLE = 3;
+
 type BlockSeed = {
   zone: Zone;
   layout: BlockLayout;
   staticPosition: Point;
+  initialDelay: number;
 };
 
 function randomBetween(min: number, max: number): number {
@@ -146,10 +149,10 @@ function createBlockCycle(zone: Zone, start?: Point): BlockCycle {
   return {
     code: pickSnippet(),
     start: start ?? randomPointInZone(zone),
-    visibleDuration: randomBetween(3.5, 7.5),
-    fadeInDuration: randomBetween(0.9, 1.4),
-    fadeOutDuration: randomBetween(1.0, 1.6),
-    gapAfter: randomBetween(500, 1500),
+    visibleDuration: randomBetween(4.0, 8.0),
+    fadeInDuration: randomBetween(2.0, 3.5),
+    fadeOutDuration: randomBetween(2.0, 3.5),
+    gapAfter: randomBetween(500, 2000),
   };
 }
 
@@ -171,6 +174,7 @@ function createBlockSeeds(count: number): BlockSeed[] {
       zone,
       layout: createInitialLayout(zone),
       staticPosition: randomPointInZone(zone),
+      initialDelay: index < INITIAL_CARDS_VISIBLE ? 0 : randomBetween(3000, 11000),
     };
   });
 }
@@ -213,13 +217,10 @@ type FloatingCodeBlockProps = {
   initialLayout: BlockLayout;
   staticPosition: Point;
   reducedMotion: boolean;
+  initialDelay: number;
 };
 
-/**
- * One independently cycling code block — fades in while drifting, fades out while still drifting,
- * then respawns with new content at a new position in its zone.
- */
-function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion }: FloatingCodeBlockProps) {
+function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion, initialDelay }: FloatingCodeBlockProps) {
   const controls = useAnimation();
   const [code, setCode] = useState(initialLayout.code);
   const zoneRef = useRef(zone);
@@ -235,6 +236,9 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
     let cancelled = false;
 
     async function runLifecycle() {
+      if (initialDelay > 0) await sleep(initialDelay);
+      if (cancelled) return;
+
       let cycle = createBlockCycle(activeZone, startPosition);
 
       while (!cancelled) {
@@ -327,6 +331,7 @@ export function FloatingCode() {
           initialLayout={seed.layout}
           staticPosition={seed.staticPosition}
           reducedMotion={prefersReducedMotion}
+          initialDelay={seed.initialDelay}
         />
       ))}
     </div>

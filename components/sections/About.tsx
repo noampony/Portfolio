@@ -185,6 +185,7 @@ const backgroundGraphs: BackgroundGraph[] = [
 const GRAPH_WIDTH_VW = 15;
 const GRAPH_HEIGHT_VH = 14;
 const GRAPH_VISIBLE_OPACITY = 0.34;
+const INITIAL_CARDS_VISIBLE = 3;
 
 type Zone = {
   xMin: number;
@@ -217,6 +218,7 @@ type GraphSeed = {
   zone: Zone;
   layout: GraphLayout;
   staticPosition: Point;
+  initialDelay: number;
 };
 
 function randomBetween(min: number, max: number): number {
@@ -281,10 +283,10 @@ function createGraphCycle(zone: Zone, start?: Point): GraphCycle {
   return {
     graph: pickGraph(),
     start: start ?? randomPointInGraphZone(zone),
-    visibleDuration: randomBetween(3.5, 7.5),
-    fadeInDuration: randomBetween(0.9, 1.4),
-    fadeOutDuration: randomBetween(1.0, 1.6),
-    gapAfter: randomBetween(500, 1500),
+    visibleDuration: randomBetween(4.0, 8.0),
+    fadeInDuration: randomBetween(2.0, 3.5),
+    fadeOutDuration: randomBetween(2.0, 3.5),
+    gapAfter: randomBetween(500, 2000),
   };
 }
 
@@ -306,6 +308,7 @@ function createGraphSeeds(count: number): GraphSeed[] {
       zone,
       layout: createInitialGraphLayout(zone),
       staticPosition: randomPointInGraphZone(zone),
+      initialDelay: index < INITIAL_CARDS_VISIBLE ? 0 : randomBetween(3000, 11000),
     };
   });
 }
@@ -398,6 +401,7 @@ type FloatingGraphCardProps = {
   initialLayout: GraphLayout;
   staticPosition: Point;
   reducedMotion: boolean;
+  initialDelay: number;
 };
 
 function FloatingGraphCard({
@@ -405,6 +409,7 @@ function FloatingGraphCard({
   initialLayout,
   staticPosition,
   reducedMotion,
+  initialDelay,
 }: FloatingGraphCardProps) {
   const controls = useAnimation();
   const [graph, setGraph] = useState(initialLayout.graph);
@@ -421,6 +426,9 @@ function FloatingGraphCard({
     let cancelled = false;
 
     async function runLifecycle() {
+      if (initialDelay > 0) await sleep(initialDelay);
+      if (cancelled) return;
+
       let cycle = createGraphCycle(activeZone, startPosition);
 
       while (!cancelled) {
@@ -508,6 +516,7 @@ function AboutBackgroundGraphs() {
           initialLayout={seed.layout}
           staticPosition={seed.staticPosition}
           reducedMotion={prefersReducedMotion}
+          initialDelay={seed.initialDelay}
         />
       ))}
     </div>
