@@ -145,6 +145,9 @@ export function EducationCertificateViewer({
                     className="cert-viewer-frame"
                   />
                 </div>
+                <p className="cert-viewer-mobile-note">
+                  PDF preview isn&apos;t supported on mobile — tap the button below to open it.
+                </p>
                 <a
                   href={certificate.file}
                   target="_blank"

@@ -839,6 +839,35 @@ html {
   color: var(--text-secondary);
 }
 
+/* On mobile, browsers can't render PDFs inline — hide the iframe and show a note instead. */
+.cert-viewer-mobile-note {
+  display: none;
+  margin: 0;
+  padding: 1.25rem 1rem;
+  border: 1px dashed color-mix(in srgb, var(--border) 88%, var(--accent));
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--bg-surface-raised) 88%, var(--accent));
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .cert-viewer-frame-wrap {
+    display: none;
+  }
+
+  .cert-viewer-mobile-note {
+    display: block;
+  }
+
+  .cert-viewer-open-link {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
+
 .about-field-badge {
   position: relative;
   display: inline-flex;

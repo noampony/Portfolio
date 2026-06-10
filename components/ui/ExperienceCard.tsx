@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useId, useState, type CSSProperties, type ReactNode } from "react";
 
 import { motion, type MotionStyle, type MotionValue } from "framer-motion";
 
@@ -143,28 +143,6 @@ function ExperienceFlipCard({
 }: ExperienceFlipCardProps) {
   const [flipped, setFlipped] = useState(false);
   const backId = useId();
-  const innerRef = useRef<HTMLDivElement>(null);
-
-  // Flip when the card surface is clicked, but let clicks that land on an interactive
-  // control (certificate button, link) through to that control. This lives on the inner
-  // surface (above the toggle, so the controls stay clickable — a CSS pointer-events
-  // fall-through is unreliable inside the `preserve-3d` context). Keyboard/assistive-tech
-  // users flip via the real `<button>` toggle below; this is a mouse-only enhancement, so
-  // it is attached imperatively rather than as a JSX handler on a non-interactive element.
-  useEffect(() => {
-    const surface = innerRef.current;
-    if (!surface) {
-      return;
-    }
-    const handleClick = (event: MouseEvent) => {
-      if ((event.target as HTMLElement).closest("a, button")) {
-        return;
-      }
-      setFlipped((value) => !value);
-    };
-    surface.addEventListener("click", handleClick);
-    return () => surface.removeEventListener("click", handleClick);
-  }, []);
 
   const logoStyle = backgroundImage
     ? ({
@@ -197,7 +175,13 @@ function ExperienceFlipCard({
         </span>
       </button>
 
-      <div ref={innerRef} className="experience-flip-inner">
+      <div
+        className="experience-flip-inner"
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a, button")) return;
+          setFlipped((value) => !value);
+        }}
+      >
         {/* Front — role/company/dates, centred and large. */}
         <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
           <span aria-hidden="true" className="experience-flip-logo" />
