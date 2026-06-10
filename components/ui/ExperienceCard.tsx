@@ -4,6 +4,8 @@ import { useId, useState, type CSSProperties, type ReactNode } from "react";
 
 import { motion, type MotionStyle, type MotionValue } from "framer-motion";
 
+import { useGlareHandlers } from "@/components/ui/GlareHover";
+
 import { EducationCertificateTrigger } from "@/components/sections/EducationCertificateViewer";
 import type { GraphNode } from "@/lib/content/experienceGraph";
 import type { AboutEducation, EducationCertificateRef, Experience } from "@/lib/content/types";
@@ -143,6 +145,12 @@ function ExperienceFlipCard({
 }: ExperienceFlipCardProps) {
   const [flipped, setFlipped] = useState(false);
   const backId = useId();
+  const frontGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const backGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const glareContainerHandlers = {
+    onMouseEnter: () => { frontGlare.handlers.onMouseEnter(); backGlare.handlers.onMouseEnter(); },
+    onMouseLeave: () => { frontGlare.handlers.onMouseLeave(); backGlare.handlers.onMouseLeave(); },
+  };
 
   const logoStyle = backgroundImage
     ? ({
@@ -185,6 +193,7 @@ function ExperienceFlipCard({
         {/* Front — role/company/dates, centred and large. */}
         <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
           <span aria-hidden="true" className="experience-flip-logo" />
+          <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
           <FrontReveal fill={fill}>
             {frontCertificates ? (
               <div className="experience-flip-cert-row">{frontCertificates}</div>
@@ -209,6 +218,7 @@ function ExperienceFlipCard({
           inert={!flipped || undefined}
         >
           <span aria-hidden="true" className="experience-flip-logo" />
+          <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
           <div className="experience-flip-back-inner">
             {backCertificates ? (
               <div className="experience-flip-cert-row experience-flip-cert-row--back">
@@ -237,6 +247,7 @@ function ExperienceFlipCard({
         className={className}
         data-flipped={flipped}
         style={{ opacity: fill.frame, "--card-frame": fill.frame, ...logoStyle } as MotionStyle}
+        {...glareContainerHandlers}
       >
         {body}
       </motion.article>
@@ -249,6 +260,7 @@ function ExperienceFlipCard({
       className={className}
       data-flipped={flipped}
       style={logoStyle}
+      {...glareContainerHandlers}
     >
       {body}
     </article>

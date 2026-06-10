@@ -349,6 +349,15 @@ html {
   letter-spacing: 0;
 }
 
+/* Experience cursor spotlight — radial gradient that follows the pointer. */
+.experience-spotlight {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
+
 /* Experience floating quote cards — mirrors the About graph-card glass system
    (.about-graphs-layer / .about-graph-card) but larger and text-oriented, so
    each inspirational quote reads with presence from the background (spec §8.3). */
@@ -461,17 +470,11 @@ html {
     transform 180ms ease;
 }
 
-.about-stat-card::before,
-.about-fields-panel::before {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    linear-gradient(120deg, transparent 0%, rgb(255 255 255 / 0.16) 44%, rgb(45 212 191 / 0.08) 50%, transparent 60%);
-  opacity: 0;
-  transform: translateX(-80%);
-  content: "";
-  pointer-events: none;
+/* GlareHover overlay (.glare-overlay) replaces the former ::before shimmer sweep. */
+.about-stat-card > *,
+.about-fields-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .about-stat-card::after,
@@ -888,30 +891,10 @@ html {
   }
 }
 
-@keyframes about-shimmer-pass {
-  from {
-    opacity: 0;
-    transform: translateX(-80%);
-  }
-
-  12% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(130%);
-  }
-}
 
 @media (prefers-reduced-motion: no-preference) {
   .about-stat-card:hover {
     transform: translateY(-0.25rem);
-  }
-
-  .about-stat-card:hover::before,
-  .about-fields-panel:hover::before {
-    animation: about-shimmer-pass 900ms ease-out;
   }
 
   .about-field-badge:hover {
@@ -1208,21 +1191,6 @@ html {
   color: var(--text-primary);
 }
 
-@keyframes experience-card-shimmer {
-  from {
-    opacity: 0;
-    transform: translateX(-80%);
-  }
-
-  12% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(130%);
-  }
-}
 
 @keyframes experience-node-ring {
   0% {
@@ -1378,23 +1346,7 @@ html {
   pointer-events: none;
 }
 
-.experience-flip-face::before {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    120deg,
-    transparent 0%,
-    rgb(255 255 255 / 0.14) 44%,
-    rgb(45 212 191 / 0.08) 50%,
-    transparent 60%
-  );
-  opacity: 0;
-  transform: translateX(-80%);
-  content: "";
-  pointer-events: none;
-}
+/* GlareHover overlay replaces the former ::before shimmer sweep. */
 
 .experience-flip-face > * {
   position: relative;
@@ -1627,9 +1579,6 @@ html {
     transform: rotate(180deg);
   }
 
-  .experience-flip:hover .experience-flip-face::before {
-    animation: experience-card-shimmer 900ms ease-out;
-  }
 
   /* The current-role card breathes (front face), in sync with its commit dot. */
   .experience-flip--current .experience-flip-front {
@@ -1709,23 +1658,7 @@ html {
   pointer-events: none;
 }
 
-.project-flip-face::before {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    120deg,
-    transparent 0%,
-    rgb(255 255 255 / 0.14) 44%,
-    rgb(45 212 191 / 0.08) 50%,
-    transparent 60%
-  );
-  opacity: 0;
-  transform: translateX(-80%);
-  content: "";
-  pointer-events: none;
-}
+/* GlareHover overlay replaces the former ::before shimmer sweep. */
 
 .project-flip-face > * {
   position: relative;
@@ -1889,9 +1822,6 @@ html {
     transition: transform 180ms ease;
   }
 
-  .project-flip:hover .project-flip-face::before {
-    animation: experience-card-shimmer 900ms ease-out;
-  }
 }
 
 /* "View All Projects" card — a blurred teaser of the (future) full Projects page. That page
