@@ -520,11 +520,7 @@ html {
 }
 
 .about-layout-sidebar {
-  min-height: 100%;
-}
-
-.about-fields-panel--stretch {
-  height: 100%;
+  min-height: 0;
 }
 
 .about-education-honor-badge {
