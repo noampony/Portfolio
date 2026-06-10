@@ -694,7 +694,7 @@ export function About() {
       <div aria-hidden="true" className="about-scanline" />
       <AboutBackgroundGraphs />
 
-      <div className="site-shell about-layout relative z-10 grid gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-stretch lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
+      <div className="site-shell about-layout relative z-10 grid gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,0.86fr)] lg:items-center lg:gap-14 xl:grid-cols-[minmax(0,0.9fr)_minmax(36rem,1fr)]">
         <motion.div
           className="about-copy-panel about-layout-copy h-full max-w-measure"
           initial={animate ? "hidden" : false}
@@ -728,10 +728,10 @@ export function About() {
           </motion.div>
         </motion.div>
 
-        <div className="about-layout-sidebar grid h-full gap-3 sm:gap-3.5 lg:grid-rows-[auto_minmax(0,1fr)]">
+        <div className="about-layout-sidebar grid gap-3 sm:gap-3.5">
           <motion.div
             aria-label="About statistics"
-            className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3"
+            className="grid gap-2 sm:grid-cols-3"
             role="group"
             initial={animate ? "hidden" : false}
             whileInView={animate ? "visible" : undefined}
@@ -764,7 +764,7 @@ export function About() {
           </motion.div>
 
           <motion.div
-            className="about-fields-panel about-fields-panel--stretch"
+            className="about-fields-panel"
             initial={animate ? "hidden" : false}
             whileInView={animate ? "visible" : undefined}
             viewport={{ once: true, margin: "-80px" }}
@@ -781,11 +781,11 @@ export function About() {
             </div>
             <ul
               aria-label="Main professional fields"
-              className="mt-3 flex flex-1 flex-wrap content-evenly gap-1.5 sm:gap-2"
+              className="mt-3 flex flex-wrap gap-1.5 sm:gap-2"
             >
               {about.mainFields.map((field) => (
-                <li key={field} className="flex grow">
-                  <span className="about-field-badge w-full justify-center">{field}</span>
+                <li key={field} className="flex">
+                  <span className="about-field-badge">{field}</span>
                 </li>
               ))}
             </ul>
