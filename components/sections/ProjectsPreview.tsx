@@ -18,10 +18,10 @@ import { filterConfidentialityReviewed } from "@/lib/content/loaders";
 const DEFAULT_CARD_BG = "/images/projects/card-bg.png";
 
 const PROJECT_BACKGROUNDS: Record<string, string> = {
-  "Microsoft Office Events": "/images/projects/microsoft-office-events.png",
+  "Microsoft & Google Events": "/images/projects/microsoft-office-events.png",
   "Email Archiving Service": "/images/projects/email-archiving-service.png",
-  "Final Failure-Watchdog": "/images/projects/final-failure-watchdog.png",
-  "Students Tracking System": "/images/projects/students-tracking-system.png",
+  "Final-Failure Watchdog": "/images/projects/final-failure-watchdog.png",
+  "At-Risk Teenagers Monitoring System": "/images/projects/students-tracking-system.png",
 };
 
 /**
