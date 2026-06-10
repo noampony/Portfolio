@@ -114,15 +114,14 @@ export function Experience() {
       className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
     >
       {/*
-       * Progressive-enhancement safety net (spec §7.5/§8.3): the entries' reveal is a
-       * Framer Motion `whileInView` fade-up, and Framer bakes its `initial` (opacity:0)
-       * into the SSR HTML. If JavaScript never runs, that would leave the timeline
-       * permanently hidden — so when scripting is disabled, force the entries to their
-       * final visible state. This block is inert whenever JS runs, so the scroll reveal
-       * plays normally; it only guarantees the content is never blocked by the animation.
+       * Progressive-enhancement safety net (spec §7.5/§8.3): the timeline's reveal is a
+       * scroll-scrubbed "draw" whose fill vars (--fill / --dot-* / --card-body) default to
+       * the fully-drawn state, so the SSR HTML is already complete and visible without JS.
+       * This block is a belt-and-suspenders guarantee that the card content and commit dots
+       * stay visible if scripting never runs; it is inert whenever JS runs.
        */}
       <noscript>
-        <style>{`.git-graph-row{opacity:1!important;transform:none!important}`}</style>
+        <style>{`.experience-card-body{opacity:1!important}.git-dot,.tree-dot{opacity:1!important}`}</style>
       </noscript>
 
       {/* Decorative backdrop glow — tokens only, echoes the About/Hero atmosphere. */}

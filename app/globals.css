@@ -915,6 +915,9 @@ html {
   --git-line-w: 2px;
   --git-col-gap: 0.75rem;
   --git-line: color-mix(in srgb, var(--accent) 60%, var(--border));
+  /* Not-yet-drawn portion: transparent, so the line *sketches* in (the bright stroke grows
+     as the scroll front advances) rather than filling over a visible track. See `--fill`. */
+  --git-line-dim: transparent;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -950,7 +953,13 @@ html {
   left: var(--git-connector-start);
   width: calc(var(--git-gutter) - var(--git-connector-start) + var(--git-col-gap));
   height: var(--git-line-w);
-  background: var(--git-line);
+  /* Fills left→right from the dot toward the card. `--conn-fill` is inherited from the row
+     element (a pseudo-element can't carry its own inline var); defaults to 1 = fully drawn. */
+  background: linear-gradient(
+    to right,
+    var(--git-line) 0 calc(var(--conn-fill, 1) * 100%),
+    var(--git-line-dim) calc(var(--conn-fill, 1) * 100%) 100%
+  );
   pointer-events: none;
 }
 
@@ -990,10 +999,18 @@ html {
 /* Lane lines. Each lane is split at the dot (`--git-dot-top`) into a top half
    (cell top → dot) and a bottom half (dot → cell bottom); adjacent rows' halves
    meet, so a lane reads as one continuous vertical line down the gutter. */
+/* Scroll-fill: `--fill` (0→1, set per element by ExperienceGitNode while scrubbing) paints
+   the bright `--git-line` over the dim track from the top down. Defaults to 1, so SSR / no-JS
+   / reduced-motion render the line fully drawn (the original solid look). */
 .git-line {
   position: absolute;
   width: var(--git-line-w);
-  background: var(--git-line);
+  --fill: 1;
+  background: linear-gradient(
+    to bottom,
+    var(--git-line) 0 calc(var(--fill) * 100%),
+    var(--git-line-dim) calc(var(--fill) * 100%) 100%
+  );
   pointer-events: none;
 }
 
@@ -1033,7 +1050,11 @@ html {
   position: absolute;
   left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
   width: calc(var(--git-branch-dx) + var(--git-line-w));
-  border: 0 solid var(--git-line);
+  /* A border can't be stroke-drawn without SVG, so the corner sketches in by fading from
+     transparent→bright over its sub-range (`--fill`, set by ExperienceGitNode). Default 1. */
+  --fill: 1;
+  border: 0 solid
+    color-mix(in srgb, var(--git-line) calc(var(--fill) * 100%), var(--git-line-dim));
   pointer-events: none;
 }
 
@@ -1062,7 +1083,10 @@ html {
   z-index: 1;
   width: 0.875rem;
   height: 0.875rem;
-  transform: translate(-50%, -50%);
+  /* `--dot-scale` (0→1) lets the dot "pop" into being as the fill front reaches it; kept in
+     CSS so it composes with the centring translate (motion would otherwise overwrite the
+     whole transform). Defaults to 1 = fully formed. */
+  transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
   border: 2px solid var(--accent);
   border-radius: 999px;
   background: var(--bg-base);
@@ -1083,6 +1107,7 @@ html {
    in flight: a persistent "live" heartbeat. Static fallback (reduced-motion) is
    still visually prominent — bigger dot + strong halo. */
 .git-dot--current {
+  /* Solid core; the dot sketches in by growing (scale) rather than colour-filling. */
   background: var(--accent);
   width: 1.1rem;
   height: 1.1rem;
@@ -1159,7 +1184,11 @@ html {
 .experience-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, white 16%, var(--accent) 18%);
+  /* `--card-frame` (0→1) fades the edge in first ("frame glows in"), then `--card-body`
+     (on .experience-card-body) fades the content. Both default to 1 = fully drawn. */
+  --card-edge: color-mix(in srgb, white 16%, var(--accent) 18%);
+  border: 1px solid
+    color-mix(in srgb, var(--card-edge) calc(var(--card-frame, 1) * 100%), transparent);
   border-radius: var(--radius);
   background:
     radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.1), transparent 32%),
@@ -1230,7 +1259,8 @@ html {
 
 /* Current role card — a stronger accent edge so it reads as "live". */
 .experience-card--current {
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+  --card-edge: color-mix(in srgb, var(--accent) 42%, var(--border));
+  border-color: color-mix(in srgb, var(--card-edge) calc(var(--card-frame, 1) * 100%), transparent);
   box-shadow:
     0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
     0 0 1.75rem color-mix(in srgb, var(--accent) 12%, transparent),
@@ -1376,6 +1406,8 @@ html {
   .experience-tree {
     --tree-line-w: 2px;
     --tree-line: color-mix(in srgb, var(--accent) 60%, var(--border));
+    /* Not-yet-drawn portion: transparent so the line sketches in (mirrors --git-line-dim). */
+    --tree-line-dim: transparent;
     --tree-rg: 2.75rem; /* vertical gap that each connector bridges */
     --tree-cgap: clamp(1.5rem, 5vw, 4rem); /* gutter between the two branch columns */
     --tree-fork-h: 2.5rem; /* height of the fork zone */
@@ -1473,14 +1505,16 @@ html {
     pointer-events: none;
   }
 
+  /* `--dot-scale` (0→1) lets the dot pop in as the fill front reaches it; composed with the
+     centring translate so motion doesn't overwrite the whole transform. Default 1. */
   .tree-dot--bottom {
     bottom: 0;
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%) scale(var(--dot-scale, 1));
   }
 
   .tree-dot--top {
     top: 0;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
   }
 
   /* Current role — larger, filled, with a relay of pulsing rings (reduced-motion-safe;
@@ -1517,10 +1551,17 @@ html {
 
   /* Connectors — thin teal lines. Each gap-bridging connector sits in the row below its
      gap and bleeds up by --tree-rg, so it spans exactly card-edge → card-edge. */
+  /* Scroll-fill: `--fill` (0→1, set per connector by TreeConnector) paints `--tree-line` over
+     the dim track top→down as the fill front passes. Default 1 = fully drawn. */
   .tree-conn {
     align-self: start;
     width: var(--tree-line-w);
-    background: var(--tree-line);
+    --fill: 1;
+    background: linear-gradient(
+      to bottom,
+      var(--tree-line) 0 calc(var(--fill) * 100%),
+      var(--tree-line-dim) calc(var(--fill) * 100%) 100%
+    );
     justify-self: center;
     pointer-events: none;
   }
@@ -1539,7 +1580,12 @@ html {
     height: calc(var(--tree-merge-h) - var(--tree-merge-y));
     width: var(--tree-line-w);
     transform: translateX(-50%);
-    background: var(--tree-line);
+    --fill: 1;
+    background: linear-gradient(
+      to bottom,
+      var(--tree-line) 0 calc(var(--fill) * 100%),
+      var(--tree-line-dim) calc(var(--fill) * 100%) 100%
+    );
     pointer-events: none;
   }
 
@@ -1590,6 +1636,10 @@ html {
     align-self: start;
     height: var(--tree-fork-h);
     list-style: none;
+    /* The fork sketches in like the straight lines: a clip-path reveals the corners top→
+       bottom as the front passes (`--fill`, inherited by the pseudo-elements). A plain
+       colour fade would show the corner faintly before the front reaches it. Default 1. */
+    --fill: 1;
     pointer-events: none;
   }
 
@@ -1601,6 +1651,8 @@ html {
     bottom: 0;
     width: 25%;
     border-bottom: var(--tree-line-w) solid var(--tree-line);
+    /* Hidden from the bottom up until drawn, so it grows downward into the spine. */
+    clip-path: inset(0 0 calc((1 - var(--fill)) * 100%) 0);
   }
 
   /* Left: A's line continues down at 25%, curves in along the bottom to 50%. The box is

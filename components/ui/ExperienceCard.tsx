@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { motion, type MotionStyle, type MotionValue } from "framer-motion";
+
 import { EducationCertificateTrigger } from "@/components/sections/EducationCertificateViewer";
 import type { GraphNode } from "@/lib/content/experienceGraph";
 import type { AboutEducation, EducationCertificateRef, Experience } from "@/lib/content/types";
@@ -15,41 +17,59 @@ import { cn } from "@/lib/utils";
  * unique.
  */
 
-const easeOut = [0.22, 1, 0.36, 1] as const;
-
 /**
- * Opacity-only reveal shared by both layouts. Each node/cell owns its connecting lines,
- * so animating position would momentarily disconnect a sliding element's lines from its
- * settled neighbour. Fading in place keeps the graph/tree lines continuous throughout
- * the staggered reveal. The `custom` value is the stagger index.
+ * Scroll-fill MotionValues for a card, threaded from the owning row/cell
+ * (ExperienceGitNode / ExperienceTreeGraph): `frame` (0→1) fades the card edge in, then
+ * `body` (0→1) fades the content. Undefined = render statically (fully drawn) — used for the
+ * pre-mount / reduced-motion fallback. See `useScrollDraw` and `CardShell`.
  */
-export const rowRevealVariants = {
-  hidden: { opacity: 0 },
-  visible: (index: number) => ({
-    opacity: 1,
-    transition: { duration: 0.6, ease: easeOut, delay: Math.min(index * 0.07, 0.25) },
-  }),
+export type CardFill = {
+  frame: MotionValue<number>;
+  body: MotionValue<number>;
+  /** Content rise (px → 0) for the body's eased entrance; only the inner content moves, so
+   *  the card frame — and the commit dot anchored to its edge — stays put. */
+  bodyY: MotionValue<number>;
 };
 
 /**
- * Large-screen tree reveal: cards rise and settle as you scroll in, staggered by their
- * `reveal` index so the tree "grows" upward from the root. Only the cards transform — the
- * connector lines are separate, statically-placed grid items — and the move is small and
- * fades in, so the commit dots re-seat onto their lines as each card settles. Off under
- * reduced motion (the cell renders in its final state). The `custom` value is the stagger
- * index (root → stem → branches).
+ * Card shell shared by both card bodies. When `fill` is set it renders a `motion.article`
+ * that fades the whole card in (`opacity` + the `--card-frame` edge var) as the fill front
+ * arrives, with the content in a `motion.div` whose opacity (`fill.body`) follows closely
+ * behind — so the card appears on scroll and its text lands just after, not a screen later.
+ * When `fill` is undefined it renders a plain article/div that inherits the CSS defaults
+ * (fully drawn) for the SSR / pre-mount / reduced-motion fallback.
  */
-export const treeCellRevealVariants = {
-  hidden: { opacity: 0, y: 22, scale: 0.965 },
-  visible: (index: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    // Slow, gentle settle (~80% longer than a typical reveal); the early trigger lives in
-    // the cell's `viewport` margin (ExperienceTreeGraph) so it starts well before scroll-in.
-    transition: { duration: 1.3, ease: easeOut, delay: Math.min(index * 0.16, 0.7) },
-  }),
-};
+function CardShell({
+  className,
+  headingId,
+  fill,
+  children,
+}: {
+  className: string;
+  headingId: string;
+  fill?: CardFill;
+  children: React.ReactNode;
+}) {
+  if (!fill) {
+    return (
+      <article aria-labelledby={headingId} className={className}>
+        <div className="experience-card-body">{children}</div>
+      </article>
+    );
+  }
+
+  return (
+    <motion.article
+      aria-labelledby={headingId}
+      className={className}
+      style={{ opacity: fill.frame, "--card-frame": fill.frame } as MotionStyle}
+    >
+      <motion.div className="experience-card-body" style={{ opacity: fill.body, y: fill.bodyY }}>
+        {children}
+      </motion.div>
+    </motion.article>
+  );
+}
 
 const MONTH_LABELS = [
   "Jan",
@@ -80,6 +100,8 @@ type NodeCardProps = {
   node: GraphNode;
   headingId: string;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
+  /** Scroll-fill MotionValues; omit for the static (pre-mount / reduced-motion) fallback. */
+  fill?: CardFill;
 };
 
 /**
@@ -117,13 +139,14 @@ function OrgLogo({ src }: { src: string }) {
  * `node.card.kind` discriminator picks the body; both layouts call this so the switch
  * lives in one place.
  */
-export function NodeCard({ node, headingId, onOpenCertificate }: NodeCardProps) {
+export function NodeCard({ node, headingId, onOpenCertificate, fill }: NodeCardProps) {
   if (node.card.kind === "education") {
     return (
       <EducationRootCard
         education={node.card.education}
         headingId={headingId}
         onOpenCertificate={onOpenCertificate}
+        fill={fill}
       />
     );
   }
@@ -135,6 +158,7 @@ export function NodeCard({ node, headingId, onOpenCertificate }: NodeCardProps) 
       isCurrent={node.isCurrent}
       headingId={headingId}
       onOpenCertificate={onOpenCertificate}
+      fill={fill}
     />
   );
 }
@@ -145,6 +169,7 @@ type ExperienceCardBodyProps = {
   isCurrent: boolean;
   headingId: string;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
+  fill?: CardFill;
 };
 
 /** The role card — mirrors the former TimelineEntry card (concurrency badge dropped:
@@ -155,6 +180,7 @@ export function ExperienceCardBody({
   isCurrent,
   headingId,
   onOpenCertificate,
+  fill,
 }: ExperienceCardBodyProps) {
   const {
     organization,
@@ -172,8 +198,9 @@ export function ExperienceCardBody({
   } = experience;
 
   return (
-    <article
-      aria-labelledby={headingId}
+    <CardShell
+      headingId={headingId}
+      fill={fill}
       className={cn("experience-card", isCurrent && "experience-card--current")}
     >
       {organizationLogo ? <OrgLogo src={organizationLogo} /> : null}
@@ -251,7 +278,7 @@ export function ExperienceCardBody({
           </a>
         </p>
       ) : null}
-    </article>
+    </CardShell>
   );
 }
 
@@ -259,6 +286,7 @@ type EducationRootCardProps = {
   education: AboutEducation;
   headingId: string;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
+  fill?: CardFill;
 };
 
 /** The root node — the B.Sc. degree, with the same in-page certificate viewer as the
@@ -267,9 +295,10 @@ export function EducationRootCard({
   education,
   headingId,
   onOpenCertificate,
+  fill,
 }: EducationRootCardProps) {
   return (
-    <article aria-labelledby={headingId} className="experience-card">
+    <CardShell headingId={headingId} fill={fill} className="experience-card">
       {education.institutionLogo ? <OrgLogo src={education.institutionLogo} /> : null}
       <div
         className={cn(
@@ -308,7 +337,7 @@ export function EducationRootCard({
           />
         </div>
       ) : null}
-    </article>
+    </CardShell>
   );
 }
 
