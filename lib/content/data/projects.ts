@@ -1,16 +1,16 @@
 /**
  * Projects content (spec §8.4, §11.3) — used by the Projects Preview section.
  *
- * Confidentiality gating (spec §15.4, Dependency Rule 9): the three Check Point
- * projects are `confidentialityReviewed: false` and MUST NOT render until the owner
- * confirms publishability. The volunteer Students Tracking System is owner-safe
- * (`true`) and uses generalized language only — no sensitive teenager / health /
- * risk-evaluation detail (§8.4 privacy note), mirroring the published Max Impact
- * experience entry.
+ * Confidentiality (spec §15.4, Dependency Rule 9): all four projects are
+ * owner-approved for publication (`confidentialityReviewed: true`). The three Check
+ * Point projects are published in generalized, public-safe form (owner sign-off):
+ * the company is named per §15.3; scale is stated generically ("billions of events
+ * weekly", not an exact non-public figure) to match the approved Experience wording;
+ * internal processing mechanics are softened. The volunteer Students Tracking System
+ * uses generalized language only — no sensitive teenager / health / risk-evaluation
+ * detail (§8.4 privacy note).
  *
- * Blocked inputs (TBD — listed, not invented):
- * - Publish approval for the Check Point project names, internal behaviors, and the
- *   "2 billion events per week" scale (§19.6). Held behind the `false` flags above.
+ * Still TBD (listed, not invented):
  * - Project years (§19.6) — `year` omitted everywhere.
  * - Final project categories (§19.6) — `category` omitted everywhere.
  * - Students Tracking System backend focus (§8.4) — `backendFocus` omitted for it.
@@ -21,7 +21,7 @@ import { validateProjectList } from "../validate";
 
 const projectData = [
   {
-    // §8.4 Project 1 — pending publish approval for name / behavior / scale (§19.6).
+    // §8.4 Project 1 — owner-approved; scale stated generically (was "2 billion/week").
     name: "Microsoft Office Events",
     role: "Project Leader",
     shortDescription:
@@ -29,13 +29,13 @@ const projectData = [
     problemSolved:
       "Fetching important information from Microsoft and Google, crucial for analytics and security insights.",
     techStack: ["AWS", "Python", "Docker", "Jenkins", "System Design"],
-    backendFocus: "High-scale system, 2 billion events per week",
+    backendFocus: "High-scale system processing billions of events weekly",
     whyImportant:
       "The events fetched were crucial for cybersecurity scanning processes, identifying malicious operations.",
-    confidentialityReviewed: false,
+    confidentialityReviewed: true,
   },
   {
-    // §8.4 Project 2 — pending approval for product-impact wording + tech list (§19.6).
+    // §8.4 Project 2 — owner-approved; public-safe product + tech-stack wording.
     name: "Email Archiving Service",
     role: "Developer in a team",
     shortDescription:
@@ -54,14 +54,14 @@ const projectData = [
     backendFocus: "High scale, advanced search on huge data",
     whyImportant:
       "The service served a main role in the product and helped attract more customers.",
-    confidentialityReviewed: false,
+    confidentialityReviewed: true,
   },
   {
-    // §8.4 Project 3 — pending approval for name + operational behavior (§19.6).
+    // §8.4 Project 3 — owner-approved; internal processing mechanics softened.
     name: "Final Failure-Watchdog",
     role: "Project Leader",
     shortDescription:
-      "A service acting as the final watchdog. It identifies stuck entities in the system and quickly releases them to the customer by bypassing the main entity-processing flow.",
+      "A service acting as the final watchdog. It identifies stuck entities in the system and reliably releases them so they reach the customer without delay.",
     problemSolved:
       "Stuck entities are identified and released to the customer reliably.",
     techStack: [
@@ -76,7 +76,7 @@ const projectData = [
       "Very high scale, high resilience, high availability, closely monitored system",
     whyImportant:
       "This system had high product focus because it helped ensure entities did not get stuck and were delivered to users.",
-    confidentialityReviewed: false,
+    confidentialityReviewed: true,
   },
   {
     // §8.4 Project 4 — volunteer; owner-safe. Generalized language only (§8.4 privacy note).
