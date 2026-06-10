@@ -25,3 +25,4 @@ pnpm-debug.log*
 
 # Claude Code local (personal) settings - never commit
 .claude/*
+.vercel

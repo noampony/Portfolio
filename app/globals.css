@@ -378,6 +378,24 @@ html {
   backdrop-filter: blur(14px) saturate(130%);
 }
 
+.experience-quote-mark {
+  display: block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.25rem;
+  line-height: 0.8;
+  color: color-mix(in srgb, var(--accent) 72%, var(--text-secondary));
+  text-shadow: 0 0 1.25rem color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.experience-quote-mark--open {
+  margin-bottom: -0.25rem;
+}
+
+.experience-quote-mark--close {
+  margin-top: -0.15rem;
+  text-align: right;
+}
+
 .experience-quote-text {
   margin: 0;
   font-style: italic;
@@ -419,8 +437,7 @@ html {
 }
 
 .about-stat-card,
-.about-fields-panel,
-.about-education-card {
+.about-fields-panel {
   position: relative;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, white 18%, var(--accent) 20%);
@@ -445,8 +462,7 @@ html {
 }
 
 .about-stat-card::before,
-.about-fields-panel::before,
-.about-education-card::before {
+.about-fields-panel::before {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -459,8 +475,7 @@ html {
 }
 
 .about-stat-card::after,
-.about-fields-panel::after,
-.about-education-card::after {
+.about-fields-panel::after {
   position: absolute;
   inset: 1px;
   border-radius: calc(var(--radius) - 1px);
@@ -471,8 +486,7 @@ html {
   pointer-events: none;
 }
 
-.about-stat-card:hover,
-.about-education-card:hover {
+.about-stat-card:hover {
   border-color: color-mix(in srgb, white 24%, var(--accent) 42%);
   box-shadow:
     0 1.5rem 4rem rgb(0 0 0 / 0.24),
@@ -496,62 +510,9 @@ html {
 }
 
 .about-fields-panel {
-  padding: 1rem;
-}
-
-.about-education-card {
-  padding: 0.875rem 1rem;
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
-}
-
-.about-education-label {
-  margin: 0 0 0.625rem;
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: var(--type-small);
-  letter-spacing: 0.14em;
-  color: var(--accent);
-}
-
-.about-education-body {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.75rem;
-}
-
-.about-education-timeline {
   display: flex;
-  width: 0.625rem;
   flex-direction: column;
-  align-items: center;
-  padding-top: 0.35rem;
-}
-
-.about-education-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  flex: none;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 42%, transparent);
-}
-
-.about-education-line {
-  width: 1px;
-  flex: 1;
-  min-height: 1.5rem;
-  margin-top: 0.25rem;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--accent) 55%, var(--border)),
-    color-mix(in srgb, var(--border) 88%, transparent)
-  );
-}
-
-.about-education-content {
-  min-width: 0;
+  padding: 1rem;
 }
 
 .about-layout-copy {
@@ -564,49 +525,6 @@ html {
 
 .about-fields-panel--stretch {
   height: 100%;
-}
-
-.about-education-title-row,
-.about-education-honor-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.3125rem 0.375rem;
-}
-
-.about-education-honor-row {
-  margin-top: 0.625rem;
-}
-
-.about-education-title {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.375rem;
-  margin: 0;
-  font-size: var(--type-body);
-  font-weight: 600;
-  line-height: var(--leading-body);
-  color: var(--text-primary);
-}
-
-.about-education-title > span {
-  flex: 1;
-  min-width: 0;
-}
-
-.about-education-dates {
-  margin: 0.25rem 0 0;
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: var(--type-small);
-  line-height: var(--leading-small);
-  color: var(--accent);
-}
-
-.about-education-summary {
-  margin: 0.5rem 0 0;
-  font-size: var(--type-small);
-  line-height: 1.45;
-  color: var(--text-secondary);
 }
 
 .about-education-honor-badge {
@@ -633,22 +551,25 @@ html {
 
 .about-cert-trigger {
   display: inline-flex;
-  width: 1.625rem;
-  height: 1.625rem;
   flex: none;
   align-items: center;
-  justify-content: center;
-  margin-top: 0.125rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--border));
-  border-radius: 0.375rem;
+  gap: 0.375rem;
+  margin-top: 0.0625rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.4375rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
+  border-radius: 0.5rem;
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--accent) 16%, var(--bg-surface-raised)),
-      color-mix(in srgb, var(--gradient-to) 10%, var(--bg-surface-raised))
+      color-mix(in srgb, var(--accent) 18%, var(--bg-surface-raised)),
+      color-mix(in srgb, var(--gradient-to) 12%, var(--bg-surface-raised))
     );
   color: var(--accent-hover);
-  padding: 0;
+  font-family: var(--font-mono), var(--font-mono-fallback);
+  font-size: var(--type-small);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
@@ -661,9 +582,13 @@ html {
     transform 160ms ease;
 }
 
+.about-cert-trigger-label {
+  white-space: nowrap;
+}
+
 .about-cert-trigger-icon {
-  width: 0.8125rem;
-  height: 0.8125rem;
+  width: 0.875rem;
+  height: 0.875rem;
   flex: none;
 }
 
@@ -684,10 +609,6 @@ html {
 .about-cert-trigger:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-.about-education-honor-row .about-cert-trigger {
-  margin-top: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -720,6 +641,53 @@ html {
 .cert-viewer-dialog::backdrop {
   background: rgb(0 0 0 / 0.3);
   backdrop-filter: blur(6px);
+}
+
+/* Pop-in / fade-out for the certificate dialog + its backdrop. Plain CSS transitions on a
+   native <dialog>: `@starting-style` supplies the entry "from" state and `transition-behavior:
+   allow-discrete` (on `display`/`overlay`) keeps the element around long enough to animate the
+   close — so both open and close are smooth with no JS. The from-state styles live only inside
+   this query, so reduced-motion (and browsers without @starting-style) just show it instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .cert-viewer-dialog {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+    transition:
+      opacity 420ms ease,
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      overlay 520ms ease allow-discrete,
+      display 520ms ease allow-discrete;
+  }
+
+  .cert-viewer-dialog[open] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  @starting-style {
+    .cert-viewer-dialog[open] {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+    }
+  }
+
+  .cert-viewer-dialog::backdrop {
+    opacity: 0;
+    transition:
+      opacity 420ms ease,
+      overlay 520ms ease allow-discrete,
+      display 520ms ease allow-discrete;
+  }
+
+  .cert-viewer-dialog[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .cert-viewer-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
 }
 
 .cert-viewer-panel {
@@ -941,14 +909,12 @@ html {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .about-stat-card:hover,
-  .about-education-card:hover {
+  .about-stat-card:hover {
     transform: translateY(-0.25rem);
   }
 
   .about-stat-card:hover::before,
-  .about-fields-panel:hover::before,
-  .about-education-card:hover::before {
+  .about-fields-panel:hover::before {
     animation: about-shimmer-pass 900ms ease-out;
   }
 
@@ -975,207 +941,301 @@ html {
   }
 }
 
-/* ===== Experience timeline (spec §8.3) =============================================
-   A reverse-chronological timeline. The glass card, accent rail and nodes mirror the
-   About card system (.about-stat-card / .about-education-card / .about-education-line)
-   so the section reads as part of the same site. The scroll-reveal itself is handled
-   by Framer Motion in TimelineEntry.tsx (reduced-motion-safe). The decorative effects
-   below — hover lift, shimmer, current-node pulse — are gated behind
-   `prefers-reduced-motion: no-preference` and use only transform/opacity (§7.3/§14.8). */
+/* ===== Experience git tree (spec §8.3) =============================================
+   A git commit graph reading bottom → top: a main branch (left lane) running straight
+   up, a side branch that forks right at "Malware Analyst" and merges back into the
+   current role at the top. The glass card mirrors the About card system so the section
+   reads as part of the same site. Each row is a 2-column grid — a fixed-width graph
+   gutter (lane lines + fork/merge elbows + commit dot) on the left and the card on the
+   right — so the lanes stay aligned regardless of card height, with no JS measurement
+   and no layout shift. The per-row reveal is a reduced-motion-safe Framer Motion fade-
+   up in ExperienceGitNode.tsx; the decorative card hover/shimmer and current-dot pulse
+   below are gated behind `prefers-reduced-motion: no-preference` and use only
+   transform/opacity (§7.3/§14.8). */
 
-.experience-timeline {
-  position: relative;
-}
-
-/* The ordered list itself carries no visual chrome — the rail and terminals are
-   owned by the wrapper so the <ol> contains only its <li> entries. */
-.experience-list {
+.git-graph {
+  --git-gutter: 2.5rem;
+  --git-lane-main: 0.75rem;
+  --git-lane-side: 1.85rem;
+  --git-branch-dx: calc(var(--git-lane-side) - var(--git-lane-main));
+  --git-dot-top: 2.1rem;
+  --git-line-w: 2px;
+  --git-col-gap: 0.75rem;
+  --git-line: color-mix(in srgb, var(--accent) 60%, var(--border));
+  /* Not-yet-drawn portion: transparent, so the line *sketches* in (the bright stroke grows
+     as the scroll front advances) rather than filling over a visible track. See `--fill`. */
+  --git-line-dim: transparent;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* Timeline row: hosts the gradient rail (::before) and reserves room for the node. */
-.experience-entry {
+@media (min-width: 640px) {
+  .git-graph {
+    --git-gutter: 3rem;
+    --git-lane-main: 0.95rem;
+    --git-lane-side: 2.35rem;
+    --git-dot-top: 2.4rem;
+    --git-col-gap: 1rem;
+  }
+}
+
+/* One node per row: [graph gutter] [card]. The gutter stretches to the full row
+   height so its lanes meet the next row's lanes; row spacing lives on the card cell. */
+.git-graph-row {
   position: relative;
-  padding-left: 2rem;
-  padding-bottom: 1.75rem;
+  display: grid;
+  grid-template-columns: var(--git-gutter) minmax(0, 1fr);
+  column-gap: var(--git-col-gap);
   list-style: none;
 }
 
+/* Horizontal connector — runs from the commit dot (`--git-connector-start`) across
+   the column-gap to the card's left edge. The start x is set by the lane modifier
+   class below so the line always originates exactly at the dot, not the gutter edge. */
+.git-graph-row::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--git-dot-top) - var(--git-line-w) / 2);
+  left: var(--git-connector-start);
+  width: calc(var(--git-gutter) - var(--git-connector-start) + var(--git-col-gap));
+  height: var(--git-line-w);
+  /* Fills left→right from the dot toward the card. `--conn-fill` is inherited from the row
+     element (a pseudo-element can't carry its own inline var); defaults to 1 = fully drawn. */
+  background: linear-gradient(
+    to right,
+    var(--git-line) 0 calc(var(--conn-fill, 1) * 100%),
+    var(--git-line-dim) calc(var(--conn-fill, 1) * 100%) 100%
+  );
+  pointer-events: none;
+}
+
+/* Lane-specific connector origin — anchors the connector at the dot's lane x. */
+.git-graph-row--main {
+  --git-connector-start: var(--git-lane-main);
+}
+
+.git-graph-row--side {
+  --git-connector-start: var(--git-lane-side);
+}
+
+.git-graph-cell {
+  min-width: 0;
+  padding-bottom: 1.75rem;
+}
+
 @media (min-width: 640px) {
-  .experience-entry {
-    padding-left: 2.5rem;
+  .git-graph-cell {
     padding-bottom: 2.25rem;
   }
 }
 
-/* The rail — a single continuous line behind every row. A muted track sits
-   below an accent "progress" line that fills on scroll (driven by Framer Motion
-   in ExperienceTimeline.tsx). Both share this geometry so they stay aligned.
-   `top`/`bottom` land on the centres of the two end-cap dots (each end-cap is
-   `min-height: 1.5rem`, so its dot centre is 0.75rem from the wrapper edge),
-   which makes the line begin on the "Now" terminal and end on the "Start" one
-   regardless of how many roles render. The node sits at `left: 0.5rem`, so the
-   2px line is offset half its own width. */
-.experience-rail {
+/* The last row is the root (degree) — nothing hangs below it. */
+.git-graph-row:last-child .git-graph-cell {
+  padding-bottom: 0;
+}
+
+/* Graph gutter — the positioning context for the absolutely-placed lane lines, the
+   fork/merge elbows and the commit dot. Stretches to the full row height. */
+.git-graph-gutter {
+  position: relative;
+  display: block;
+  align-self: stretch;
+}
+
+/* Lane lines. Each lane is split at the dot (`--git-dot-top`) into a top half
+   (cell top → dot) and a bottom half (dot → cell bottom); adjacent rows' halves
+   meet, so a lane reads as one continuous vertical line down the gutter. */
+/* Scroll-fill: `--fill` (0→1, set per element by ExperienceGitNode while scrubbing) paints
+   the bright `--git-line` over the dim track from the top down. Defaults to 1, so SSR / no-JS
+   / reduced-motion render the line fully drawn (the original solid look). */
+.git-line {
   position: absolute;
-  left: calc(0.5rem - 1px);
-  top: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 0;
-  width: 2px;
-  border-radius: 999px;
+  width: var(--git-line-w);
+  --fill: 1;
+  background: linear-gradient(
+    to bottom,
+    var(--git-line) 0 calc(var(--fill) * 100%),
+    var(--git-line-dim) calc(var(--fill) * 100%) 100%
+  );
   pointer-events: none;
 }
 
-.experience-rail-track {
-  background: color-mix(in srgb, var(--border) 92%, transparent);
+.git-line--main {
+  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
 }
 
-/* Accent fill — collapsed by default (no-JS shows only the track); Framer Motion
-   scales it from the top as the section scrolls (or to full under reduced motion). */
-.experience-rail-progress {
-  transform: scaleY(0);
-  transform-origin: top center;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--accent) 85%, white),
-    color-mix(in srgb, var(--accent) 62%, var(--border))
-  );
-  box-shadow: 0 0 0.55rem color-mix(in srgb, var(--accent) 38%, transparent);
+.git-line--side {
+  left: calc(var(--git-lane-side) - var(--git-line-w) / 2);
 }
 
-/* Timeline terminals — explicit "Now" (top, most recent) and "Start" (bottom,
-   earliest) markers that bookend the rail. Each reserves 1.5rem of height so its
-   dot centre lands 0.75rem from the wrapper edge, matching the rail's anchors. */
-.experience-endcap {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 1.5rem;
-  padding-left: 2rem;
+.git-line--top {
+  top: 0;
+  height: var(--git-dot-top);
 }
 
-@media (min-width: 640px) {
-  .experience-endcap {
-    padding-left: 2.5rem;
-  }
+.git-line--bottom {
+  top: var(--git-dot-top);
+  bottom: 0;
 }
 
-.experience-endcap--now {
-  margin-bottom: 0.5rem;
+/* Continuation line — drawn above the topmost (current) node to signal that the
+   main branch is still live and continues beyond the graph's top edge. Fades from
+   the lane colour at the dot upward to transparent, reading as "this branch keeps
+   going" — matching the visual language of git UIs. */
+.git-line--continuation {
+  top: 0;
+  height: var(--git-dot-top);
+  background: linear-gradient(to bottom, transparent 0%, var(--git-line) 100%);
 }
 
-.experience-endcap--start {
-  margin-top: 0.25rem;
-}
-
-.experience-endcap-dot {
+/* Fork / merge elbows — one bordered box per corner draws the quarter-curve between
+   the main lane and the side lane, so the two legs join by construction. The box's
+   right border is the side-lane riser and stays collinear with the straight
+   `.git-line--side` segments (both centred on `--git-lane-side`). */
+.git-elbow {
   position: absolute;
-  left: 0.5rem;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 999px;
+  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
+  width: calc(var(--git-branch-dx) + var(--git-line-w));
+  /* A border can't be stroke-drawn without SVG, so the corner sketches in by fading from
+     transparent→bright over its sub-range (`--fill`, set by ExperienceGitNode). Default 1. */
+  --fill: 1;
+  border: 0 solid
+    color-mix(in srgb, var(--git-line) calc(var(--fill) * 100%), var(--git-line-dim));
+  pointer-events: none;
 }
 
-/* "Now" — a live, filled accent terminal (the most-recent point). */
-.experience-endcap--now .experience-endcap-dot {
-  width: 0.85rem;
-  height: 0.85rem;
-  background: var(--accent);
-  box-shadow:
-    0 0 0 0.18rem color-mix(in srgb, var(--accent) 16%, transparent),
-    0 0 0.9rem color-mix(in srgb, var(--accent) 50%, transparent);
+/* Split — forks up-and-right out of the branch-point dot into the side lane above. */
+.git-elbow--split {
+  top: 0;
+  height: var(--git-dot-top);
+  border-right-width: var(--git-line-w);
+  border-bottom-width: var(--git-line-w);
+  border-bottom-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
 }
 
-/* "Start" — an origin marker: a ring with a solid centre, reading as a beginning. */
-.experience-endcap--start .experience-endcap-dot {
-  width: 0.95rem;
-  height: 0.95rem;
-  background: var(--bg-base);
-  border: 2px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+/* Merge — the side lane curves down-and-left into the merge-point (current) dot. */
+.git-elbow--merge {
+  top: var(--git-dot-top);
+  bottom: 0;
+  border-right-width: var(--git-line-w);
+  border-top-width: var(--git-line-w);
+  border-top-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
 }
 
-.experience-endcap--start .experience-endcap-dot::after {
-  content: "";
+/* Commit dot — sits on its lane, vertically aligned with the card's title row. */
+.git-dot {
   position: absolute;
-  inset: 0.22rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 60%, var(--border));
-}
-
-.experience-endcap-label {
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: var(--type-small);
-  line-height: 1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.experience-endcap--now .experience-endcap-label {
-  color: var(--accent);
-}
-
-.experience-endcap--start .experience-endcap-label {
-  color: var(--text-muted);
-}
-
-/* Node — a dot sitting on the rail, vertically aligned with the card's title row. */
-.experience-node {
-  position: absolute;
-  left: 0.5rem;
-  top: 2.1rem;
+  top: var(--git-dot-top);
   z-index: 1;
   width: 0.875rem;
   height: 0.875rem;
-  transform: translate(-50%, -50%);
+  /* `--dot-scale` (0→1) lets the dot "pop" into being as the fill front reaches it; kept in
+     CSS so it composes with the centring translate (motion would otherwise overwrite the
+     whole transform). Defaults to 1 = fully formed. */
+  transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
   border: 2px solid var(--accent);
   border-radius: 999px;
   background: var(--bg-base);
   box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 28%, transparent);
+  pointer-events: none;
 }
 
-@media (min-width: 640px) {
-  .experience-node {
-    top: 2.4rem;
-  }
+.git-dot--main {
+  left: var(--git-lane-main);
 }
 
-/* Current role — filled, glowing node with a radiating ring (transform/opacity only). */
-.experience-node--current {
+.git-dot--side {
+  left: var(--git-lane-side);
+}
+
+/* Current role (the "Now" merge point) — noticeably larger, fully filled and
+   glowing. Two concentric rings pulse outward in relay so there is always one
+   in flight: a persistent "live" heartbeat. Static fallback (reduced-motion) is
+   still visually prominent — bigger dot + strong halo. */
+.git-dot--current {
+  /* Solid core; the dot sketches in by growing (scale) rather than colour-filling. */
   background: var(--accent);
+  width: 1.1rem;
+  height: 1.1rem;
+  border-width: 2.5px;
   box-shadow:
-    0 0 0 0.18rem color-mix(in srgb, var(--accent) 14%, transparent),
-    0 0 1rem color-mix(in srgb, var(--accent) 45%, transparent);
+    0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
+    0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
+    0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
-.experience-node--current::after {
+/* First ring — fires immediately. */
+.git-dot--current::after {
   content: "";
   position: absolute;
-  inset: -0.2rem;
+  inset: -0.22rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
-/* Concurrent role — a diamond marker (vs the round sequential nodes) signalling
-   the role branched off / ran in parallel with the ongoing one. */
-.experience-node--concurrent {
-  border-radius: 3px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  border-color: color-mix(in srgb, var(--accent) 70%, var(--border));
-  background: color-mix(in srgb, var(--accent) 22%, var(--bg-base));
+/* Second ring — fires offset so one ring is always expanding. */
+.git-dot--current::before {
+  content: "";
+  position: absolute;
+  inset: -0.28rem;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Root (the B.Sc. degree) — rendered as a plain commit dot, identical to every other
+   node so the timeline reads consistently (no special origin marker). */
+
+/* Organization / institution logo badge — pinned to the card's top-right corner, medium
+   sized so it reads without crowding the heading (the header reserves right padding for
+   it). The descendant selector outranks `.experience-card > *` so the absolute positioning
+   isn't overridden. A faint light wash keeps transparent/dark logos legible on the card. */
+.experience-card .experience-org-logo {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1875rem 0.3125rem;
+  border: 1px solid color-mix(in srgb, white 14%, var(--border));
+  border-radius: 0.4375rem;
+  background: color-mix(in srgb, white 8%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+}
+
+@media (min-width: 640px) {
+  .experience-card .experience-org-logo {
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+}
+
+/* Raster logos that carry an opaque (white) background: sit them on a white chip so the
+   logo's own background merges into the badge instead of showing as a white box. */
+.experience-card .experience-org-logo--light {
+  border-color: color-mix(in srgb, white 22%, var(--border));
+  background: #fff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 0 0 1px rgb(0 0 0 / 0.04);
 }
 
 /* Glass card — matches the About card surface for a consistent treatment. */
 .experience-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, white 16%, var(--accent) 18%);
+  /* `--card-frame` (0→1) fades the edge in first ("frame glows in"), then `--card-body`
+     (on .experience-card-body) fades the content. Both default to 1 = fully drawn. */
+  --card-edge: color-mix(in srgb, white 16%, var(--accent) 18%);
+  border: 1px solid
+    color-mix(in srgb, var(--card-edge) calc(var(--card-frame, 1) * 100%), transparent);
   border-radius: var(--radius);
   background:
     radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.1), transparent 32%),
@@ -1246,7 +1306,8 @@ html {
 
 /* Current role card — a stronger accent edge so it reads as "live". */
 .experience-card--current {
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+  --card-edge: color-mix(in srgb, var(--accent) 42%, var(--border));
+  border-color: color-mix(in srgb, var(--card-edge) calc(var(--card-frame, 1) * 100%), transparent);
   box-shadow:
     0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
     0 0 1.75rem color-mix(in srgb, var(--accent) 12%, transparent),
@@ -1293,14 +1354,55 @@ html {
 
 @keyframes experience-node-ring {
   0% {
-    opacity: 0.6;
-    transform: scale(0.75);
+    opacity: 0.85;
+    transform: scale(1);
   }
 
-  70%,
+  75%,
   100% {
     opacity: 0;
-    transform: scale(1.8);
+    transform: scale(2.6);
+  }
+}
+
+/* Breathing glow on the dot itself — pulses the outer halo between a resting
+   intensity and a brighter flare in sync with the radiating rings. */
+@keyframes git-dot-glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
+      0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
+      0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 0.45rem color-mix(in srgb, var(--accent) 18%, transparent),
+      0 0 2rem color-mix(in srgb, var(--accent) 88%, transparent),
+      0 0 4.5rem color-mix(in srgb, var(--accent) 48%, transparent);
+  }
+}
+
+/* "Live" heartbeat for the current-role card — the whole card (accent edge + ambient
+   glow) breathes in sync with its commit dot, so the active role reads as alive rather
+   than just having a static accent border. In sync (2.4s) with git-dot-glow-pulse. */
+@keyframes experience-card-live {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+    box-shadow:
+      0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
+      0 0 1.5rem color-mix(in srgb, var(--accent) 12%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.18);
+  }
+
+  50% {
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--border));
+    box-shadow:
+      0 1.25rem 3.5rem rgb(0 0 0 / 0.26),
+      0 0 2.75rem color-mix(in srgb, var(--accent) 34%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.22);
   }
 }
 
@@ -1309,12 +1411,346 @@ html {
     transform: translateY(-0.25rem);
   }
 
+  /* The whole current-role card pulses (not only its dot), reading as "live". */
+  .experience-card--current {
+    animation: experience-card-live 2.4s ease-in-out infinite;
+  }
+
   .experience-card:hover::before {
     animation: experience-card-shimmer 900ms ease-out;
   }
 
-  .experience-node--current::after {
-    animation: experience-node-ring 2.8s ease-out infinite;
+  /* Dot breathes, two rings fire in relay (0s + 1.2s offset) — one ring is
+     always mid-expansion, creating a continuous "live" heartbeat effect. */
+  .git-dot--current {
+    animation: git-dot-glow-pulse 2.4s ease-in-out infinite;
+  }
+
+  .git-dot--current::after {
+    animation: experience-node-ring 2.4s ease-out infinite;
+  }
+
+  .git-dot--current::before {
+    animation: experience-node-ring 2.4s ease-out 1.2s infinite;
+  }
+}
+
+/* ===== Experience tree — large screens (≥ md) ======================================
+   The big-screen alternative to the git tree above: an upward-growing tree whose root
+   (the degree) is centred at the bottom, a stem rising to the branch-point card, then a
+   fork into a single left branch (the current role — ends highest) and a two-card right
+   branch (the side roles). The small git tree (.git-graph) stays for < md.
+
+   Rendering is gated in JS (useMediaQuery, min-width:768px) and this block is gated to
+   the same width as a safety net. Layout is a 2-equal-column grid, so the branch lines
+   sit at fixed reference positions — col centres at 25% / 75%, spine at 50% — and need
+   no JS measurement. Vertical connector extents come from grid track sizing plus
+   negative-margin bleed into the row gaps, so they stay glued to cards of any height
+   with no layout shift. Connectors/dots are decorative (aria-hidden). Reuses the git
+   line token, glass card and dot keyframes. */
+
+@media (min-width: 768px) {
+  .experience-tree {
+    --tree-line-w: 2px;
+    --tree-line: color-mix(in srgb, var(--accent) 60%, var(--border));
+    /* Not-yet-drawn portion: transparent so the line sketches in (mirrors --git-line-dim). */
+    --tree-line-dim: transparent;
+    --tree-rg: 2.75rem; /* vertical gap that each connector bridges */
+    --tree-cgap: clamp(1.5rem, 5vw, 4rem); /* gutter between the two branch columns */
+    --tree-fork-h: 2.5rem; /* height of the fork zone */
+    --tree-fork-r: 1rem; /* fork corner radius */
+    --tree-a-rise: clamp(3rem, 7vw, 6rem); /* how much higher branch A (current role) ends */
+    --tree-card-max: 30rem; /* stem/root reading width */
+    --tree-merge-h: 3rem; /* space above branch-A for the top merge zone (= branch-A top y) */
+    --tree-merge-y: 1.25rem; /* y of the merge bar (from the tree's top edge) */
+
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0;
+    row-gap: var(--tree-rg);
+    max-width: 64rem;
+    margin: 0 auto;
+    /* Top padding holds both the breathing room above the (raised) branch-A card and the
+       top merge zone (--tree-merge-h above branch-A, which sits --tree-a-rise above the
+       row). Tracks both so the gap stays stable as they change. */
+    padding: calc(var(--tree-a-rise) + var(--tree-merge-h)) 0 0;
+    list-style: none;
+  }
+
+  /* Cards — placed explicitly so DOM order can stay chronological while the visual
+     order is 2-D. Branch cards are narrower than their column by --tree-cgap, leaving a
+     gutter at the central spine; the card centre stays on the column centre (25%/75%). */
+  .experience-tree-cell {
+    min-width: 0;
+    list-style: none;
+  }
+
+  .experience-tree-cardwrap {
+    position: relative; /* dot anchor — its box is the card box */
+    width: 100%;
+  }
+
+  .experience-tree-cell--branch-a,
+  .experience-tree-cell--branch-b-top,
+  .experience-tree-cell--branch-b-bottom {
+    width: calc(100% - var(--tree-cgap));
+    justify-self: center;
+  }
+
+  /* Branch A spans the two branch rows as a flex column: card on top, then a flex
+     filler line down to the fork (see .tree-conn--branch-a-fill). */
+  .experience-tree-cell--branch-a {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Branch A ends a touch higher than branch B's top card. */
+  .experience-tree-cell--branch-a .experience-tree-cardwrap {
+    margin-top: calc(-1 * var(--tree-a-rise));
+  }
+
+  .experience-tree-cell--branch-b-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .experience-tree-cell--branch-b-bottom {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .experience-tree-cell--stem,
+  .experience-tree-cell--root {
+    grid-column: 1 / 3;
+    justify-self: center;
+    width: 100%;
+    max-width: var(--tree-card-max);
+  }
+
+  .experience-tree-cell--stem {
+    grid-row: 4;
+  }
+
+  .experience-tree-cell--root {
+    grid-row: 5;
+  }
+
+  /* Commit dots — sit on the card edge where a connector meets it. */
+  .tree-dot {
+    position: absolute;
+    left: 50%;
+    z-index: 2;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid var(--accent);
+    border-radius: 999px;
+    background: var(--bg-base);
+    box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 28%, transparent);
+    pointer-events: none;
+  }
+
+  /* `--dot-scale` (0→1) lets the dot pop in as the fill front reaches it; composed with the
+     centring translate so motion doesn't overwrite the whole transform. Default 1. */
+  .tree-dot--bottom {
+    bottom: 0;
+    transform: translate(-50%, 50%) scale(var(--dot-scale, 1));
+  }
+
+  .tree-dot--top {
+    top: 0;
+    transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
+  }
+
+  /* Current role — larger, filled, with a relay of pulsing rings (reduced-motion-safe;
+     the static fallback is still a prominent glowing dot). */
+  .tree-dot--current {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-width: 2.5px;
+    background: var(--accent);
+    box-shadow:
+      0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
+      0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
+      0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  .tree-dot--current::after,
+  .tree-dot--current::before {
+    content: "";
+    position: absolute;
+    inset: -0.22rem;
+    border-radius: 999px;
+    border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tree-dot--current::before {
+    inset: -0.28rem;
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  /* Root (degree) — a plain commit dot, identical to every other node (no special
+     origin marker), so the education node matches the rest of the tree. */
+
+  /* Connectors — thin teal lines. Each gap-bridging connector sits in the row below its
+     gap and bleeds up by --tree-rg, so it spans exactly card-edge → card-edge. */
+  /* Scroll-fill: `--fill` (0→1, set per connector by TreeConnector) paints `--tree-line` over
+     the dim track top→down as the fill front passes. Default 1 = fully drawn. */
+  .tree-conn {
+    align-self: start;
+    width: var(--tree-line-w);
+    --fill: 1;
+    background: linear-gradient(
+      to bottom,
+      var(--tree-line) 0 calc(var(--fill) * 100%),
+      var(--tree-line-dim) calc(var(--fill) * 100%) 100%
+    );
+    justify-self: center;
+    pointer-events: none;
+  }
+
+  /* ----- Top continuation -----------------------------------------------------------
+     Absolutely positioned over the tree's top padding (so it never affects the grid).
+     Coordinates are measured from the tree's top edge; branch-A's card top sits at
+     --tree-merge-h. A line rises from branch-A's live HEAD dot (on the card's top edge,
+     25%) and continues up, fading out — the current role's branch is still live. */
+
+  /* Solid part: from the Backend card top (--tree-merge-h) up to --tree-merge-y. */
+  .tree-merge-stem {
+    position: absolute;
+    left: 25%;
+    top: var(--tree-merge-y);
+    height: calc(var(--tree-merge-h) - var(--tree-merge-y));
+    width: var(--tree-line-w);
+    transform: translateX(-50%);
+    --fill: 1;
+    background: linear-gradient(
+      to bottom,
+      var(--tree-line) 0 calc(var(--fill) * 100%),
+      var(--tree-line-dim) calc(var(--fill) * 100%) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Fading part: continues up from --tree-merge-y to the top edge and fades out. */
+  .tree-merge-head {
+    position: absolute;
+    left: 25%;
+    top: 0;
+    height: var(--tree-merge-y);
+    width: var(--tree-line-w);
+    transform: translateX(-50%);
+    background: linear-gradient(to top, var(--tree-line), transparent);
+    pointer-events: none;
+  }
+
+  /* Branch A's descender: a flex filler inside the branch-A cell, centred on col-1
+     (25%). It grows to whatever height branch B's stack imposes and bleeds down one gap
+     into the fork, so it stays glued to the card bottom with no height math. */
+  .tree-conn--branch-a-fill {
+    flex: 1 1 auto;
+    min-height: var(--tree-rg);
+    align-self: center;
+    margin-bottom: calc(-1 * var(--tree-rg));
+  }
+
+  /* Between the two branch-B cards (col-2 centre, 75%). */
+  .tree-conn--branch-b-riser {
+    grid-column: 2;
+    grid-row: 2;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  /* Branch B's lower card down to the fork. */
+  .tree-conn--branch-b {
+    grid-column: 2;
+    grid-row: 3;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  /* Fork zone — curves the two branch lines (25% / 75%) into the central spine (50%),
+     using mirrored bordered quarter-elbows like the git-tree fork. */
+  .tree-fork {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    position: relative;
+    align-self: start;
+    height: var(--tree-fork-h);
+    list-style: none;
+    /* The fork sketches in like the straight lines: a clip-path reveals the corners top→
+       bottom as the front passes (`--fill`, inherited by the pseudo-elements). A plain
+       colour fade would show the corner faintly before the front reaches it. Default 1. */
+    --fill: 1;
+    pointer-events: none;
+  }
+
+  .tree-fork::before,
+  .tree-fork::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 25%;
+    border-bottom: var(--tree-line-w) solid var(--tree-line);
+    /* Hidden from the bottom up until drawn, so it grows downward into the spine. */
+    clip-path: inset(0 0 calc((1 - var(--fill)) * 100%) 0);
+  }
+
+  /* Left: A's line continues down at 25%, curves in along the bottom to 50%. The box is
+     nudged left by half the line width and widened to match, so the drawn border-left
+     centres exactly on 25% (the branch-A connector's centre) while its right edge stays
+     on the 50% spine — eliminating the 1px sideways jog that made the join look broken. */
+  .tree-fork::before {
+    left: calc(25% - var(--tree-line-w) / 2);
+    width: calc(25% + var(--tree-line-w) / 2);
+    border-left: var(--tree-line-w) solid var(--tree-line);
+    border-bottom-left-radius: var(--tree-fork-r);
+  }
+
+  /* Right: B's line continues down at 75%, curves in along the bottom to 50%. Widened by
+     half the line width so the drawn border-right centres exactly on 75% (the branch-B
+     connector's centre), keeping the vertical continuous through the join. */
+  .tree-fork::after {
+    left: 50%;
+    width: calc(25% + var(--tree-line-w) / 2);
+    border-right: var(--tree-line-w) solid var(--tree-line);
+    border-bottom-right-radius: var(--tree-fork-r);
+  }
+
+  /* Central tap (50%): fork bottom down to the stem card. */
+  .tree-conn--tap {
+    grid-column: 1 / 3;
+    grid-row: 4;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  /* Stem card down to the root card (50%). */
+  .tree-conn--stem {
+    grid-column: 1 / 3;
+    grid-row: 5;
+    height: var(--tree-rg);
+    margin-top: calc(-1 * var(--tree-rg));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tree-dot--current {
+      animation: git-dot-glow-pulse 2.4s ease-in-out infinite;
+    }
+
+    .tree-dot--current::after {
+      animation: experience-node-ring 2.4s ease-out infinite;
+    }
+
+    .tree-dot--current::before {
+      animation: experience-node-ring 2.4s ease-out 1.2s infinite;
+    }
   }
 }
 

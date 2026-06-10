@@ -3,12 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { motion, useAnimation, useInView, useReducedMotion } from "framer-motion";
 
-import {
-  EducationCertificateTrigger,
-  EducationCertificateViewer,
-} from "@/components/sections/EducationCertificateViewer";
 import { about } from "@/lib/content/data/about";
-import type { EducationCertificateRef } from "@/lib/content/types";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const ABOUT_ACCENT_LINE_START_X = -128;
@@ -620,24 +615,6 @@ function AboutBackgroundGraphs() {
   );
 }
 
-function DeanListIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      className="h-3.5 w-3.5 shrink-0"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7-6.3-4.6L5.7 21l2.3-7-6-4.6h7.6L12 2z" />
-    </svg>
-  );
-}
-
 function MetricIcon() {
   return (
     <svg
@@ -702,9 +679,6 @@ function AnimatedStatValue({ value, suffix = "", animate }: AnimatedStatValuePro
 export function About() {
   const reduceMotion = useReducedMotion();
   const animate = !reduceMotion;
-  const [activeCertificate, setActiveCertificate] = useState<EducationCertificateRef | null>(
-    null,
-  );
 
   return (
     <section
@@ -754,7 +728,7 @@ export function About() {
           </motion.div>
         </motion.div>
 
-        <div className="about-layout-sidebar grid h-full gap-3 sm:gap-3.5 lg:grid-rows-[auto_auto_minmax(0,1fr)]">
+        <div className="about-layout-sidebar grid h-full gap-3 sm:gap-3.5 lg:grid-rows-[auto_minmax(0,1fr)]">
           <motion.div
             aria-label="About statistics"
             className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3"
@@ -790,49 +764,6 @@ export function About() {
           </motion.div>
 
           <motion.div
-            className="about-education-card"
-            initial={animate ? "hidden" : false}
-            whileInView={animate ? "visible" : undefined}
-            viewport={{ once: true, margin: "-80px" }}
-            variants={revealVariants}
-          >
-            <article aria-labelledby="about-education-heading">
-              <p className="about-education-label">EDUCATION</p>
-              <div className="about-education-body">
-                <div aria-hidden="true" className="about-education-timeline">
-                  <span className="about-education-dot" />
-                  <span className="about-education-line" />
-                </div>
-                <div className="about-education-content">
-                  <h3 id="about-education-heading" className="about-education-title">
-                    <span>
-                      {about.education.degree} – {about.education.institution}
-                    </span>
-                    <EducationCertificateTrigger
-                      certificate={about.education.degreeCertificate}
-                      onOpen={setActiveCertificate}
-                    />
-                  </h3>
-                  <p className="about-education-dates">{about.education.dateRange}</p>
-                  <p className="about-education-summary">{about.education.summary}</p>
-                  {about.education.honor && about.education.honorCertificate ? (
-                    <div className="about-education-honor-row">
-                      <span className="about-education-honor-badge">
-                        <DeanListIcon />
-                        {about.education.honor}
-                      </span>
-                      <EducationCertificateTrigger
-                        certificate={about.education.honorCertificate}
-                        onOpen={setActiveCertificate}
-                      />
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </article>
-          </motion.div>
-
-          <motion.div
             className="about-fields-panel about-fields-panel--stretch"
             initial={animate ? "hidden" : false}
             whileInView={animate ? "visible" : undefined}
@@ -848,7 +779,10 @@ export function About() {
                 className="h-px min-w-12 flex-1 bg-gradient-to-r from-border via-accent/35 to-transparent"
               />
             </div>
-            <ul aria-label="Main professional fields" className="mt-3 flex flex-wrap gap-1.5">
+            <ul
+              aria-label="Main professional fields"
+              className="mt-3 flex flex-1 flex-wrap content-evenly gap-1.5 sm:gap-2"
+            >
               {about.mainFields.map((field) => (
                 <li key={field} className="flex grow">
                   <span className="about-field-badge w-full justify-center">{field}</span>
@@ -858,11 +792,6 @@ export function About() {
           </motion.div>
         </div>
       </div>
-
-      <EducationCertificateViewer
-        certificate={activeCertificate}
-        onClose={() => setActiveCertificate(null)}
-      />
     </section>
   );
 }

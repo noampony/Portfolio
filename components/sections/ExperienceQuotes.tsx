@@ -262,9 +262,9 @@ function subscribeToResize(onStoreChange: () => void): () => void {
 function getViewportQuoteCount(): number {
   if (typeof window === "undefined") return 0;
   if (window.innerWidth < 768) return 0;
-  if (window.innerWidth < 1024) return 3;
-  if (window.innerWidth < 1280) return 4;
-  return 5;
+  if (window.innerWidth < 1024) return 4;
+  if (window.innerWidth < 1280) return 5;
+  return 6;
 }
 
 function useQuoteCount(): number {
@@ -278,7 +278,13 @@ type QuoteCardContentProps = {
 function QuoteCardContent({ quote }: QuoteCardContentProps) {
   return (
     <>
+      <span aria-hidden="true" className="experience-quote-mark experience-quote-mark--open">
+        ❝
+      </span>
       <p className="experience-quote-text">{quote.text}</p>
+      <span aria-hidden="true" className="experience-quote-mark experience-quote-mark--close">
+        ❞
+      </span>
       <p className="experience-quote-author">— {quote.author}</p>
     </>
   );
@@ -289,17 +295,32 @@ type FloatingQuoteCardProps = {
   initialLayout: QuoteLayout;
   staticPosition: Point;
   reducedMotion: boolean;
+  /** Measured pixel height of the quotes layer (the full section), see below. */
+  layerHeight: number;
 };
 
 /**
  * One independently cycling quote card — fades in while drifting, fades out while
  * still drifting, then respawns with a new quote at a new position in its zone.
+ *
+ * Horizontal positions stay in `vw` (the layer is full-bleed, so viewport width ≈ layer
+ * width). Vertical positions are kept as abstract 0–100 units and mapped to the layer's
+ * measured pixel height, so the cards spread across the *entire* (tall) Experience
+ * section rather than only the first viewport-height of it. `layerHeight` is read through
+ * a ref so a resize updates future drift cycles without restarting the running one.
  */
-function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion }: FloatingQuoteCardProps) {
+function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion, layerHeight }: FloatingQuoteCardProps) {
   const controls = useAnimation();
   const [quote, setQuote] = useState(initialLayout.quote);
   const zoneRef = useRef(zone);
   const startPositionRef = useRef({ x: initialLayout.x, y: initialLayout.y });
+  const heightRef = useRef(layerHeight);
+
+  // Keep the ref current so the running drift lifecycle reads the latest layer height
+  // (e.g. after a resize) without being torn down and restarted.
+  useEffect(() => {
+    heightRef.current = layerHeight;
+  }, [layerHeight]);
 
   useEffect(() => {
     if (reducedMotion) {
@@ -310,6 +331,9 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion 
     const startPosition = startPositionRef.current;
     let cancelled = false;
 
+    /** Map a 0–100 vertical unit to a pixel offset within the (tall) section. */
+    const yPx = (unit: number) => `${(unit / 100) * heightRef.current}px`;
+
     async function runLifecycle() {
       let cycle = createQuoteCycle(activeZone, startPosition);
 
@@ -318,7 +342,7 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion 
 
         await controls.set({
           x: `${cycle.start.x}vw`,
-          y: `${cycle.start.y}vh`,
+          y: yPx(cycle.start.y),
           opacity: 0,
         });
 
@@ -328,7 +352,7 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion 
 
         await controls.start({
           x: `${cycle.end.x}vw`,
-          y: `${cycle.end.y}vh`,
+          y: yPx(cycle.end.y),
           opacity: [0, QUOTE_VISIBLE_OPACITY, QUOTE_VISIBLE_OPACITY, 0],
           transition: {
             x: { duration: totalDuration, ease: "linear" },
@@ -359,7 +383,7 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion 
         className="experience-quote-card"
         style={{
           opacity: QUOTE_VISIBLE_OPACITY,
-          transform: `translate(${staticPosition.x}vw, ${staticPosition.y}vh)`,
+          transform: `translate(${staticPosition.x}vw, ${(staticPosition.y / 100) * layerHeight}px)`,
         }}
       >
         <QuoteCardContent quote={quote} />
@@ -373,7 +397,7 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion 
       initial={{
         opacity: 0,
         x: `${initialLayout.x}vw`,
-        y: `${initialLayout.y}vh`,
+        y: `${(initialLayout.y / 100) * layerHeight}px`,
       }}
       animate={controls}
     >
@@ -386,26 +410,47 @@ export function ExperienceQuotes() {
   const isClient = useIsClient();
   const prefersReducedMotion = useReducedMotion() ?? false;
   const quoteCount = useQuoteCount();
+  const layerRef = useRef<HTMLDivElement | null>(null);
+  const [layerHeight, setLayerHeight] = useState(0);
   const quoteSeeds = useMemo(
     () => (quoteCount > 0 ? createQuoteSeeds(quoteCount) : []),
     [quoteCount]
   );
+
+  // Track the layer's pixel height (it spans the full Experience section) so cards can be
+  // distributed across the whole section height rather than a single viewport-height.
+  useEffect(() => {
+    const layer = layerRef.current;
+    if (!layer || typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const observer = new ResizeObserver((entries) => {
+      const height = entries[0]?.contentRect.height ?? layer.offsetHeight;
+      setLayerHeight(height);
+    });
+    observer.observe(layer);
+    setLayerHeight(layer.offsetHeight);
+    return () => observer.disconnect();
+  }, [isClient, quoteCount]);
 
   if (!isClient || quoteCount === 0) {
     return null;
   }
 
   return (
-    <div aria-hidden="true" className="experience-quotes-layer">
-      {quoteSeeds.map((seed, index) => (
-        <FloatingQuoteCard
-          key={index}
-          zone={seed.zone}
-          initialLayout={seed.layout}
-          staticPosition={seed.staticPosition}
-          reducedMotion={prefersReducedMotion}
-        />
-      ))}
+    <div aria-hidden="true" className="experience-quotes-layer" ref={layerRef}>
+      {layerHeight > 0
+        ? quoteSeeds.map((seed, index) => (
+            <FloatingQuoteCard
+              key={index}
+              zone={seed.zone}
+              initialLayout={seed.layout}
+              staticPosition={seed.staticPosition}
+              reducedMotion={prefersReducedMotion}
+              layerHeight={layerHeight}
+            />
+          ))
+        : null}
     </div>
   );
 }

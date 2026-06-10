@@ -1,17 +1,22 @@
+import { ExperienceIntro } from "@/components/sections/ExperienceIntro";
 import { ExperienceQuotes } from "@/components/sections/ExperienceQuotes";
-import { ExperienceTimeline } from "@/components/ui/ExperienceTimeline";
-import { TimelineEntry } from "@/components/ui/TimelineEntry";
+import { ExperienceGitGraph } from "@/components/ui/ExperienceGitGraph";
+import { about } from "@/lib/content/data/about";
 import { experiences } from "@/lib/content/data/experience";
+import { buildExperienceGraph } from "@/lib/content/experienceGraph";
 import { filterConfidentialityReviewed } from "@/lib/content/loaders";
 import type { Experience as ExperienceModel } from "@/lib/content/types";
 
 /**
- * Experience section (spec §8.3) — a reverse-chronological timeline of
- * professional and leadership roles.
+ * Experience section (spec §8.3) — a git commit graph of professional and
+ * leadership roles: a main branch from the B.Sc. degree (root) up to the current
+ * role, with a side branch (Private Tutor → Team Leader) forking at "Malware Analyst"
+ * and merging back at the top. Topology is built in `buildExperienceGraph`.
  *
  * Confidentiality gating (spec §15.4, tasks/README Rule 9): only entries with
  * `confidentialityReviewed: true` are ever rendered; the gate runs here so an
- * unreviewed work entry can never reach the DOM regardless of ordering.
+ * unreviewed work entry can never reach the DOM regardless of ordering. The graph
+ * builder degrades gracefully to a straight main lane if a branch node is gated out.
  *
  * The section exposes the `#experience` anchor (spec §5.3). Per spec §5.1 the
  * primary navbar carries only Home/Projects/Courses/Resume — homepage sections
@@ -19,11 +24,11 @@ import type { Experience as ExperienceModel } from "@/lib/content/types";
  * left unchanged here, consistent with how the About section (`#about`) was
  * wired in Task 5.2.
  *
- * This stays a server component so the timeline content is rendered into the
- * initial HTML (available without client JS, good for SEO/AT) and the ongoing
- * role's duration is computed once at build time here, then handed to the client
- * `TimelineEntry` — avoiding a runtime clock dependency and any hydration
- * mismatch (§8.3.2). The per-entry scroll animation lives in `TimelineEntry`.
+ * This stays a server component so the graph content is rendered into the initial
+ * HTML (available without client JS, good for SEO/AT) and the ongoing role's
+ * duration is computed once at build time here, then handed to the client
+ * `ExperienceGitGraph` — avoiding a runtime clock dependency and any hydration
+ * mismatch (§8.3.2). The per-node scroll reveal lives in `ExperienceGitNode`.
  */
 
 const ONGOING_END_SORT_KEY = "9999-99";
@@ -85,28 +90,6 @@ function resolveDuration(entry: ExperienceModel): string | null {
   return null;
 }
 
-/** The month an entry's tenure ends — its end date, or its start if open/undated. */
-function entryEndMonth(entry: ExperienceModel): string {
-  if (!entry.endDate || entry.endDate === "Present") {
-    return entry.startDate;
-  }
-  return entry.endDate;
-}
-
-/**
- * Whether `entry` ran concurrently with the ongoing role (spec §8.3 — several
- * roles overlap in time). The current role is open-ended from its start, so any
- * other entry that ends strictly after the current role began was held in
- * parallel with it. Marked entries get a "Concurrent" badge so the timeline does
- * not read as a purely sequential history.
- */
-function overlapsCurrentRole(entry: ExperienceModel, current?: ExperienceModel): boolean {
-  if (!current || entry === current) {
-    return false;
-  }
-  return entryEndMonth(entry).localeCompare(current.startDate) > 0;
-}
-
 export function Experience() {
   const reviewed = filterConfidentialityReviewed(experiences);
   const entries = [...reviewed].sort(byMostRecent);
@@ -116,8 +99,13 @@ export function Experience() {
     return null;
   }
 
-  // The ongoing role anchors the "concurrent" markers (computed once, at build).
-  const currentRole = entries.find((entry) => entry.endDate === "Present");
+  // Resolve each entry's duration at build time (avoids a client clock dependency),
+  // then compose the git tree: the experiences plus the degree root (§8.3).
+  const resolved = entries.map((entry) => ({
+    experience: entry,
+    duration: resolveDuration(entry),
+  }));
+  const graph = buildExperienceGraph(resolved, about.education);
 
   return (
     <section
@@ -126,15 +114,14 @@ export function Experience() {
       className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
     >
       {/*
-       * Progressive-enhancement safety net (spec §7.5/§8.3): the entries' reveal is a
-       * Framer Motion `whileInView` fade-up, and Framer bakes its `initial` (opacity:0)
-       * into the SSR HTML. If JavaScript never runs, that would leave the timeline
-       * permanently hidden — so when scripting is disabled, force the entries to their
-       * final visible state. This block is inert whenever JS runs, so the scroll reveal
-       * plays normally; it only guarantees the content is never blocked by the animation.
+       * Progressive-enhancement safety net (spec §7.5/§8.3): the timeline's reveal is a
+       * scroll-scrubbed "draw" whose fill vars (--fill / --dot-* / --card-body) default to
+       * the fully-drawn state, so the SSR HTML is already complete and visible without JS.
+       * This block is a belt-and-suspenders guarantee that the card content and commit dots
+       * stay visible if scripting never runs; it is inert whenever JS runs.
        */}
       <noscript>
-        <style>{`.experience-entry{opacity:1!important;transform:none!important}`}</style>
+        <style>{`.experience-card-body{opacity:1!important}.git-dot,.tree-dot{opacity:1!important}`}</style>
       </noscript>
 
       {/* Decorative backdrop glow — tokens only, echoes the About/Hero atmosphere. */}
@@ -147,29 +134,9 @@ export function Experience() {
       <ExperienceQuotes />
 
       <div className="site-shell relative z-10">
-        <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://EXPERIENCE</p>
-        <h2
-          id="experience-heading"
-          className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-        >
-          Where I&apos;ve Built and Led
-        </h2>
-        <p className="mt-4 max-w-measure text-body text-text-secondary">
-          Backend engineering and team leadership — most recent first.
-        </p>
+        <ExperienceIntro />
 
-        <ExperienceTimeline>
-          {entries.map((entry, index) => (
-            <TimelineEntry
-              key={`${entry.organization}-${entry.role}-${entry.startDate}`}
-              experience={entry}
-              isCurrent={entry.endDate === "Present"}
-              concurrent={overlapsCurrentRole(entry, currentRole)}
-              index={index}
-              duration={resolveDuration(entry)}
-            />
-          ))}
-        </ExperienceTimeline>
+        <ExperienceGitGraph graph={graph} />
       </div>
     </section>
   );
