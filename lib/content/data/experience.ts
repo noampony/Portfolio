@@ -55,6 +55,7 @@ const experienceData = [
     // §8.3.4 — self-employed, public-safe. `organization` is required by the model;
     // "Self-Employed" is the honest representation of freelance work (no company invented).
     organization: "Self-Employed",
+    organizationLogo: "/logos/private-tutor.png",
     role: "Private Tutor",
     employmentType: "Self-employed",
     startDate: "2022-02",
