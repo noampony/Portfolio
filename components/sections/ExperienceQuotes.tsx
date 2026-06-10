@@ -18,13 +18,6 @@ import { inspirationalQuotes, type Quote } from "@/lib/content/data/quotes";
 /** Approximate rendered card footprint (vw/vh) — larger than the About cards. */
 const QUOTE_WIDTH_VW = 26;
 const QUOTE_HEIGHT_VH = 15;
-const DRIFT_ZONE_BLEED_VW = 24;
-const DRIFT_ZONE_BLEED_VH = 18;
-const DRIFT_MIN_DISTANCE = 8;
-const DRIFT_MAX_DISTANCE = 24;
-const DRIFT_MIN_AXIS_COMPONENT = 2.75;
-const DRIFT_MIN_SPEED = 1.4;
-const DRIFT_MAX_SPEED = 4.6;
 const QUOTE_VISIBLE_OPACITY = 0.44;
 
 type Zone = {
@@ -42,7 +35,6 @@ type Point = {
 type QuoteCycle = {
   quote: Quote;
   start: Point;
-  end: Point;
   visibleDuration: number;
   fadeInDuration: number;
   fadeOutDuration: number;
@@ -63,10 +55,6 @@ type QuoteSeed = {
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
 }
 
 function pickQuote(): Quote {
@@ -111,23 +99,6 @@ function getPlacementBounds(zone: Zone): Zone {
   };
 }
 
-function getMovementBounds(zone: Zone): Zone {
-  const placementBounds = getPlacementBounds({
-    xMin: 2,
-    xMax: 92,
-    yMin: 4,
-    yMax: 88,
-  });
-  const zoneBounds = getPlacementBounds(zone);
-
-  return {
-    xMin: Math.max(placementBounds.xMin, zoneBounds.xMin - DRIFT_ZONE_BLEED_VW),
-    xMax: Math.min(placementBounds.xMax, zoneBounds.xMax + DRIFT_ZONE_BLEED_VW),
-    yMin: Math.max(placementBounds.yMin, zoneBounds.yMin - DRIFT_ZONE_BLEED_VH),
-    yMax: Math.min(placementBounds.yMax, zoneBounds.yMax + DRIFT_ZONE_BLEED_VH),
-  };
-}
-
 function randomPointInBounds(bounds: Zone): Point {
   return {
     x: randomBetween(bounds.xMin, bounds.xMax),
@@ -139,78 +110,11 @@ function randomPointInZone(zone: Zone): Point {
   return randomPointInBounds(getPlacementBounds(zone));
 }
 
-function randomDriftVector(): Point {
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const angle = randomBetween(0, Math.PI * 2);
-    const distance = randomBetween(DRIFT_MIN_DISTANCE, DRIFT_MAX_DISTANCE);
-    const x = Math.cos(angle) * distance;
-    const y = Math.sin(angle) * distance;
-
-    if (Math.abs(x) >= DRIFT_MIN_AXIS_COMPONENT && Math.abs(y) >= DRIFT_MIN_AXIS_COMPONENT) {
-      return { x, y };
-    }
-  }
-
-  const diagonalAngle = randomBetween(Math.PI / 7, Math.PI / 2 - Math.PI / 7);
-  const quadrant = Math.floor(randomBetween(0, 4));
-  const angle = diagonalAngle + quadrant * (Math.PI / 2);
-  const distance = randomBetween(DRIFT_MIN_DISTANCE, DRIFT_MAX_DISTANCE);
-
-  return {
-    x: Math.cos(angle) * distance,
-    y: Math.sin(angle) * distance,
-  };
-}
-
-function createDrift(zone: Zone, start: Point): { end: Point; visibleDuration: number } {
-  const bounds = getMovementBounds(zone);
-  let end = randomPointInBounds(bounds);
-  let distance = 0;
-
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const drift = randomDriftVector();
-    const candidate = {
-      x: clamp(start.x + drift.x, bounds.xMin, bounds.xMax),
-      y: clamp(start.y + drift.y, bounds.yMin, bounds.yMax),
-    };
-
-    distance = Math.hypot(candidate.x - start.x, candidate.y - start.y);
-    if (distance >= DRIFT_MIN_DISTANCE) {
-      end = candidate;
-      break;
-    }
-  }
-
-  if (distance < DRIFT_MIN_DISTANCE) {
-    for (let attempt = 0; attempt < 12; attempt += 1) {
-      const candidate = randomPointInBounds(bounds);
-      distance = Math.hypot(candidate.x - start.x, candidate.y - start.y);
-
-      if (distance >= DRIFT_MIN_DISTANCE) {
-        end = candidate;
-        break;
-      }
-    }
-  }
-
-  distance = Math.max(DRIFT_MIN_DISTANCE, Math.hypot(end.x - start.x, end.y - start.y));
-  const speed = randomBetween(DRIFT_MIN_SPEED, DRIFT_MAX_SPEED);
-
-  return {
-    end,
-    visibleDuration: clamp(distance / speed, 3.2, 9.5),
-  };
-}
-
 function createQuoteCycle(zone: Zone, start?: Point): QuoteCycle {
-  const startPoint = start ?? randomPointInZone(zone);
-  const drift = createDrift(zone, startPoint);
-
   return {
     quote: pickQuote(),
-    start: startPoint,
-    end: drift.end,
-    visibleDuration: drift.visibleDuration,
+    start: start ?? randomPointInZone(zone),
+    visibleDuration: randomBetween(3.5, 7.5),
     fadeInDuration: randomBetween(0.9, 1.4),
     fadeOutDuration: randomBetween(1.0, 1.6),
     gapAfter: randomBetween(500, 1500),
@@ -351,17 +255,11 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion,
         const fadeOutStart = (cycle.fadeInDuration + cycle.visibleDuration) / totalDuration;
 
         await controls.start({
-          x: `${cycle.end.x}vw`,
-          y: yPx(cycle.end.y),
           opacity: [0, QUOTE_VISIBLE_OPACITY, QUOTE_VISIBLE_OPACITY, 0],
           transition: {
-            x: { duration: totalDuration, ease: "linear" },
-            y: { duration: totalDuration, ease: "linear" },
-            opacity: {
-              duration: totalDuration,
-              ease: "easeInOut",
-              times: [0, fadeInEnd, fadeOutStart, 1],
-            },
+            duration: totalDuration,
+            ease: "easeInOut",
+            times: [0, fadeInEnd, fadeOutStart, 1],
           },
         });
 

@@ -184,13 +184,6 @@ const backgroundGraphs: BackgroundGraph[] = [
 
 const GRAPH_WIDTH_VW = 15;
 const GRAPH_HEIGHT_VH = 14;
-const GRAPH_DRIFT_ZONE_BLEED_VW = 24;
-const GRAPH_DRIFT_ZONE_BLEED_VH = 18;
-const GRAPH_DRIFT_MIN_DISTANCE = 8;
-const GRAPH_DRIFT_MAX_DISTANCE = 24;
-const GRAPH_DRIFT_MIN_AXIS_COMPONENT = 2.75;
-const GRAPH_DRIFT_MIN_SPEED = 1.4;
-const GRAPH_DRIFT_MAX_SPEED = 4.6;
 const GRAPH_VISIBLE_OPACITY = 0.34;
 
 type Zone = {
@@ -208,7 +201,6 @@ type Point = {
 type GraphCycle = {
   graph: BackgroundGraph;
   start: Point;
-  end: Point;
   visibleDuration: number;
   fadeInDuration: number;
   fadeOutDuration: number;
@@ -229,10 +221,6 @@ type GraphSeed = {
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
 }
 
 function pickGraph(): BackgroundGraph {
@@ -278,23 +266,6 @@ function getGraphPlacementBounds(zone: Zone): Zone {
   };
 }
 
-function getGraphMovementBounds(zone: Zone): Zone {
-  const placementBounds = getGraphPlacementBounds({
-    xMin: 2,
-    xMax: 92,
-    yMin: 4,
-    yMax: 88,
-  });
-  const zoneBounds = getGraphPlacementBounds(zone);
-
-  return {
-    xMin: Math.max(placementBounds.xMin, zoneBounds.xMin - GRAPH_DRIFT_ZONE_BLEED_VW),
-    xMax: Math.min(placementBounds.xMax, zoneBounds.xMax + GRAPH_DRIFT_ZONE_BLEED_VW),
-    yMin: Math.max(placementBounds.yMin, zoneBounds.yMin - GRAPH_DRIFT_ZONE_BLEED_VH),
-    yMax: Math.min(placementBounds.yMax, zoneBounds.yMax + GRAPH_DRIFT_ZONE_BLEED_VH),
-  };
-}
-
 function randomPointInGraphBounds(bounds: Zone): Point {
   return {
     x: randomBetween(bounds.xMin, bounds.xMax),
@@ -306,78 +277,11 @@ function randomPointInGraphZone(zone: Zone): Point {
   return randomPointInGraphBounds(getGraphPlacementBounds(zone));
 }
 
-function randomGraphDriftVector(): Point {
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const angle = randomBetween(0, Math.PI * 2);
-    const distance = randomBetween(GRAPH_DRIFT_MIN_DISTANCE, GRAPH_DRIFT_MAX_DISTANCE);
-    const x = Math.cos(angle) * distance;
-    const y = Math.sin(angle) * distance;
-
-    if (Math.abs(x) >= GRAPH_DRIFT_MIN_AXIS_COMPONENT && Math.abs(y) >= GRAPH_DRIFT_MIN_AXIS_COMPONENT) {
-      return { x, y };
-    }
-  }
-
-  const diagonalAngle = randomBetween(Math.PI / 7, Math.PI / 2 - Math.PI / 7);
-  const quadrant = Math.floor(randomBetween(0, 4));
-  const angle = diagonalAngle + quadrant * (Math.PI / 2);
-  const distance = randomBetween(GRAPH_DRIFT_MIN_DISTANCE, GRAPH_DRIFT_MAX_DISTANCE);
-
-  return {
-    x: Math.cos(angle) * distance,
-    y: Math.sin(angle) * distance,
-  };
-}
-
-function createGraphDrift(zone: Zone, start: Point): { end: Point; visibleDuration: number } {
-  const bounds = getGraphMovementBounds(zone);
-  let end = randomPointInGraphBounds(bounds);
-  let distance = 0;
-
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const drift = randomGraphDriftVector();
-    const candidate = {
-      x: clamp(start.x + drift.x, bounds.xMin, bounds.xMax),
-      y: clamp(start.y + drift.y, bounds.yMin, bounds.yMax),
-    };
-
-    distance = Math.hypot(candidate.x - start.x, candidate.y - start.y);
-    if (distance >= GRAPH_DRIFT_MIN_DISTANCE) {
-      end = candidate;
-      break;
-    }
-  }
-
-  if (distance < GRAPH_DRIFT_MIN_DISTANCE) {
-    for (let attempt = 0; attempt < 12; attempt += 1) {
-      const candidate = randomPointInGraphBounds(bounds);
-      distance = Math.hypot(candidate.x - start.x, candidate.y - start.y);
-
-      if (distance >= GRAPH_DRIFT_MIN_DISTANCE) {
-        end = candidate;
-        break;
-      }
-    }
-  }
-
-  distance = Math.max(GRAPH_DRIFT_MIN_DISTANCE, Math.hypot(end.x - start.x, end.y - start.y));
-  const speed = randomBetween(GRAPH_DRIFT_MIN_SPEED, GRAPH_DRIFT_MAX_SPEED);
-
-  return {
-    end,
-    visibleDuration: clamp(distance / speed, 3.2, 9.5),
-  };
-}
-
 function createGraphCycle(zone: Zone, start?: Point): GraphCycle {
-  const startPoint = start ?? randomPointInGraphZone(zone);
-  const drift = createGraphDrift(zone, startPoint);
-
   return {
     graph: pickGraph(),
-    start: startPoint,
-    end: drift.end,
-    visibleDuration: drift.visibleDuration,
+    start: start ?? randomPointInGraphZone(zone),
+    visibleDuration: randomBetween(3.5, 7.5),
     fadeInDuration: randomBetween(0.9, 1.4),
     fadeOutDuration: randomBetween(1.0, 1.6),
     gapAfter: randomBetween(500, 1500),
@@ -533,17 +437,11 @@ function FloatingGraphCard({
         const fadeOutStart = (cycle.fadeInDuration + cycle.visibleDuration) / totalDuration;
 
         await controls.start({
-          x: `${cycle.end.x}vw`,
-          y: `${cycle.end.y}vh`,
           opacity: [0, GRAPH_VISIBLE_OPACITY, GRAPH_VISIBLE_OPACITY, 0],
           transition: {
-            x: { duration: totalDuration, ease: "linear" },
-            y: { duration: totalDuration, ease: "linear" },
-            opacity: {
-              duration: totalDuration,
-              ease: "easeInOut",
-              times: [0, fadeInEnd, fadeOutStart, 1],
-            },
+            duration: totalDuration,
+            ease: "easeInOut",
+            times: [0, fadeInEnd, fadeOutStart, 1],
           },
         });
 
