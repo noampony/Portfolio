@@ -21,8 +21,8 @@ import { validateProjectList } from "../validate";
 
 const projectData = [
   {
-    // §8.4 Project 1 — owner-approved; scale stated generically (was "2 billion/week").
-    name: "Microsoft Office Events",
+    // §8.4 Project 1 — owner-approved; scale stated generically (not "2 Billion Events").
+    name: "Microsoft & Google Events",
     role: "Project Leader",
     shortDescription:
       "Developed a service that subscribes to Microsoft and Google APIs, retrieves events via webhook, processes them, and writes billions of events weekly to a database.",
@@ -39,9 +39,9 @@ const projectData = [
     name: "Email Archiving Service",
     role: "Developer in a team",
     shortDescription:
-      "Implemented a long-term email archiving solution together with the team.",
+      "Implemented a long-term email archiving solution together with my team.",
     problemSolved:
-      "Users can archive emails long-term, mainly for legal purposes, search across email information including body and attachments, import and export emails, and more.",
+      "Users can archive their emails long-term (mainly for legal purposes), search across all email content including body and attachments, import and export emails, and more.",
     techStack: [
       "AWS",
       "Python",
@@ -53,17 +53,17 @@ const projectData = [
     ],
     backendFocus: "High scale, advanced search on huge data",
     whyImportant:
-      "The service served a main role in the product and helped attract more customers.",
+      "The service served a main role in the product, attracting more customers.",
     confidentialityReviewed: true,
   },
   {
     // §8.4 Project 3 — owner-approved; internal processing mechanics softened.
-    name: "Final Failure-Watchdog",
+    name: "Final-Failure Watchdog",
     role: "Project Leader",
     shortDescription:
-      "A service acting as the final watchdog. It identifies stuck entities in the system and reliably releases them so they reach the customer without delay.",
+      "A service acting as the final watchdog. It is responsible for identifying stuck entities in the system and quickly releasing them to the customer, bypassing normal processing flow.",
     problemSolved:
-      "Stuck entities are identified and released to the customer reliably.",
+      "All stuck entities are identified and released to the customer reliably.",
     techStack: [
       "AWS",
       "Python",
@@ -73,23 +73,23 @@ const projectData = [
       "Grafana",
     ],
     backendFocus:
-      "Very high scale, high resilience, high availability, closely monitored system",
+      "Very high scale, high resilience, high availability, and closely monitored system",
     whyImportant:
-      "This system had high product focus because it helped ensure entities did not get stuck and were delivered to users.",
+      "This system had high product focus, giving confidence that no entity gets stuck and everything is delivered to the user.",
     confidentialityReviewed: true,
   },
   {
-    // §8.4 Project 4 — volunteer; owner-safe. Generalized language only (§8.4 privacy note).
-    // `backendFocus` is TBD (§8.4) and intentionally omitted.
-    name: "Students Tracking System",
+    // §8.4 Project 4 — volunteer; owner-approved content from planning doc.
+    // `backendFocus` omitted (not applicable for this project).
+    name: "At-Risk Teenagers Monitoring System",
     role: "Team Leader",
     shortDescription:
-      "A web app used for tracking and managing school activity for a non-profit organization.",
+      "A web application for tracking and monitoring at-risk teenagers with eating disorders, developed through volunteer work for a non-profit organization.",
     problemSolved:
-      "The organization needed a more efficient way to track and manage student progress.",
+      "The organization had difficulty tracking and evaluating the risk level of each teenager. The system made tracking and assessment significantly more efficient.",
     techStack: ["Bubble.io", "JavaScript", "Figma"],
     whyImportant:
-      "A fully volunteer project that solved a real-life problem for a non-profit organization supporting hundreds of students.",
+      "A 100% volunteer project that solved a real-life problem for hundreds of at-risk teenagers, improving their lives in practice.",
     confidentialityReviewed: true,
   },
 ] as const;
