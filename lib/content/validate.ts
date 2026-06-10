@@ -545,6 +545,30 @@ export function validateExperienceList(data: unknown): Experience[] {
   });
 }
 
+export function validateCourseList(data: unknown): Course[] {
+  return validateList(data, "Course[]", (item, index) => {
+    const path = `Course[${index}]`;
+    const raw = assertObject(item, path);
+    return omitUndefined({
+      name: assertRequiredString(raw.name, `${path}.name`),
+      provider: assertRequiredString(raw.provider, `${path}.provider`),
+      category: assertRequiredStringArray(raw.category, `${path}.category`),
+      completionDate: assertCompletionDate(raw.completionDate, `${path}.completionDate`),
+      description: assertRequiredString(raw.description, `${path}.description`),
+      skillsSharpened: assertRequiredStringArray(raw.skillsSharpened, `${path}.skillsSharpened`),
+      numberOfHours: assertOptionalNumber(raw.numberOfHours, `${path}.numberOfHours`),
+      certificateLink: assertOptionalString(raw.certificateLink, `${path}.certificateLink`),
+      certificatePdfFile: assertOptionalString(raw.certificatePdfFile, `${path}.certificatePdfFile`),
+      courseImage: assertOptionalString(raw.courseImage, `${path}.courseImage`),
+      mainTopics: assertOptionalStringArray(raw.mainTopics, `${path}.mainTopics`),
+      whyITookIt: assertOptionalString(raw.whyITookIt, `${path}.whyITookIt`),
+      whatILearned: assertOptionalString(raw.whatILearned, `${path}.whatILearned`),
+      relatedProjects: assertOptionalStringArray(raw.relatedProjects, `${path}.relatedProjects`),
+      isFeatured: assertOptionalBoolean(raw.isFeatured, `${path}.isFeatured`),
+    });
+  });
+}
+
 export function validateProjectList(data: unknown): Project[] {
   return validateList(data, "Project[]", (item, index) => {
     const path = `Project[${index}]`;

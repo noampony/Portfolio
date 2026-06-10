@@ -10,6 +10,7 @@ import {
   validateContact,
   validateAboutSectionData,
   validateCourse,
+  validateCourseList,
   validateExperience,
   validateExperienceList,
   validateProfile,
@@ -28,6 +29,7 @@ export {
   validateContact,
   validateAboutSectionData,
   validateCourse,
+  validateCourseList,
   validateExperience,
   validateExperienceList,
   validateProfile,
@@ -67,6 +69,10 @@ export function loadProjectList(data: unknown) {
 
 export function loadCourse(data: unknown) {
   return validateCourse(data);
+}
+
+export function loadCourseList(data: unknown) {
+  return validateCourseList(data);
 }
 
 export function loadSkill(data: unknown) {
