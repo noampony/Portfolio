@@ -3,6 +3,7 @@
 import { useId, useState, type CSSProperties } from "react";
 
 import type { Project } from "@/lib/content/types";
+import { useGlareHandlers } from "@/components/ui/GlareHover";
 
 /**
  * A single project preview card (spec §8.4, §6.7, §7.4) — a click/tap-to-flip card.
@@ -46,6 +47,12 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
   const { name, role, shortDescription, problemSolved, backendFocus, techStack } = project;
   const [flipped, setFlipped] = useState(false);
   const backId = useId();
+  const frontGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const backGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const glareContainerHandlers = {
+    onMouseEnter: () => { frontGlare.handlers.onMouseEnter(); backGlare.handlers.onMouseEnter(); },
+    onMouseLeave: () => { frontGlare.handlers.onMouseLeave(); backGlare.handlers.onMouseLeave(); },
+  };
 
   // Decorative photo behind the card content, wired through the CSS `--card-bg` var.
   const style = backgroundImage
@@ -53,7 +60,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
     : undefined;
 
   return (
-    <article aria-labelledby={headingId} className="project-flip" data-flipped={flipped} style={style}>
+    <article aria-labelledby={headingId} className="project-flip" data-flipped={flipped} style={style} {...glareContainerHandlers}>
       <button
         type="button"
         onClick={() => setFlipped((value) => !value)}
@@ -70,6 +77,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
         {/* Front — title + affordance. */}
         <div className="project-flip-face project-flip-front" aria-hidden={flipped}>
           <div aria-hidden="true" className="project-card-bg" />
+          <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
           <span aria-hidden="true" className="font-mono text-small tracking-wider text-accent">
             {"// project"}
           </span>
@@ -98,6 +106,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
           aria-hidden={!flipped}
         >
           <div aria-hidden="true" className="project-card-bg" />
+          <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
           <p className="project-flip-back-title">{name}</p>
           <p className="m-0 text-small text-text-secondary">{shortDescription}</p>
 

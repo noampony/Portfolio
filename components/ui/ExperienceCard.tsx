@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useId, useState, type CSSProperties, type ReactNode } from "react";
 
 import { motion, type MotionStyle, type MotionValue } from "framer-motion";
+
+import { useGlareHandlers } from "@/components/ui/GlareHover";
 
 import { EducationCertificateTrigger } from "@/components/sections/EducationCertificateViewer";
 import type { GraphNode } from "@/lib/content/experienceGraph";
@@ -143,28 +145,12 @@ function ExperienceFlipCard({
 }: ExperienceFlipCardProps) {
   const [flipped, setFlipped] = useState(false);
   const backId = useId();
-  const innerRef = useRef<HTMLDivElement>(null);
-
-  // Flip when the card surface is clicked, but let clicks that land on an interactive
-  // control (certificate button, link) through to that control. This lives on the inner
-  // surface (above the toggle, so the controls stay clickable — a CSS pointer-events
-  // fall-through is unreliable inside the `preserve-3d` context). Keyboard/assistive-tech
-  // users flip via the real `<button>` toggle below; this is a mouse-only enhancement, so
-  // it is attached imperatively rather than as a JSX handler on a non-interactive element.
-  useEffect(() => {
-    const surface = innerRef.current;
-    if (!surface) {
-      return;
-    }
-    const handleClick = (event: MouseEvent) => {
-      if ((event.target as HTMLElement).closest("a, button")) {
-        return;
-      }
-      setFlipped((value) => !value);
-    };
-    surface.addEventListener("click", handleClick);
-    return () => surface.removeEventListener("click", handleClick);
-  }, []);
+  const frontGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const backGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const glareContainerHandlers = {
+    onMouseEnter: () => { frontGlare.handlers.onMouseEnter(); backGlare.handlers.onMouseEnter(); },
+    onMouseLeave: () => { frontGlare.handlers.onMouseLeave(); backGlare.handlers.onMouseLeave(); },
+  };
 
   const logoStyle = backgroundImage
     ? ({
@@ -197,10 +183,17 @@ function ExperienceFlipCard({
         </span>
       </button>
 
-      <div ref={innerRef} className="experience-flip-inner">
+      <div
+        className="experience-flip-inner"
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a, button")) return;
+          setFlipped((value) => !value);
+        }}
+      >
         {/* Front — role/company/dates, centred and large. */}
         <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
           <span aria-hidden="true" className="experience-flip-logo" />
+          <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
           <FrontReveal fill={fill}>
             {frontCertificates ? (
               <div className="experience-flip-cert-row">{frontCertificates}</div>
@@ -225,6 +218,7 @@ function ExperienceFlipCard({
           inert={!flipped || undefined}
         >
           <span aria-hidden="true" className="experience-flip-logo" />
+          <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
           <div className="experience-flip-back-inner">
             {backCertificates ? (
               <div className="experience-flip-cert-row experience-flip-cert-row--back">
@@ -253,6 +247,7 @@ function ExperienceFlipCard({
         className={className}
         data-flipped={flipped}
         style={{ opacity: fill.frame, "--card-frame": fill.frame, ...logoStyle } as MotionStyle}
+        {...glareContainerHandlers}
       >
         {body}
       </motion.article>
@@ -265,6 +260,7 @@ function ExperienceFlipCard({
       className={className}
       data-flipped={flipped}
       style={logoStyle}
+      {...glareContainerHandlers}
     >
       {body}
     </article>

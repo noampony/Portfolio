@@ -43,13 +43,6 @@ const SNIPPET_POOL = [
 /** Approximate rendered block footprint used to keep spawn zones from overlapping. */
 const BLOCK_WIDTH_VW = 14;
 const BLOCK_HEIGHT_VH = 10;
-const DRIFT_ZONE_BLEED_VW = 24;
-const DRIFT_ZONE_BLEED_VH = 18;
-const DRIFT_MIN_DISTANCE = 8;
-const DRIFT_MAX_DISTANCE = 24;
-const DRIFT_MIN_AXIS_COMPONENT = 2.75;
-const DRIFT_MIN_SPEED = 1.4;
-const DRIFT_MAX_SPEED = 4.6;
 
 const blockClassName =
   "absolute left-0 top-0 m-0 max-w-[15rem] whitespace-pre-wrap rounded-md border border-border bg-bg-surface p-3 font-mono text-small leading-snug text-[color-mix(in_srgb,var(--text-muted)_45%,var(--bg-surface))] will-change-transform lg:max-w-[17rem] xl:max-w-[18rem]";
@@ -69,7 +62,6 @@ type Point = {
 type BlockCycle = {
   code: string;
   start: Point;
-  end: Point;
   visibleDuration: number;
   fadeInDuration: number;
   fadeOutDuration: number;
@@ -82,18 +74,17 @@ type BlockLayout = {
   y: number;
 };
 
+const INITIAL_CARDS_VISIBLE = 3;
+
 type BlockSeed = {
   zone: Zone;
   layout: BlockLayout;
   staticPosition: Point;
+  initialDelay: number;
 };
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
 }
 
 function pickSnippet(): string {
@@ -141,23 +132,6 @@ function getPlacementBounds(zone: Zone): Zone {
   };
 }
 
-function getMovementBounds(zone: Zone): Zone {
-  const placementBounds = getPlacementBounds({
-    xMin: 2,
-    xMax: 92,
-    yMin: 4,
-    yMax: 88,
-  });
-  const zoneBounds = getPlacementBounds(zone);
-
-  return {
-    xMin: Math.max(placementBounds.xMin, zoneBounds.xMin - DRIFT_ZONE_BLEED_VW),
-    xMax: Math.min(placementBounds.xMax, zoneBounds.xMax + DRIFT_ZONE_BLEED_VW),
-    yMin: Math.max(placementBounds.yMin, zoneBounds.yMin - DRIFT_ZONE_BLEED_VH),
-    yMax: Math.min(placementBounds.yMax, zoneBounds.yMax + DRIFT_ZONE_BLEED_VH),
-  };
-}
-
 function randomPointInZone(zone: Zone): Point {
   const bounds = getPlacementBounds(zone);
 
@@ -171,81 +145,14 @@ function randomPointInBounds(bounds: Zone): Point {
   };
 }
 
-function randomDriftVector(): Point {
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const angle = randomBetween(0, Math.PI * 2);
-    const distance = randomBetween(DRIFT_MIN_DISTANCE, DRIFT_MAX_DISTANCE);
-    const x = Math.cos(angle) * distance;
-    const y = Math.sin(angle) * distance;
-
-    if (Math.abs(x) >= DRIFT_MIN_AXIS_COMPONENT && Math.abs(y) >= DRIFT_MIN_AXIS_COMPONENT) {
-      return { x, y };
-    }
-  }
-
-  const diagonalAngle = randomBetween(Math.PI / 7, Math.PI / 2 - Math.PI / 7);
-  const quadrant = Math.floor(randomBetween(0, 4));
-  const angle = diagonalAngle + quadrant * (Math.PI / 2);
-  const distance = randomBetween(DRIFT_MIN_DISTANCE, DRIFT_MAX_DISTANCE);
-
-  return {
-    x: Math.cos(angle) * distance,
-    y: Math.sin(angle) * distance,
-  };
-}
-
-function createDrift(zone: Zone, start: Point): { end: Point; visibleDuration: number } {
-  const bounds = getMovementBounds(zone);
-  let end = randomPointInBounds(bounds);
-  let distance = 0;
-
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const drift = randomDriftVector();
-    const candidate = {
-      x: clamp(start.x + drift.x, bounds.xMin, bounds.xMax),
-      y: clamp(start.y + drift.y, bounds.yMin, bounds.yMax),
-    };
-
-    distance = Math.hypot(candidate.x - start.x, candidate.y - start.y);
-    if (distance >= DRIFT_MIN_DISTANCE) {
-      end = candidate;
-      break;
-    }
-  }
-
-  if (distance < DRIFT_MIN_DISTANCE) {
-    for (let attempt = 0; attempt < 12; attempt += 1) {
-      const candidate = randomPointInBounds(bounds);
-      distance = Math.hypot(candidate.x - start.x, candidate.y - start.y);
-
-      if (distance >= DRIFT_MIN_DISTANCE) {
-        end = candidate;
-        break;
-      }
-    }
-  }
-
-  distance = Math.max(DRIFT_MIN_DISTANCE, Math.hypot(end.x - start.x, end.y - start.y));
-  const speed = randomBetween(DRIFT_MIN_SPEED, DRIFT_MAX_SPEED);
-
-  return {
-    end,
-    visibleDuration: clamp(distance / speed, 3.2, 9.5),
-  };
-}
-
 function createBlockCycle(zone: Zone, start?: Point): BlockCycle {
-  const startPoint = start ?? randomPointInZone(zone);
-  const drift = createDrift(zone, startPoint);
-
   return {
     code: pickSnippet(),
-    start: startPoint,
-    end: drift.end,
-    visibleDuration: drift.visibleDuration,
-    fadeInDuration: randomBetween(0.9, 1.4),
-    fadeOutDuration: randomBetween(1.0, 1.6),
-    gapAfter: randomBetween(500, 1500),
+    start: start ?? randomPointInZone(zone),
+    visibleDuration: randomBetween(4.0, 8.0),
+    fadeInDuration: randomBetween(2.0, 3.5),
+    fadeOutDuration: randomBetween(2.0, 3.5),
+    gapAfter: randomBetween(500, 2000),
   };
 }
 
@@ -267,6 +174,7 @@ function createBlockSeeds(count: number): BlockSeed[] {
       zone,
       layout: createInitialLayout(zone),
       staticPosition: randomPointInZone(zone),
+      initialDelay: index < INITIAL_CARDS_VISIBLE ? 0 : randomBetween(3000, 11000),
     };
   });
 }
@@ -309,13 +217,10 @@ type FloatingCodeBlockProps = {
   initialLayout: BlockLayout;
   staticPosition: Point;
   reducedMotion: boolean;
+  initialDelay: number;
 };
 
-/**
- * One independently cycling code block — fades in while drifting, fades out while still drifting,
- * then respawns with new content at a new position in its zone.
- */
-function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion }: FloatingCodeBlockProps) {
+function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion, initialDelay }: FloatingCodeBlockProps) {
   const controls = useAnimation();
   const [code, setCode] = useState(initialLayout.code);
   const zoneRef = useRef(zone);
@@ -331,6 +236,9 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
     let cancelled = false;
 
     async function runLifecycle() {
+      if (initialDelay > 0) await sleep(initialDelay);
+      if (cancelled) return;
+
       let cycle = createBlockCycle(activeZone, startPosition);
 
       while (!cancelled) {
@@ -347,17 +255,11 @@ function FloatingCodeBlock({ zone, initialLayout, staticPosition, reducedMotion 
         const fadeOutStart = (cycle.fadeInDuration + cycle.visibleDuration) / totalDuration;
 
         await controls.start({
-          x: `${cycle.end.x}vw`,
-          y: `${cycle.end.y}vh`,
           opacity: [0, 1, 1, 0],
           transition: {
-            x: { duration: totalDuration, ease: "linear" },
-            y: { duration: totalDuration, ease: "linear" },
-            opacity: {
-              duration: totalDuration,
-              ease: "easeInOut",
-              times: [0, fadeInEnd, fadeOutStart, 1],
-            },
+            duration: totalDuration,
+            ease: "easeInOut",
+            times: [0, fadeInEnd, fadeOutStart, 1],
           },
         });
 
@@ -429,6 +331,7 @@ export function FloatingCode() {
           initialLayout={seed.layout}
           staticPosition={seed.staticPosition}
           reducedMotion={prefersReducedMotion}
+          initialDelay={seed.initialDelay}
         />
       ))}
     </div>
