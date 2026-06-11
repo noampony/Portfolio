@@ -1,5 +1,4 @@
 import { ExperienceIntro } from "@/components/sections/ExperienceIntro";
-import { ExperienceSpotlight } from "@/components/sections/ExperienceSpotlight";
 import { ExperienceGitGraph } from "@/components/ui/ExperienceGitGraph";
 import { about } from "@/lib/content/data/about";
 import { experiences } from "@/lib/content/data/experience";
@@ -130,9 +129,7 @@ export function Experience() {
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_46%_at_88%_-4%,color-mix(in_srgb,var(--gradient-to)_11%,transparent),transparent_34%),radial-gradient(46%_42%_at_6%_6%,color-mix(in_srgb,var(--accent)_8%,transparent),transparent_32%)]"
       />
 
-      <ExperienceSpotlight />
-
-      <div className="site-shell relative z-10">
+<div className="site-shell relative z-10">
         <ExperienceIntro />
 
         <ExperienceGitGraph graph={graph} />

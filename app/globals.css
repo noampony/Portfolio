@@ -349,16 +349,6 @@ html {
   letter-spacing: 0;
 }
 
-/* Experience cursor spotlight — two-layer radial gradient that follows the pointer:
-   a tight bright core (280px) + a wide atmospheric haze (700px). */
-.experience-spotlight {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  transition: opacity 0.25s ease;
-}
-
 /* Experience floating quote cards — mirrors the About graph-card glass system
    (.about-graphs-layer / .about-graph-card) but larger and text-oriented, so
    each inspirational quote reads with presence from the background (spec §8.3). */
@@ -1354,37 +1344,6 @@ html {
   z-index: 1;
 }
 
-/* Per-card cursor spotlight (React Bits SpotlightCard pattern). A tight radial gradient
-   centered at the cursor within each face; --sx/--sy are set imperatively on mousemove.
-   Defaults off-screen (-9999px) so the first hover frame shows no stale glow.
-   Visibility is CSS-only: :hover reveals it, prefers-reduced-motion removes it. */
-.experience-card-spotlight {
-  --sx: -9999px;
-  --sy: -9999px;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: radial-gradient(
-    280px circle at var(--sx) var(--sy),
-    color-mix(in srgb, white 22%, var(--accent) 30%) 0%,
-    color-mix(in srgb, var(--accent) 16%, transparent) 40%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.experience-flip:hover .experience-card-spotlight {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .experience-card-spotlight {
-    display: none;
-  }
-}
 
 /* Centred organisation-logo watermark behind the content. The URL is supplied per card via
    the inline `--card-logo` custom property; absent → `none` (the card just shows the glass,
