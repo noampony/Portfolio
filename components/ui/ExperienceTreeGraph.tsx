@@ -1,24 +1,9 @@
 "use client";
 
-import { useRef } from "react";
-
-import {
-  cubicBezier,
-  motion,
-  useTransform,
-  type MotionStyle,
-  type UseScrollOptions,
-} from "framer-motion";
-
 import { NodeCard } from "@/components/ui/ExperienceCard";
-import { useScrollDraw } from "@/lib/hooks/useScrollDraw";
 import type { ExperienceGraph, GraphNode } from "@/lib/content/experienceGraph";
 import type { EducationCertificateRef } from "@/lib/content/types";
 import { cn } from "@/lib/utils";
-
-/** Symmetric ease-in-out for the card entrance: it ramps gradually across the whole range
- *  (an ease-out would front-load the change and still read as a pop). */
-const cardEase = cubicBezier(0.42, 0, 0.58, 1);
 
 /**
  * Large-screen Experience layout (≥ md): an upward-growing tree.
@@ -44,10 +29,8 @@ const cardEase = cubicBezier(0.42, 0, 0.58, 1);
  * are decorative (aria-hidden); the cards keep the same semantics, ids and chronological
  * reading order as the small layout.
  *
- * The reveal is the same scroll-scrubbed "draw" as the small git tree: each cell and each
- * standalone connector owns its scroll progress (`useScrollDraw`) and feeds the shared CSS
- * fill vars (`--fill` / `--dot-*` / `--card-frame` / `--card-body`), which default to 1 so
- * the SSR / pre-mount / reduced-motion fallback renders the tree fully drawn.
+ * The tree renders fully drawn; the `ScrollGradualBlur` wrapper in `ExperienceGitGraph`
+ * owns the single scroll-driven reveal for the whole tree block.
  */
 
 type CellPlacement = {
@@ -97,7 +80,8 @@ function placeNode(node: GraphNode, sideOrder: string[]): CellPlacement {
   };
 }
 
-/** One tree cell (card + its commit dot[s]); owns its scroll-draw progress. */
+/** One tree cell (card + its commit dot[s]). Renders fully drawn; reveal is handled by
+ *  the `ScrollGradualBlur` wrapper in `ExperienceGitGraph`. */
 function TreeCell({
   node,
   index,
@@ -109,96 +93,31 @@ function TreeCell({
   sideOrder: string[];
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
 }) {
-  const cellRef = useRef<HTMLLIElement>(null);
-  // Wider band so each phase plays over more scroll distance and the card glides in instead
-  // of popping at medium scroll speed.
-  const { active, progress } = useScrollDraw(cellRef, ["start 0.92", "start 0.32"]);
   const { modifier, topDot, bottomDot, topAccent } = placeNode(node, sideOrder);
   const isBranchA = modifier === "branch-a";
-
-  // Sequence: the top dot sketches in as the front arrives, then the card glides in over a
-  // wide, eased range (body fading + rising just behind), then the bottom dot appears once
-  // the card is in — it marks where the line exits downward. Branch A's descender last.
-  const topDotScale = useTransform(progress, [0.06, 0.28], [0, 1]);
-  const topDotOpacity = useTransform(progress, [0.04, 0.24], [0, 1]);
-  const cardFrame = useTransform(progress, [0.28, 0.66], [0, 1], { ease: cardEase });
-  const cardBody = useTransform(progress, [0.38, 0.76], [0, 1], { ease: cardEase });
-  const cardBodyY = useTransform(progress, [0.38, 0.76], [12, 0], { ease: cardEase });
-  const bottomDotScale = useTransform(progress, [0.76, 0.94], [0, 1]);
-  const bottomDotOpacity = useTransform(progress, [0.74, 0.92], [0, 1]);
-  const descenderFill = useTransform(progress, [0.8, 1], [0, 1]);
-
-  // Same id scheme as the small layout; only one layout mounts, so ids stay unique.
   const headingId = `experience-node-${index}`;
 
-  const topDotStyle: MotionStyle | undefined = active
-    ? ({ "--dot-scale": topDotScale, opacity: topDotOpacity } as MotionStyle)
-    : undefined;
-  const bottomDotStyle: MotionStyle | undefined = active
-    ? ({ "--dot-scale": bottomDotScale, opacity: bottomDotOpacity } as MotionStyle)
-    : undefined;
-
   return (
-    <li
-      ref={cellRef}
-      className={cn("experience-tree-cell", `experience-tree-cell--${modifier}`)}
-    >
+    <li className={cn("experience-tree-cell", `experience-tree-cell--${modifier}`)}>
       <div className="experience-tree-cardwrap">
         {topDot ? (
-          <motion.span
-            aria-hidden="true"
-            className={cn("tree-dot tree-dot--top", topAccent)}
-            style={topDotStyle}
-          />
+          <span aria-hidden="true" className={cn("tree-dot tree-dot--top", topAccent)} />
         ) : null}
         {bottomDot ? (
-          <motion.span
-            aria-hidden="true"
-            className="tree-dot tree-dot--bottom"
-            style={bottomDotStyle}
-          />
+          <span aria-hidden="true" className="tree-dot tree-dot--bottom" />
         ) : null}
-        <NodeCard
-          node={node}
-          headingId={headingId}
-          onOpenCertificate={onOpenCertificate}
-          fill={active ? { frame: cardFrame, body: cardBody, bodyY: cardBodyY } : undefined}
-        />
+        <NodeCard node={node} headingId={headingId} onOpenCertificate={onOpenCertificate} />
       </div>
-      {/* Branch A's descender stretches to branch B's taller stack and stays glued to the
-          card bottom — a flex filler, so no height math. */}
       {isBranchA ? (
-        <motion.span
-          aria-hidden="true"
-          className="tree-conn tree-conn--branch-a-fill"
-          style={active ? ({ "--fill": descenderFill } as MotionStyle) : undefined}
-        />
+        <span aria-hidden="true" className="tree-conn tree-conn--branch-a-fill" />
       ) : null}
     </li>
   );
 }
 
-/** A standalone decorative connector — grid-placed by its class; owns its scroll-draw. */
-function TreeConnector({
-  className,
-  variant = "fill",
-}: {
-  className: string;
-  /** `fill` paints the line via `--fill`; `opacity` fades a faded continuation in. */
-  variant?: "fill" | "opacity";
-}) {
-  const ref = useRef<HTMLLIElement>(null);
-  const offset: UseScrollOptions["offset"] = ["start 0.92", "start 0.5"];
-  const { active, progress } = useScrollDraw(ref, offset);
-  const draw = useTransform(progress, [0, 1], [0, 1]);
-
-  const style: MotionStyle | undefined = active
-    ? variant === "opacity"
-      ? { opacity: draw }
-      : ({ "--fill": draw } as MotionStyle)
-    : undefined;
-
-  return <motion.li aria-hidden="true" className={className} ref={ref} style={style} />;
+/** A standalone decorative connector — grid-placed by its class. Renders fully drawn. */
+function TreeConnector({ className }: { className: string }) {
+  return <li aria-hidden="true" className={className} />;
 }
 
 export function ExperienceTreeGraph({
@@ -233,7 +152,7 @@ export function ExperienceTreeGraph({
           (top of the Backend card, 25%) that continues up and fades out past the top of
           the graph — signalling the branch is still live. */}
       <TreeConnector className="tree-merge-stem" />
-      <TreeConnector className="tree-merge-head" variant="opacity" />
+      <TreeConnector className="tree-merge-head" />
     </ol>
   );
 }

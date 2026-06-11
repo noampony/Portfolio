@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import { useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { motion, type MotionStyle, type MotionValue } from "framer-motion";
 
@@ -67,6 +67,33 @@ function formatMonthYear(value: string): string {
   const [year, month] = value.split("-");
   const label = MONTH_LABELS[Number(month) - 1];
   return label ? `${label} ${year}` : value;
+}
+
+/**
+ * Per-card cursor spotlight (React Bits SpotlightCard pattern): tracks pointer position
+ * within the card and imperatively updates `--sx`/`--sy` CSS vars on the overlay elements
+ * inside each face. The back face x-axis is mirrored because `.experience-flip-back` is
+ * pre-rotated `rotateY(180deg)`. Visibility is controlled entirely by CSS (`:hover` +
+ * `prefers-reduced-motion`), so no JS opacity management is needed.
+ */
+function useCardSpotlight() {
+  const containerRef = useRef<HTMLElement>(null);
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
+
+  const onMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    frontRef.current?.style.setProperty("--sx", `${x}px`);
+    frontRef.current?.style.setProperty("--sy", `${y}px`);
+    backRef.current?.style.setProperty("--sx", `${rect.width - x}px`);
+    backRef.current?.style.setProperty("--sy", `${y}px`);
+  };
+
+  return { containerRef, frontRef, backRef, onMouseMove };
 }
 
 /** Decorative flip glyph (two curved arrows) reinforcing the "flip me" affordance. */
@@ -147,6 +174,7 @@ function ExperienceFlipCard({
   const backId = useId();
   const frontGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
   const backGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
+  const cardSpotlight = useCardSpotlight();
   const glareContainerHandlers = {
     onMouseEnter: () => { frontGlare.handlers.onMouseEnter(); backGlare.handlers.onMouseEnter(); },
     onMouseLeave: () => { frontGlare.handlers.onMouseLeave(); backGlare.handlers.onMouseLeave(); },
@@ -194,6 +222,7 @@ function ExperienceFlipCard({
         <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
           <span aria-hidden="true" className="experience-flip-logo" />
           <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
+          <div ref={cardSpotlight.frontRef} className="experience-card-spotlight" aria-hidden="true" />
           <FrontReveal fill={fill}>
             {frontCertificates ? (
               <div className="experience-flip-cert-row">{frontCertificates}</div>
@@ -219,6 +248,7 @@ function ExperienceFlipCard({
         >
           <span aria-hidden="true" className="experience-flip-logo" />
           <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
+          <div ref={cardSpotlight.backRef} className="experience-card-spotlight" aria-hidden="true" />
           <div className="experience-flip-back-inner">
             {backCertificates ? (
               <div className="experience-flip-cert-row experience-flip-cert-row--back">
@@ -243,11 +273,13 @@ function ExperienceFlipCard({
   if (fill) {
     return (
       <motion.article
+        ref={cardSpotlight.containerRef}
         aria-labelledby={headingId}
         className={className}
         data-flipped={flipped}
         style={{ opacity: fill.frame, "--card-frame": fill.frame, ...logoStyle } as MotionStyle}
         {...glareContainerHandlers}
+        onMouseMove={cardSpotlight.onMouseMove}
       >
         {body}
       </motion.article>
@@ -256,11 +288,13 @@ function ExperienceFlipCard({
 
   return (
     <article
+      ref={cardSpotlight.containerRef}
       aria-labelledby={headingId}
       className={className}
       data-flipped={flipped}
       style={logoStyle}
       {...glareContainerHandlers}
+      onMouseMove={cardSpotlight.onMouseMove}
     >
       {body}
     </article>

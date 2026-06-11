@@ -5,6 +5,7 @@ import { useState } from "react";
 import { EducationCertificateViewer } from "@/components/sections/EducationCertificateViewer";
 import { ExperienceGitNode } from "@/components/ui/ExperienceGitNode";
 import { ExperienceTreeGraph } from "@/components/ui/ExperienceTreeGraph";
+import { ScrollGradualBlur } from "@/components/ui/ScrollGradualBlur";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import type { ExperienceGraph } from "@/lib/content/experienceGraph";
 import type { EducationCertificateRef } from "@/lib/content/types";
@@ -43,21 +44,23 @@ export function ExperienceGitGraph({ graph }: { graph: ExperienceGraph }) {
 
   return (
     <div className="mt-10 sm:mt-12">
-      {isLargeScreen && canRenderTree ? (
-        <ExperienceTreeGraph graph={graph} onOpenCertificate={setActiveCertificate} />
-      ) : (
-        <ol className="git-graph max-w-3xl">
-          {graph.nodes.map((node, index) => (
-            <ExperienceGitNode
-              key={node.id}
-              node={node}
-              index={index}
-              total={total}
-              onOpenCertificate={setActiveCertificate}
-            />
-          ))}
-        </ol>
-      )}
+      <ScrollGradualBlur>
+        {isLargeScreen && canRenderTree ? (
+          <ExperienceTreeGraph graph={graph} onOpenCertificate={setActiveCertificate} />
+        ) : (
+          <ol className="git-graph max-w-3xl">
+            {graph.nodes.map((node, index) => (
+              <ExperienceGitNode
+                key={node.id}
+                node={node}
+                index={index}
+                total={total}
+                onOpenCertificate={setActiveCertificate}
+              />
+            ))}
+          </ol>
+        )}
+      </ScrollGradualBlur>
 
       <EducationCertificateViewer
         certificate={activeCertificate}

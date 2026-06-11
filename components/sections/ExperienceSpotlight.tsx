@@ -43,7 +43,7 @@ export function ExperienceSpotlight() {
       style={
         position
           ? {
-              background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, color-mix(in srgb, var(--accent) 14%, transparent) 0%, color-mix(in srgb, var(--accent) 5%, transparent) 45%, transparent 70%)`,
+              background: `radial-gradient(280px circle at ${position.x}px ${position.y}px, color-mix(in srgb, var(--accent) 34%, white 8%) 0%, color-mix(in srgb, var(--accent) 18%, transparent) 45%, transparent 75%), radial-gradient(700px circle at ${position.x}px ${position.y}px, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 70%)`,
               opacity: 1,
             }
           : { opacity: 0 }

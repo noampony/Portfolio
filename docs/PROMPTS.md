@@ -355,7 +355,7 @@ Task focus: render only confidentialityReviewed:true projects (3–5); each card
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/7.2-projects-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 7.3 — Style, Make Responsive, and Animate Project Cards
+## ✅ Task 7.3 — Style, Make Responsive, and Animate Project Cards
 
 ```text
 Implement ONLY Task 7.3 — "Style, Make Responsive, and Animate Project Cards" — for the Noam Pony portfolio. Depends on Task 7.2.
