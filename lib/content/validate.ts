@@ -14,6 +14,7 @@ import type {
   EducationCertificateRef,
   Experience,
   ExperienceEndDate,
+  LearningPath,
   Profile,
   Project,
   Resume,
@@ -77,6 +78,13 @@ function assertOptionalBoolean(value: unknown, path: string): boolean | undefine
   }
   if (typeof value !== "boolean") {
     throw new ContentValidationError(path, "optional boolean must be omitted or a boolean");
+  }
+  return value;
+}
+
+function assertRequiredNumber(value: unknown, path: string): number {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    throw new ContentValidationError(path, "required finite number");
   }
   return value;
 }
@@ -565,6 +573,27 @@ export function validateCourseList(data: unknown): Course[] {
       whatILearned: assertOptionalString(raw.whatILearned, `${path}.whatILearned`),
       relatedProjects: assertOptionalStringArray(raw.relatedProjects, `${path}.relatedProjects`),
       isFeatured: assertOptionalBoolean(raw.isFeatured, `${path}.isFeatured`),
+    });
+  });
+}
+
+export function validateLearningPathList(data: unknown): LearningPath[] {
+  return validateList(data, "LearningPath[]", (item, index) => {
+    const path = `LearningPath[${index}]`;
+    const raw = assertObject(item, path);
+    return omitUndefined({
+      id: assertRequiredString(raw.id, `${path}.id`),
+      order: assertRequiredNumber(raw.order, `${path}.order`),
+      title: assertRequiredString(raw.title, `${path}.title`),
+      courses: validateList(raw.courses, `${path}.courses`, (course, courseIndex) => {
+        const coursePath = `${path}.courses[${courseIndex}]`;
+        const rawCourse = assertObject(course, coursePath);
+        return omitUndefined({
+          name: assertRequiredString(rawCourse.name, `${coursePath}.name`),
+          category: assertRequiredString(rawCourse.category, `${coursePath}.category`),
+          image: assertOptionalString(rawCourse.image, `${coursePath}.image`),
+        });
+      }),
     });
   });
 }
