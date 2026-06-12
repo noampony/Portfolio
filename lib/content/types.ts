@@ -142,6 +142,34 @@ export type Course = {
   isFeatured?: boolean;
 };
 
+/**
+ * Learning-path roadmap models (spec §8.5) — the compact homepage roadmap that
+ * groups courses into ordered paths, each rendered as a header + small carousel.
+ *
+ * Deliberately lighter than {@link Course}: a roadmap card shows only an image,
+ * name, and category. Categories and images are owner-supplied later (§19.7), so
+ * `category` carries a placeholder default and `image` is omitted until provided.
+ */
+
+/** A single course shown as a compact roadmap card. */
+export type RoadmapCourse = {
+  name: string;
+  /** Placeholder default until the owner supplies final categories (§19.7). */
+  category: string;
+  /** Optional; served from `/public`. Falls back to a gradient visual until provided. */
+  image?: AssetReference;
+};
+
+/** An ordered group of related courses (a roadmap "path"). */
+export type LearningPath = {
+  /** Stable slug for React keys / aria, e.g. `python-foundation`. */
+  id: string;
+  /** 1-based position in the roadmap. */
+  order: number;
+  title: string;
+  courses: RoadmapCourse[];
+};
+
 /** §11.5 Skill Model */
 export type Skill = {
   name: string;
