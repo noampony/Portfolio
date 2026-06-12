@@ -1,8 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 import { RoadmapPath } from "@/components/ui/RoadmapPath";
+import { RoadmapRoad } from "@/components/ui/RoadmapRoad";
 import { learningPaths } from "@/lib/content/data/learning-paths";
 
 /**
@@ -47,6 +49,7 @@ const NO_JS_FALLBACK = `.courses-reveal{opacity:1!important;transform:none!impor
 export function CoursesRoadmap() {
   const reduceMotion = useReducedMotion();
   const animate = !reduceMotion;
+  const pathsRef = useRef<HTMLOListElement>(null);
 
   // Defensive: render nothing rather than an empty shell if data is ever emptied.
   if (learningPaths.length === 0) {
@@ -93,13 +96,16 @@ export function CoursesRoadmap() {
           backend systems to architecture, security, and AI-augmented development.
         </motion.p>
 
-        <ol className="roadmap-paths mt-10 list-none p-0">
-          {learningPaths.map((path) => (
-            <motion.li key={path.id} variants={revealItemVariants} className="courses-reveal">
-              <RoadmapPath path={path} headingId={`path-${path.id}-heading`} />
-            </motion.li>
-          ))}
-        </ol>
+        <div className="roadmap-paths-wrap mt-10">
+          <RoadmapRoad containerRef={pathsRef} pathCount={learningPaths.length} />
+          <ol ref={pathsRef} className="roadmap-paths list-none p-0">
+            {learningPaths.map((path) => (
+              <motion.li key={path.id} variants={revealItemVariants} className="courses-reveal">
+                <RoadmapPath path={path} headingId={`path-${path.id}-heading`} />
+              </motion.li>
+            ))}
+          </ol>
+        </div>
       </motion.div>
     </section>
   );

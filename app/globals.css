@@ -1929,6 +1929,49 @@ html {
   pointer-events: none;
 }
 
+.roadmap-paths-wrap {
+  position: relative;
+}
+
+/* Winding "road" overlay drawn through the nodes (desktop only — see RoadmapRoad). Hidden
+   below the desktop breakpoint, where the straight CSS spine (::before) is used instead. */
+.roadmap-road {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  display: none;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 16%, transparent));
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+}
+
+/* Faint accent shoulder, asphalt surface, dashed lane line — stacked widest → narrowest. */
+.roadmap-road-edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 24%, var(--border));
+  stroke-width: 44;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.roadmap-road-surface {
+  fill: none;
+  stroke: #363d49;
+  stroke-width: 36;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.roadmap-road-lane {
+  fill: none;
+  stroke: color-mix(in srgb, #e6edf3 60%, transparent);
+  stroke-width: 3;
+  stroke-dasharray: 14 16;
+  stroke-linecap: round;
+}
+
 /* Vertical stack of paths; hosts the spine. The spine x sits at the node centre so the
    line threads through every node. */
 .roadmap-paths {
@@ -2207,17 +2250,22 @@ html {
     margin-top: 0;
   }
 
-  /* Spine moves to the centre. */
-  .roadmap-paths::before {
-    left: 50%;
+  /* The curvy road overlay replaces the straight centre line on desktop. */
+  .roadmap-road {
+    display: block;
   }
 
-  /* Three columns: side | node | side. minmax(0,…) lets the carousels scroll inside. */
+  .roadmap-paths::before {
+    display: none;
+  }
+
+  /* Three columns: side | node | side. minmax(0,…) lets the carousels scroll inside; the
+     wide centre gap gives the road room to wind without touching the cards. */
   .roadmap-path {
     padding-left: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    column-gap: 1.5rem;
+    column-gap: 3rem;
     align-items: center;
   }
 
@@ -2242,7 +2290,7 @@ html {
     content: "";
     position: absolute;
     top: 50%;
-    width: 1.5rem;
+    width: 2.75rem;
     height: 2px;
     background: color-mix(in srgb, var(--accent) 45%, var(--border));
     transform: translateY(-50%);
@@ -2279,8 +2327,12 @@ html {
     text-align: right;
   }
 
+  /* `safe` so that when a path's cards overflow the column the alignment falls back to
+     start — otherwise flex-end pushes the overflow past the start edge where it can't be
+     scrolled to (and scrollWidth wouldn't count it, so the arrows stay hidden). When the
+     cards fit, they still hug the centre spine. */
   .roadmap-paths > li:nth-child(even) .roadmap-carousel-track {
-    justify-content: flex-end;
+    justify-content: safe flex-end;
   }
 
   .roadmap-paths > li:nth-child(even) .roadmap-path-header::after {
