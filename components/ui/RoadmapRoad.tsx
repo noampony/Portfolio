@@ -59,16 +59,22 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       });
 
       // Anchor the road to the top and bottom edges so it "exits" the frame like a real road.
+      // The bottom anchor extends well beyond h so the bezier's "return to centre" phase is
+      // clipped by the SVG viewport — only the outgoing arc is visible before the mask fades.
       const first = centres[0];
       const last = centres[centres.length - 1];
-      const points = [{ x: first.x, y: 0 }, ...centres, { x: last.x, y: h }];
+      const points = [{ x: first.x, y: 0 }, ...centres, { x: last.x, y: h + BULGE * 3 }];
 
       let d = `M ${first.x.toFixed(1)} 0`;
       for (let i = 0; i < points.length - 1; i += 1) {
         const p0 = points[i];
         const p1 = points[i + 1];
         const dir = i % 2 === 0 ? 1 : -1;
-        const cx = (p0.x + p1.x) / 2 + BULGE * dir;
+        // Scale the bulge to the segment height so short anchor segments (top-edge → first
+        // node, last node → bottom-edge) curve gently rather than kinking sideways.
+        const segH = Math.abs(p1.y - p0.y);
+        const bulge = Math.min(BULGE, segH / 2);
+        const cx = (p0.x + p1.x) / 2 + bulge * dir;
         const cy = (p0.y + p1.y) / 2;
         d += ` Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
       }
@@ -86,6 +92,13 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       compute();
       observer = new ResizeObserver(compute);
       observer.observe(containerRef.current);
+      // Also observe each node individually — a CSS alignment change (e.g. align-items)
+      // can shift node positions without changing the container size, so the container
+      // ResizeObserver alone wouldn't re-fire. Observing nodes catches those cases.
+      const nodes = Array.from(
+        containerRef.current.querySelectorAll<HTMLElement>(".roadmap-path-order"),
+      );
+      nodes.forEach((n) => observer!.observe(n));
     };
     start();
 

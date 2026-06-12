@@ -156,10 +156,10 @@ function ExperienceFlipCard({
     ? ({
         "--card-logo": `url(${backgroundImage})`,
         ...(prominentLogo
-          ? { "--card-logo-size": "clamp(10rem, 70%, 20rem)", "--card-logo-opacity": "0.18" }
+          ? { "--card-logo-size": "clamp(10rem, 70%, 20rem)", "--card-logo-opacity": "0.11" }
           : {}),
         ...(subduedLogo
-          ? { "--card-logo-size": "clamp(4.5rem, 34%, 9rem)", "--card-logo-opacity": "0.06" }
+          ? { "--card-logo-size": "clamp(4.5rem, 34%, 9rem)", "--card-logo-opacity": "0.04" }
           : {}),
       } as CSSProperties)
     : undefined;
@@ -192,7 +192,6 @@ function ExperienceFlipCard({
       >
         {/* Front — role/company/dates, centred and large. */}
         <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
-          <span aria-hidden="true" className="experience-flip-logo" />
           <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
           <FrontReveal fill={fill}>
             {frontCertificates ? (
@@ -200,6 +199,14 @@ function ExperienceFlipCard({
             ) : null}
             <div aria-hidden="true" className="experience-flip-front-main">
               {front}
+              {backgroundImage ? (
+                <img
+                  src={backgroundImage}
+                  alt=""
+                  aria-hidden="true"
+                  className="experience-flip-front-logo"
+                />
+              ) : null}
             </div>
             <span aria-hidden="true" className="experience-flip-hint">
               <span className="experience-flip-hint-icon">
@@ -370,11 +377,19 @@ export function ExperienceCardBody({
           <span className="mt-1 block text-text-secondary">{duration}</span>
         ) : null}
       </p>
-      {employmentType ? (
-        <span className="mt-3 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
-          {employmentType}
-        </span>
-      ) : null}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {isCurrent ? (
+          <span className="experience-current-tag">
+            <span className="experience-current-tag-dot" aria-hidden="true" />
+            Current
+          </span>
+        ) : null}
+        {employmentType ? (
+          <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+            {employmentType}
+          </span>
+        ) : null}
+      </div>
     </>
   );
 

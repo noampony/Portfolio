@@ -382,6 +382,15 @@ export function validateProject(data: unknown): Project {
     liveDemoUrl: assertOptionalString(raw.liveDemoUrl, `${path}.liveDemoUrl`),
     screenshots: assertOptionalStringArray(raw.screenshots, `${path}.screenshots`),
     isFeatured: assertOptionalBoolean(raw.isFeatured, `${path}.isFeatured`),
+    workplace: (() => {
+      if (raw.workplace == null) return undefined;
+      const wp = assertObject(raw.workplace, `${path}.workplace`);
+      return {
+        name: assertRequiredString(wp.name, `${path}.workplace.name`),
+        logo: assertRequiredString(wp.logo, `${path}.workplace.logo`),
+        showName: assertOptionalBoolean(wp.showName, `${path}.workplace.showName`),
+      };
+    })(),
     confidentialityReviewed: assertRequiredBoolean(
       raw.confidentialityReviewed,
       `${path}.confidentialityReviewed`,
@@ -624,6 +633,15 @@ export function validateProjectList(data: unknown): Project[] {
       liveDemoUrl: assertOptionalString(raw.liveDemoUrl, `${path}.liveDemoUrl`),
       screenshots: assertOptionalStringArray(raw.screenshots, `${path}.screenshots`),
       isFeatured: assertOptionalBoolean(raw.isFeatured, `${path}.isFeatured`),
+      workplace: (() => {
+        if (raw.workplace == null) return undefined;
+        const wp = assertObject(raw.workplace, `${path}.workplace`);
+        return {
+          name: assertRequiredString(wp.name, `${path}.workplace.name`),
+          logo: assertRequiredString(wp.logo, `${path}.workplace.logo`),
+          showName: assertOptionalBoolean(wp.showName, `${path}.workplace.showName`),
+        };
+      })(),
       confidentialityReviewed: assertRequiredBoolean(
         raw.confidentialityReviewed,
         `${path}.confidentialityReviewed`,

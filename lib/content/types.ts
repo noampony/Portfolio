@@ -101,6 +101,14 @@ export type Experience = {
 export type Project = {
   name: string;
   role: string;
+  /** Optional — the organisation where this project was built. */
+  workplace?: {
+    name: string;
+    /** Logo path served from `/public` (e.g. `/logos/check-point.svg`). */
+    logo: AssetReference;
+    /** When true, renders the name text alongside the logo. */
+    showName?: boolean;
+  };
   year?: string | number;
   /** Optional — final categories are TBD (§19.6); omitted until owner-confirmed. */
   category?: string[];
