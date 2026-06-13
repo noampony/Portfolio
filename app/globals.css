@@ -1093,72 +1093,8 @@ html {
   border-top-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
 }
 
-/* Commit dot — sits on its lane, vertically aligned with the card's title row. */
-.git-dot {
-  position: absolute;
-  top: var(--git-dot-top);
-  z-index: 1;
-  width: 0.875rem;
-  height: 0.875rem;
-  /* `--dot-scale` (0→1) lets the dot "pop" into being as the fill front reaches it; kept in
-     CSS so it composes with the centring translate (motion would otherwise overwrite the
-     whole transform). Defaults to 1 = fully formed. */
-  transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
-  border: 2px solid var(--accent);
-  border-radius: 999px;
-  background: var(--bg-base);
-  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 28%, transparent);
-  pointer-events: none;
-}
-
-.git-dot--main {
-  left: var(--git-lane-main);
-}
-
-.git-dot--side {
-  left: var(--git-lane-side);
-}
-
-/* Current role (the "Now" merge point) — noticeably larger, fully filled and
-   glowing. Two concentric rings pulse outward in relay so there is always one
-   in flight: a persistent "live" heartbeat. Static fallback (reduced-motion) is
-   still visually prominent — bigger dot + strong halo. */
-.git-dot--current {
-  /* Solid core; the dot sketches in by growing (scale) rather than colour-filling. */
-  background: var(--accent);
-  width: 1.1rem;
-  height: 1.1rem;
-  border-width: 2.5px;
-  box-shadow:
-    0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
-    0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
-    0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
-}
-
-/* First ring — fires immediately. */
-.git-dot--current::after {
-  content: "";
-  position: absolute;
-  inset: -0.22rem;
-  border-radius: 999px;
-  border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Second ring — fires offset so one ring is always expanding. */
-.git-dot--current::before {
-  content: "";
-  position: absolute;
-  inset: -0.28rem;
-  border-radius: 999px;
-  border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Root (the B.Sc. degree) — rendered as a plain commit dot, identical to every other
-   node so the timeline reads consistently (no special origin marker). */
+/* Commit dots were removed — the lane lines and fork/merge elbows meet the card edges
+   directly. The line split at `--git-dot-top` keeps the top/bottom halves collinear. */
 
 /* Technology chips — mono, glassy, accent edge on hover. */
 .experience-tag {
@@ -1256,28 +1192,9 @@ html {
   }
 }
 
-/* Breathing glow on the dot itself — pulses the outer halo between a resting
-   intensity and a brighter flare in sync with the radiating rings. */
-@keyframes git-dot-glow-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
-      0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
-      0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
-  }
-
-  50% {
-    box-shadow:
-      0 0 0 0.45rem color-mix(in srgb, var(--accent) 18%, transparent),
-      0 0 2rem color-mix(in srgb, var(--accent) 88%, transparent),
-      0 0 4.5rem color-mix(in srgb, var(--accent) 48%, transparent);
-  }
-}
-
 /* "Live" heartbeat for the current-role card — the whole card (accent edge + ambient
-   glow) breathes in sync with its commit dot, so the active role reads as alive rather
-   than just having a static accent border. In sync (2.4s) with git-dot-glow-pulse. */
+   glow) breathes so the active role reads as alive rather than just having a static
+   accent border. */
 @keyframes experience-card-live {
   0%,
   100% {
@@ -1297,67 +1214,21 @@ html {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  /* Dot breathes, two rings fire in relay (0s + 1.2s offset) — one ring is
-     always mid-expansion, creating a continuous "live" heartbeat effect. */
-  .git-dot--current {
-    animation: git-dot-glow-pulse 2.4s ease-in-out infinite;
-  }
+/* ===== Experience — expand cards (spec §7.4 / §7.5 / §8.3) ==========================
+   Each role/degree node is COMPACT by default (role, organisation, dates+duration and a
+   small logo) so the whole tree is visible at once. The full detail opens as a larger
+   "big card" on hover (desktop), on keyboard activation, or on tap (touch) — never
+   hover-only. The expanded card is portalled to <body> and positioned `fixed`, so the
+   tree never reflows when it opens. Until the client hydrates, the full detail renders
+   inline and visible (`.experience-card-static`) so the section is complete without JS.
+   The compact hover lift, the grow-in animation and the current-role "live" breathing are
+   gated under `prefers-reduced-motion: no-preference`. */
 
-  .git-dot--current::after {
-    animation: experience-node-ring 2.4s ease-out infinite;
-  }
-
-  .git-dot--current::before {
-    animation: experience-node-ring 2.4s ease-out 1.2s infinite;
-  }
-}
-
-/* ===== Experience — flip cards (spec §7.4 / §8.3) ====================================
-   Each role/degree node is a click/tap-to-flip card: the FRONT shows the role/degree,
-   organisation and dates (with the computed period) centred and large; the BACK keeps the
-   full detail layout. Both faces stack in one grid cell so the card auto-sizes to its taller
-   face — no fixed height, no clipping. The organisation-logo watermark sits centred behind
-   both faces. A single transparent full-card toggle flips the card; the faces are
-   `pointer-events:none` so clicks on empty space reach it while the certificate/link controls
-   re-enable pointer events. The 3D flip + hover lift + shimmer are gated under
-   `prefers-reduced-motion: no-preference`, and the section's `<noscript>` unfolds the faces. */
-
-.experience-flip {
-  position: relative;
-  width: 100%;
-  perspective: 1400px;
-}
-
-.experience-flip-inner {
-  position: relative;
-  /* Stacked above the full-card toggle so the faces' interactive controls (certificate
-     buttons, links) receive their own clicks rather than the toggle catching them. The flip
-     is driven by an onClick on this surface (it ignores clicks that land on a control), with
-     the toggle button kept underneath purely as the keyboard/assistive-tech control. */
-  z-index: 2;
-  display: grid;
-  cursor: pointer;
-  transform-style: preserve-3d;
-}
-
-.experience-flip[data-flipped="true"] .experience-flip-inner {
-  transform: rotateY(180deg);
-}
-
-/* Both faces share one grid cell → the card grows to the taller face. */
-.experience-flip-face {
-  position: relative;
-  grid-area: 1 / 1;
-  min-height: 12rem;
-  overflow: hidden;
-  /* `--card-frame` (0→1) fades the edge in as the scroll-draw front arrives; defaults to 1. */
-  border: 1px solid
-    color-mix(
-      in srgb,
-      color-mix(in srgb, white 16%, var(--accent) 18%) calc(var(--card-frame, 1) * 100%),
-      transparent
-    );
+/* Shared glass surface for the compact card, the expanded panel and the no-JS static card. */
+.experience-card-compact,
+.experience-card-panel,
+.experience-card-static {
+  border: 1px solid color-mix(in srgb, color-mix(in srgb, white 16%, var(--accent) 18%), transparent);
   border-radius: var(--radius);
   background:
     radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.1), transparent 32%),
@@ -1368,47 +1239,110 @@ html {
     inset 0 1px 0 rgb(255 255 255 / 0.16),
     inset 0 -1px 0 rgb(45 212 191 / 0.07);
   backdrop-filter: blur(22px) saturate(170%);
-  padding: 1.25rem;
-  /* Clicks fall through to the full-card toggle beneath; controls re-enable below. */
-  pointer-events: none;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+}
+
+/* The card wrapper — positioning context + hover/focus group. */
+.experience-card {
+  position: relative;
+  width: 100%;
+}
+
+/* ----- Compact card (the always-visible disclosure) ------------------------------- */
+.experience-card-compact {
+  position: relative;
+  display: flex;
+  min-height: 6rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.875rem 1.25rem;
+  text-align: center;
   transition:
     border-color 180ms ease,
-    box-shadow 180ms ease;
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 @media (min-width: 640px) {
-  .experience-flip-face {
-    padding: 1.5rem;
+  .experience-card-compact {
+    padding: 1rem 1.5rem;
   }
 }
 
-/* Static inner sheen + (hover-only) shimmer sweep, behind the face content. */
-.experience-flip-face::after {
-  position: absolute;
-  inset: 1px;
-  z-index: 0;
-  border-radius: calc(var(--radius) - 1px);
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.07), transparent 38%),
-    linear-gradient(90deg, rgb(45 212 191 / 0.05), transparent 34%, rgb(59 130 246 / 0.035));
-  content: "";
+/* The small organisation/institution logo on the compact card. */
+.experience-card-compact-logo {
+  display: block;
+  margin: 0 auto 0.4rem;
+  height: 1.5rem;
+  width: auto;
+  max-width: 55%;
+  object-fit: contain;
+  opacity: 0.7;
   pointer-events: none;
 }
 
-/* GlareHover overlay replaces the former ::before shimmer sweep. */
+/* Transparent full-card toggle — sits over the (aria-hidden) compact content and is the
+   accessible disclosure control; it carries the focus ring. */
+.experience-card-toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+}
 
-.experience-flip-face > * {
+.experience-card-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Current-role compact card — a stronger accent edge so it reads as "live". */
+.experience-card--current .experience-card-compact {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+  box-shadow:
+    0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
+    0 0 1.75rem color-mix(in srgb, var(--accent) 12%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+
+/* ----- Expanded "big card" (portalled overlay) + no-JS static card ---------------- */
+.experience-card-panel {
+  z-index: 70;
+  width: min(26rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+/* Touch / no-hover devices open a wider centred sheet. */
+.experience-card-panel--sheet {
+  width: min(32rem, 92vw);
+  max-height: 85vh;
+}
+
+.experience-card-panel--current {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+/* The pre-hydration / no-JS full card, in normal flow. */
+.experience-card-static {
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+/* Content sits above the logo watermark. */
+.experience-card-panel-inner {
   position: relative;
   z-index: 1;
 }
 
-
-/* Centred organisation-logo watermark behind the content. The URL is supplied per card via
-   the inline `--card-logo` custom property; absent → `none` (the card just shows the glass,
-   no console error). Sized as a contained, centred mark — never cropped like a cover photo. */
-.experience-flip-logo {
+/* Centred organisation-logo watermark behind the expanded/static content. The URL is
+   supplied per card via the inline `--card-logo` custom property; absent → `none`. */
+.experience-card-logo {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -1416,63 +1350,29 @@ html {
   background-image: var(--card-logo, none);
   background-position: center;
   background-repeat: no-repeat;
-  /* Size/opacity are overridable per card (e.g. the Check Point wordmark reads larger). */
-  background-size: var(--card-logo-size, clamp(7rem, 52%, 15rem)) auto;
-  opacity: var(--card-logo-opacity, 0.065);
+  background-size: var(--card-logo-size, clamp(7rem, 50%, 14rem)) auto;
+  opacity: var(--card-logo-opacity, 0.06);
   pointer-events: none;
 }
 
-/* Organisation logo displayed as visible content on the front face, below the tags. */
-.experience-flip-front-logo {
-  display: block;
-  margin: 1.25rem auto 0;
-  height: 2.75rem;
-  width: auto;
-  max-width: 62%;
-  object-fit: contain;
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-/* Front face — centred, large; the hint pins to the bottom. */
-.experience-flip-front-inner {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-}
-
-.experience-flip-front-main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.experience-flip-back {
-  display: flex;
-  flex-direction: column;
-  transform: rotateY(180deg);
-}
-
-.experience-flip-back-inner {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-}
-
-/* Certificate trigger row — centred on the front, left-aligned on the back. */
-.experience-flip-cert-row {
+/* Certificate trigger row at the top of the expanded card. */
+.experience-card-cert-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
 
-.experience-flip-cert-row--back {
-  justify-content: flex-start;
+/* ----- Backdrop (click/tap-outside to close) -------------------------------------- */
+.experience-card-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.experience-card-backdrop--dim {
+  background: rgb(2 6 12 / 0.55);
+  backdrop-filter: blur(2px);
 }
 
 /* Dean's List badge joined to its certificate trigger as one segmented pill, so it is
@@ -1530,85 +1430,8 @@ html {
   }
 }
 
-/* "Click to reveal" affordance — mirrors the Projects flip hint. */
-.experience-flip-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  align-self: center;
-  margin-top: 1rem;
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  transition: color 200ms ease;
-}
-
-.experience-flip-hint--back {
-  align-self: flex-start;
-  margin-top: auto;
-  padding-top: 0.75rem;
-}
-
-.experience-flip:hover .experience-flip-hint {
-  color: var(--accent);
-}
-
-.experience-flip-hint-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.55rem;
-  height: 1.55rem;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
-  transition:
-    background 200ms ease,
-    box-shadow 200ms ease,
-    transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.experience-flip:hover .experience-flip-hint-icon {
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-  box-shadow: 0 0 0.9rem color-mix(in srgb, var(--accent) 28%, transparent);
-}
-
-.experience-flip-hint svg {
-  width: 0.8rem;
-  height: 0.8rem;
-}
-
-/* The full-card toggle sits behind the (pointer-events:none) faces; empty-space clicks fall
-   through to it, so it flips the card from either face and never disappears mid-flip. */
-.experience-flip-toggle {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border: 0;
-  border-radius: var(--radius);
-  background: transparent;
-  cursor: pointer;
-}
-
-.experience-flip-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Re-enable pointer events for the interactive controls inside the faces (the rest of the
-   face stays click-through so the toggle handles the flip). */
-.experience-flip-face .about-cert-trigger,
-.experience-flip-face a {
-  pointer-events: auto;
-}
-
-/* Hover: brighten the visible face + lift the card (mirrors the Projects/About card hover). */
-.experience-flip:hover .experience-flip-face {
+/* Hover (desktop): brighten the compact card before the overlay grows in. */
+.experience-card:hover .experience-card-compact {
   border-color: color-mix(in srgb, white 22%, var(--accent) 40%);
   box-shadow:
     0 1.5rem 4rem rgb(0 0 0 / 0.24),
@@ -1616,37 +1439,75 @@ html {
     inset 0 1px 0 rgb(255 255 255 / 0.2);
 }
 
-/* Current-role card — a stronger accent edge so it reads as "live". */
-.experience-flip--current .experience-flip-face {
-  border-color: color-mix(
-    in srgb,
-    color-mix(in srgb, var(--accent) 42%, var(--border)) calc(var(--card-frame, 1) * 100%),
-    transparent
-  );
-  box-shadow:
-    0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
-    0 0 1.75rem color-mix(in srgb, var(--accent) 12%, transparent),
-    inset 0 1px 0 rgb(255 255 255 / 0.18);
+@media (prefers-reduced-motion: no-preference) {
+  .experience-card:hover .experience-card-compact {
+    transform: translateY(-0.25rem);
+  }
+
+  /* The current-role compact card breathes, in sync with its commit dot. */
+  .experience-card--current .experience-card-compact {
+    animation: experience-card-live 2.4s ease-in-out infinite;
+  }
 }
 
+/* Gentle reveal-on-scroll for the Experience tree — cards rise + fade, connector lines fade
+   in just after, top-to-bottom. `data-reveal` is set by JS only once the tree is / scrolls
+   into view; this whole block is reduced-motion-gated, and no-JS never sets the attribute,
+   so reduced-motion and no-JS users always see the tree fully drawn (§7.5). */
 @media (prefers-reduced-motion: no-preference) {
-  .experience-flip-inner {
-    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  [data-reveal="armed"] .experience-card {
+    opacity: 0;
+    transform: translateY(14px);
   }
 
-  .experience-flip:hover {
-    transform: translateY(-0.25rem);
-    transition: transform 180ms ease;
+  [data-reveal="revealed"] .experience-card {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 520ms ease,
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .experience-flip:hover .experience-flip-hint-icon {
-    transform: rotate(180deg);
+  [data-reveal="armed"] .git-line,
+  [data-reveal="armed"] .git-elbow,
+  [data-reveal="armed"] .git-graph-row::after,
+  [data-reveal="armed"] .tree-conn,
+  [data-reveal="armed"] .tree-fork,
+  [data-reveal="armed"] .tree-merge-stem,
+  [data-reveal="armed"] .tree-merge-head {
+    opacity: 0;
   }
 
+  [data-reveal="revealed"] .git-line,
+  [data-reveal="revealed"] .git-elbow,
+  [data-reveal="revealed"] .git-graph-row::after,
+  [data-reveal="revealed"] .tree-conn,
+  [data-reveal="revealed"] .tree-fork,
+  [data-reveal="revealed"] .tree-merge-stem,
+  [data-reveal="revealed"] .tree-merge-head {
+    opacity: 1;
+    transition: opacity 640ms ease 160ms;
+  }
 
-  /* The current-role card breathes (front face), in sync with its commit dot. */
-  .experience-flip--current .experience-flip-front {
-    animation: experience-card-live 2.4s ease-in-out infinite;
+  /* Top-to-bottom stagger (cells / rows are in chronological DOM order). */
+  [data-reveal="revealed"] .experience-tree-cell:nth-child(2) .experience-card,
+  [data-reveal="revealed"] .git-graph-row:nth-child(2) .experience-card {
+    transition-delay: 80ms;
+  }
+  [data-reveal="revealed"] .experience-tree-cell:nth-child(3) .experience-card,
+  [data-reveal="revealed"] .git-graph-row:nth-child(3) .experience-card {
+    transition-delay: 160ms;
+  }
+  [data-reveal="revealed"] .experience-tree-cell:nth-child(4) .experience-card,
+  [data-reveal="revealed"] .git-graph-row:nth-child(4) .experience-card {
+    transition-delay: 240ms;
+  }
+  [data-reveal="revealed"] .experience-tree-cell:nth-child(5) .experience-card,
+  [data-reveal="revealed"] .git-graph-row:nth-child(5) .experience-card {
+    transition-delay: 320ms;
+  }
+  [data-reveal="revealed"] .git-graph-row:nth-child(6) .experience-card {
+    transition-delay: 400ms;
   }
 }
 
@@ -2475,13 +2336,13 @@ html {
     --tree-line: color-mix(in srgb, var(--accent) 60%, var(--border));
     /* Not-yet-drawn portion: transparent so the line sketches in (mirrors --git-line-dim). */
     --tree-line-dim: transparent;
-    --tree-rg: 2.75rem; /* vertical gap that each connector bridges */
+    --tree-rg: 1.75rem; /* vertical gap that each connector bridges */
     --tree-cgap: clamp(1.5rem, 5vw, 4rem); /* gutter between the two branch columns */
-    --tree-fork-h: 2.5rem; /* height of the fork zone */
+    --tree-fork-h: 2rem; /* height of the fork zone */
     --tree-fork-r: 1rem; /* fork corner radius */
-    --tree-a-rise: clamp(3rem, 7vw, 6rem); /* how much higher branch A (current role) ends */
+    --tree-a-rise: clamp(1.5rem, 4vw, 3rem); /* how much higher branch A (current role) ends */
     --tree-card-max: 30rem; /* stem/root reading width */
-    --tree-merge-h: 3rem; /* space above branch-A for the top merge zone (= branch-A top y) */
+    --tree-merge-h: 1.75rem; /* space above branch-A for the top merge zone (= branch-A top y) */
     --tree-merge-y: 1.25rem; /* y of the merge bar (from the tree's top edge) */
 
     position: relative;
@@ -2558,63 +2419,7 @@ html {
     grid-row: 5;
   }
 
-  /* Commit dots — sit on the card edge where a connector meets it. */
-  .tree-dot {
-    position: absolute;
-    left: 50%;
-    z-index: 2;
-    width: 0.875rem;
-    height: 0.875rem;
-    border: 2px solid var(--accent);
-    border-radius: 999px;
-    background: var(--bg-base);
-    box-shadow: 0 0 0.75rem color-mix(in srgb, var(--accent) 28%, transparent);
-    pointer-events: none;
-  }
-
-  /* `--dot-scale` (0→1) lets the dot pop in as the fill front reaches it; composed with the
-     centring translate so motion doesn't overwrite the whole transform. Default 1. */
-  .tree-dot--bottom {
-    bottom: 0;
-    transform: translate(-50%, 50%) scale(var(--dot-scale, 1));
-  }
-
-  .tree-dot--top {
-    top: 0;
-    transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
-  }
-
-  /* Current role — larger, filled, with a relay of pulsing rings (reduced-motion-safe;
-     the static fallback is still a prominent glowing dot). */
-  .tree-dot--current {
-    width: 1.1rem;
-    height: 1.1rem;
-    border-width: 2.5px;
-    background: var(--accent);
-    box-shadow:
-      0 0 0 0.28rem color-mix(in srgb, var(--accent) 22%, transparent),
-      0 0 1.25rem color-mix(in srgb, var(--accent) 65%, transparent),
-      0 0 2.75rem color-mix(in srgb, var(--accent) 32%, transparent);
-  }
-
-  .tree-dot--current::after,
-  .tree-dot--current::before {
-    content: "";
-    position: absolute;
-    inset: -0.22rem;
-    border-radius: 999px;
-    border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .tree-dot--current::before {
-    inset: -0.28rem;
-    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  }
-
-  /* Root (degree) — a plain commit dot, identical to every other node (no special
-     origin marker), so the education node matches the rest of the tree. */
+  /* Commit dots were removed — the connectors meet the card edges directly. */
 
   /* Connectors — thin teal lines. Each gap-bridging connector sits in the row below its
      gap and bleeds up by --tree-rg, so it spans exactly card-edge → card-edge. */
@@ -2757,20 +2562,6 @@ html {
     grid-row: 5;
     height: var(--tree-rg);
     margin-top: calc(-1 * var(--tree-rg));
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .tree-dot--current {
-      animation: git-dot-glow-pulse 2.4s ease-in-out infinite;
-    }
-
-    .tree-dot--current::after {
-      animation: experience-node-ring 2.4s ease-out infinite;
-    }
-
-    .tree-dot--current::before {
-      animation: experience-node-ring 2.4s ease-out 1.2s infinite;
-    }
   }
 }
 

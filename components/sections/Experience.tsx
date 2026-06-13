@@ -27,7 +27,9 @@ import type { Experience as ExperienceModel } from "@/lib/content/types";
  * HTML (available without client JS, good for SEO/AT) and the ongoing role's
  * duration is computed once at build time here, then handed to the client
  * `ExperienceGitGraph` — avoiding a runtime clock dependency and any hydration
- * mismatch (§8.3.2). The per-node scroll reveal lives in `ExperienceGitNode`.
+ * mismatch (§8.3.2). Each card ships its full detail inline and visible until the
+ * client hydrates, then collapses to the compact card + on-demand overlay
+ * (`ExperienceCard`), so the section is complete without JS (§7.5).
  */
 
 const ONGOING_END_SORT_KEY = "9999-99";
@@ -112,17 +114,6 @@ export function Experience() {
       aria-labelledby="experience-heading"
       className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
     >
-      {/*
-       * Progressive-enhancement safety net (spec §7.5/§8.3): the timeline's reveal is a
-       * scroll-scrubbed "draw" whose fill vars (--fill / --dot-* / --card-body) default to
-       * the fully-drawn state, so the SSR HTML is already complete and visible without JS.
-       * This block is a belt-and-suspenders guarantee that the card content and commit dots
-       * stay visible if scripting never runs; it is inert whenever JS runs.
-       */}
-      <noscript>
-        <style>{`.experience-flip-inner{display:block!important;transform:none!important}.experience-flip-face{transform:none!important;-webkit-backface-visibility:visible!important;backface-visibility:visible!important;min-height:0!important}.experience-flip-toggle,.experience-flip-hint{display:none!important}.git-dot,.tree-dot{opacity:1!important}`}</style>
-      </noscript>
-
       {/* Decorative backdrop glow — tokens only, echoes the About/Hero atmosphere. */}
       <div
         aria-hidden="true"

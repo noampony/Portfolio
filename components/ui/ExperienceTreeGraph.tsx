@@ -1,6 +1,6 @@
 "use client";
 
-import { NodeCard } from "@/components/ui/ExperienceCard";
+import { NodeCard, type ExperienceExpansion } from "@/components/ui/ExperienceCard";
 import type { ExperienceGraph, GraphNode } from "@/lib/content/experienceGraph";
 import type { EducationCertificateRef } from "@/lib/content/types";
 import { cn } from "@/lib/utils";
@@ -29,84 +29,51 @@ import { cn } from "@/lib/utils";
  * are decorative (aria-hidden); the cards keep the same semantics, ids and chronological
  * reading order as the small layout.
  *
- * The tree renders fully drawn; the `ScrollGradualBlur` wrapper in `ExperienceGitGraph`
- * owns the single scroll-driven reveal for the whole tree block.
+ * The whole tree is visible at once; cards are compact and expand into a larger overlay
+ * card on hover / keyboard / tap. The overlay is portalled to `document.body`, so the grid
+ * never reflows when a card opens.
  */
-
-type CellPlacement = {
-  /** Grid-placement modifier suffix, e.g. `branch-a`. */
-  modifier: string;
-  /** A commit dot at the card's top edge, where the incoming line lands. */
-  topDot: boolean;
-  /** A commit dot at the card's bottom edge, where the line exits to history below. */
-  bottomDot: boolean;
-  /** Extra class for the top dot (current/root accents); empty for a plain dot. */
-  topAccent: string;
-};
 
 /**
- * Dots sit where a line meets the card: a `topDot` where the incoming line lands (drawn
- * before the card, as the front arrives from above) and a `bottomDot` where the line exits
- * downward (drawn after the card has appeared). Tip cards that have no line above them
- * (the most-recent side role) carry only a bottom dot.
+ * Which cell a node occupies in the 2-branch tree (its grid-placement modifier). Derived
+ * from the graph flags, never array order: root caps the bottom, the branch point is the
+ * stem, the remaining main-lane node is branch A, and the two side nodes are branch B
+ * (most-recent on top).
  */
-function placeNode(node: GraphNode, sideOrder: string[]): CellPlacement {
-  if (node.isRoot) {
-    // Root caps the bottom of the tree: only an incoming line from above, so a top dot.
-    return { modifier: "root", topDot: true, bottomDot: false, topAccent: "tree-dot--root" };
-  }
-  if (node.branchPoint) {
-    // Stem (Malware Analyst): the fork taps into its top, the line to the root exits below.
-    return { modifier: "stem", topDot: true, bottomDot: true, topAccent: "" };
-  }
-  if (node.lane === "main") {
-    // Branch A (the current role): its top dot is the live "HEAD" where the upward branch +
-    // the merge of the side branch meet; the descender to history exits the card bottom.
-    return {
-      modifier: "branch-a",
-      topDot: true,
-      bottomDot: true,
-      topAccent: node.isCurrent ? "tree-dot--current" : "",
-    };
-  }
-  // Side lane → branch B. First side node (most recent) is the top card — a branch tip with
-  // no line above it, so only a bottom dot. The older side card has a line entering its top.
-  const isTop = sideOrder.indexOf(node.id) === 0;
-  return {
-    modifier: isTop ? "branch-b-top" : "branch-b-bottom",
-    topDot: !isTop,
-    bottomDot: true,
-    topAccent: "",
-  };
+function placeNode(node: GraphNode, sideOrder: string[]): string {
+  if (node.isRoot) return "root";
+  if (node.branchPoint) return "stem";
+  if (node.lane === "main") return "branch-a";
+  return sideOrder.indexOf(node.id) === 0 ? "branch-b-top" : "branch-b-bottom";
 }
 
-/** One tree cell (card + its commit dot[s]). Renders fully drawn; reveal is handled by
- *  the `ScrollGradualBlur` wrapper in `ExperienceGitGraph`. */
+/** One tree cell (the card placed in its branch position). */
 function TreeCell({
   node,
   index,
   sideOrder,
+  expansion,
   onOpenCertificate,
 }: {
   node: GraphNode;
   index: number;
   sideOrder: string[];
+  expansion: ExperienceExpansion;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
 }) {
-  const { modifier, topDot, bottomDot, topAccent } = placeNode(node, sideOrder);
+  const modifier = placeNode(node, sideOrder);
   const isBranchA = modifier === "branch-a";
   const headingId = `experience-node-${index}`;
 
   return (
     <li className={cn("experience-tree-cell", `experience-tree-cell--${modifier}`)}>
       <div className="experience-tree-cardwrap">
-        {topDot ? (
-          <span aria-hidden="true" className={cn("tree-dot tree-dot--top", topAccent)} />
-        ) : null}
-        {bottomDot ? (
-          <span aria-hidden="true" className="tree-dot tree-dot--bottom" />
-        ) : null}
-        <NodeCard node={node} headingId={headingId} onOpenCertificate={onOpenCertificate} />
+        <NodeCard
+          node={node}
+          headingId={headingId}
+          expansion={expansion}
+          onOpenCertificate={onOpenCertificate}
+        />
       </div>
       {isBranchA ? (
         <span aria-hidden="true" className="tree-conn tree-conn--branch-a-fill" />
@@ -122,9 +89,11 @@ function TreeConnector({ className }: { className: string }) {
 
 export function ExperienceTreeGraph({
   graph,
+  expansion,
   onOpenCertificate,
 }: {
   graph: ExperienceGraph;
+  expansion: ExperienceExpansion;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
 }) {
   const sideOrder = graph.nodes.filter((node) => node.lane === "side").map((node) => node.id);
@@ -137,6 +106,7 @@ export function ExperienceTreeGraph({
           node={node}
           index={index}
           sideOrder={sideOrder}
+          expansion={expansion}
           onOpenCertificate={onOpenCertificate}
         />
       ))}
