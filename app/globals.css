@@ -1261,7 +1261,16 @@ html {
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
-    transform 180ms ease;
+    transform 180ms ease,
+    opacity 200ms ease;
+}
+
+/* While the overlay is open, fade the compact content out so it crossfades with the growing
+   panel (which fades its detail in) — the box morphs and extends instead of snapping. */
+@media (prefers-reduced-motion: no-preference) {
+  .experience-card[data-open] .experience-card-compact {
+    opacity: 0;
+  }
 }
 
 @media (min-width: 640px) {

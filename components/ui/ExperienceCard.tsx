@@ -108,7 +108,10 @@ function computePanelPos(
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const pw = panel.offsetWidth;
-  const ph = panel.offsetHeight;
+  // The anchored panel mounts at the compact height and animates open, so `offsetHeight`
+  // reads small mid-grow; use the full content height (`scrollHeight`) to clamp the position
+  // so the unfolding panel never grows off-screen near the viewport edge.
+  const ph = Math.max(panel.offsetHeight, panel.scrollHeight);
 
   if (mode === "anchored" && anchor) {
     // The panel is rendered at the card's width, so it keeps that width and only grows taller.
@@ -308,16 +311,45 @@ function ExperienceExpandCard({
       } as CSSProperties)
     : undefined;
 
+  // Medium-speed expansion: the panel grows in place rather than popping in.
   const overlayTransition = prefersReducedMotion
     ? { duration: 0 }
-    : { duration: 0.18, ease: [0.22, 1, 0.36, 1] as const };
-  const panelMotion = prefersReducedMotion
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : {
-        initial: { opacity: 0, scale: 0.94 },
-        animate: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: 0.96 },
-      };
+    : { duration: 0.34, ease: [0.22, 1, 0.36, 1] as const };
+  let panelMotion: {
+    initial: Record<string, number | string>;
+    animate: Record<string, number | string>;
+    exit: Record<string, number | string>;
+  };
+  if (prefersReducedMotion) {
+    panelMotion = { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } };
+  } else if (mode === "anchored" && anchorRect) {
+    // Anchored (hover): keep the card's header in place and unfold the detail beneath it by
+    // animating height from the compact card's height down to the panel's natural height.
+    panelMotion = {
+      initial: { opacity: 1, height: anchorRect.height },
+      animate: { opacity: 1, height: "auto" },
+      exit: { opacity: 0, height: anchorRect.height },
+    };
+  } else {
+    // Sheet (touch): centred card, so grow gently from a near-full scale instead of height.
+    panelMotion = {
+      initial: { opacity: 0, scale: 0.96 },
+      animate: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.98 },
+    };
+  }
+
+  // Anchored open is a morph: the box stays put and grows, while the detail crossfades in (the
+  // compact content fades out in CSS). Without this the differently-laid-out header snapped in
+  // at frame 0, which read as a "jump" rather than the card extending.
+  const panelInnerMotion =
+    prefersReducedMotion || mode !== "anchored"
+      ? null
+      : {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.22, delay: 0.06, ease: "easeOut" as const },
+        };
 
   return (
     <article
@@ -388,6 +420,8 @@ function ExperienceExpandCard({
                     top: pos?.top ?? 0,
                     // Anchored: match the compact card's width so it grows in place. Sheet: CSS width.
                     width: mode === "anchored" && anchorRect ? anchorRect.width : undefined,
+                    // Anchored grows by height, so clip the unfolding detail to its current height.
+                    overflow: mode === "anchored" ? "hidden" : undefined,
                     transformOrigin: pos ? `${pos.originX}px ${pos.originY}px` : "center",
                     visibility: pos ? "visible" : "hidden",
                     ...logoStyle,
@@ -399,7 +433,13 @@ function ExperienceExpandCard({
                   onBlur={handleFocusOut}
                 >
                   <span aria-hidden="true" className="experience-card-logo" />
-                  <div className="experience-card-panel-inner">{panel}</div>
+                  {panelInnerMotion ? (
+                    <motion.div className="experience-card-panel-inner" {...panelInnerMotion}>
+                      {panel}
+                    </motion.div>
+                  ) : (
+                    <div className="experience-card-panel-inner">{panel}</div>
+                  )}
                 </motion.div>
               ) : null}
             </AnimatePresence>,
