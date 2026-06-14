@@ -710,13 +710,12 @@ export function EducationRootCard({
         <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
           Education
         </span>
-        {education.honor ? (
-          <span className="about-education-honor-badge">
-            <DeanListIcon />
-            {education.honor}
-          </span>
-        ) : null}
       </div>
+      {education.honor ? (
+        <span className="mt-2 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small font-semibold text-text-secondary">
+          {education.honor}
+        </span>
+      ) : null}
     </>
   );
 
