@@ -1,6 +1,6 @@
 "use client";
 
-import { NodeCard } from "@/components/ui/ExperienceCard";
+import { NodeCard, type ExperienceExpansion } from "@/components/ui/ExperienceCard";
 import type { GraphNode } from "@/lib/content/experienceGraph";
 import type { EducationCertificateRef } from "@/lib/content/types";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,8 @@ import { cn } from "@/lib/utils";
  * with the role/degree card. The two share a grid row, so the gutter stretches to the
  * card's height and the lanes stay aligned with no JS measurement.
  *
- * The tree renders fully drawn (CSS `--fill` / `--dot-scale` variables default to 1).
- * The scroll-driven reveal is handled by the `ScrollGradualBlur` wrapper in
- * `ExperienceGitGraph`, which applies a single gradient blur animation to the whole tree.
+ * The whole tree is visible at once; each card is compact and expands into a larger card
+ * on hover / keyboard / tap (`NodeCard` → `ExperienceCard`).
  *
  * This is the SMALL-screen layout. The large-screen tree (`ExperienceTreeGraph`) reuses
  * the same card bodies (`NodeCard`).
@@ -25,6 +24,7 @@ type ExperienceGitNodeProps = {
   index: number;
   /** Total node count; used to know whether a lane continues below this row. */
   total: number;
+  expansion: ExperienceExpansion;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
 };
 
@@ -32,6 +32,7 @@ export function ExperienceGitNode({
   node,
   index,
   total,
+  expansion,
   onOpenCertificate,
 }: ExperienceGitNodeProps) {
   const mainAbove = index > 0;
@@ -67,18 +68,15 @@ export function ExperienceGitNode({
         {node.mergePoint ? (
           <span className="git-elbow git-elbow--merge" />
         ) : null}
-        <span
-          className={cn(
-            "git-dot",
-            onSide ? "git-dot--side" : "git-dot--main",
-            node.isCurrent && "git-dot--current",
-            node.isRoot && "git-dot--root",
-          )}
-        />
       </span>
 
       <div className="git-graph-cell">
-        <NodeCard node={node} headingId={headingId} onOpenCertificate={onOpenCertificate} />
+        <NodeCard
+          node={node}
+          headingId={headingId}
+          expansion={expansion}
+          onOpenCertificate={onOpenCertificate}
+        />
       </div>
     </li>
   );

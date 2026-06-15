@@ -16,7 +16,7 @@ const profileData = {
     "A passionate experienced cloud backend developer.\nBuilding scalable & reliable cloud backend systems.",
   location: "Israel",
   profileImage: "/profile.png",
-  yearsExperienceStartDate: "2022-10",
+  yearsExperienceStartDate: "2021-12",
   technologiesCountLabel: "18+",
   coursesCountLabel: "35",
   mainFields: [

@@ -1,10 +1,20 @@
 "use client";
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FocusEvent as ReactFocusEvent,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 
-import { motion, type MotionStyle, type MotionValue } from "framer-motion";
-
-import { useGlareHandlers } from "@/components/ui/GlareHover";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { EducationCertificateTrigger } from "@/components/sections/EducationCertificateViewer";
 import type { GraphNode } from "@/lib/content/experienceGraph";
@@ -18,30 +28,36 @@ import { cn } from "@/lib/utils";
  * scheme; because only one layout is mounted at a time, the `aria-labelledby` ids stay
  * unique.
  *
- * Each card is a click/tap-to-flip card (mirrors the Projects flip cards, §7.4): the
- * FRONT shows the role/degree, organisation/institution and dates (with the computed
- * period) centred and large, plus a "click to reveal" affordance; the BACK keeps the full
- * detail layout (description, team, technologies, links). Certificate triggers are
- * per-face: role cards show the same trigger row on both faces, while the education card
- * pairs each trigger with its context (degree vs Dean's List) so two "Preview certificate"
- * buttons are never ambiguous. The organisation-logo watermark appears on BOTH faces.
- * The flip is a single transparent
- * full-card toggle (a disclosure: `aria-expanded`/`aria-controls`); the faces toggle
- * `inert` with the flip state so the hidden face's controls leave the tab + a11y tree,
- * and the always-present `sr-only` heading names the card regardless of which face shows.
+ * The card is **compact by default** so the whole tree is visible at once (spec §8.3): it
+ * shows just the role/degree, organisation, dates+duration and a small logo. The full
+ * detail (description, team, technologies, links, certificates) lives in a larger card
+ * that opens **on hover, on keyboard activation and on tap** — never hover-only (§7.4).
+ *
+ * Reveal mechanism (a disclosure, not a flip):
+ * - A transparent full-card `<button aria-expanded aria-controls>` toggles the card; the
+ *   `sr-only <h3>` names it regardless of state.
+ * - Desktop (pointer + hover): hovering opens an absolutely-positioned overlay anchored to
+ *   the card; the tree never reflows because the overlay is portalled to `document.body`.
+ * - Touch / no-hover: tapping opens a centred sheet with a dimmed backdrop.
+ * - Keyboard: Enter/Space opens and moves focus into the panel; Escape closes and returns
+ *   focus to the trigger; tabbing out of the panel closes it.
+ *
+ * Progressive enhancement (§7.5): until the client hydrates (`enhanced` is `false`), the
+ * full detail renders inline and visible, so the SSR HTML is complete without JS. After
+ * hydration it collapses to the compact card + on-demand overlay. All motion is
+ * reduced-motion-gated.
  */
 
-/**
- * Scroll-fill MotionValues for a card, threaded from the owning row/cell
- * (ExperienceGitNode / ExperienceTreeGraph): `frame` (0→1) fades the whole card in, then
- * `body` (0→1) fades the front content. Undefined = render statically (fully drawn) — used
- * for the pre-mount / reduced-motion fallback. See `useScrollDraw`.
- */
-export type CardFill = {
-  frame: MotionValue<number>;
-  body: MotionValue<number>;
-  /** Content rise (px → 0) for the front body's eased entrance. */
-  bodyY: MotionValue<number>;
+/** Bundle of single-open state + capability flags, owned by `ExperienceGitGraph`. */
+export type ExperienceExpansion = {
+  /** Id of the currently open card (single-open), or null. */
+  expandedId: string | null;
+  /** Open the given card, or close all when passed null. */
+  onExpandedChange: (id: string | null) => void;
+  /** True once the client has hydrated — switches inline detail → compact + overlay. */
+  enhanced: boolean;
+  /** True on hover-capable, fine-pointer devices (desktop) → anchored overlay + hover. */
+  hoverCapable: boolean;
 };
 
 const MONTH_LABELS = [
@@ -69,200 +85,374 @@ function formatMonthYear(value: string): string {
   return label ? `${label} ${year}` : value;
 }
 
-/** Decorative flip glyph (two curved arrows) reinforcing the "flip me" affordance. */
-function FlipGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-7.5-4" strokeLinecap="round" />
-      <path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 7.5 4" strokeLinecap="round" />
-      <path d="M21 3v4h-4M3 21v-4h4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+const CLOSE_DELAY_MS = 130;
+const VIEWPORT_MARGIN = 16;
+
+type PanelPos = { left: number; top: number; originX: number; originY: number };
+
+function clampValue(value: number, lo: number, hi: number): number {
+  return Math.min(Math.max(value, lo), Math.max(lo, hi));
 }
 
 /**
- * The front body wrapper. With `fill` it fades + rises into place on scroll (mirroring the
- * former card-body reveal); without it, a plain wrapper inherits the CSS fully-drawn default
- * (SSR / pre-mount / reduced-motion).
+ * Position the fixed overlay. Anchored mode renders the panel at the trigger's width (so it
+ * "grows in place" — same width, taller), aligned over the card and clamped inside the
+ * viewport (so edge cards never clip); the transform-origin sits at the trigger centre so it
+ * grows out of the compact card. Sheet mode centres a wider panel on screen.
  */
-function FrontReveal({ fill, children }: { fill?: CardFill; children: ReactNode }) {
-  if (!fill) {
-    return <div className="experience-flip-front-inner">{children}</div>;
+function computePanelPos(
+  mode: "anchored" | "sheet",
+  anchor: DOMRect | null,
+  panel: HTMLElement,
+): PanelPos {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const pw = panel.offsetWidth;
+  // The anchored panel mounts at the compact height and animates open, so `offsetHeight`
+  // reads small mid-grow; use the full content height (`scrollHeight`) to clamp the position
+  // so the unfolding panel never grows off-screen near the viewport edge.
+  const ph = Math.max(panel.offsetHeight, panel.scrollHeight);
+
+  if (mode === "anchored" && anchor) {
+    // The panel is rendered at the card's width, so it keeps that width and only grows taller.
+    const left = clampValue(anchor.left, VIEWPORT_MARGIN, Math.max(VIEWPORT_MARGIN, vw - pw - VIEWPORT_MARGIN));
+    const top = clampValue(anchor.top, VIEWPORT_MARGIN, Math.max(VIEWPORT_MARGIN, vh - ph - VIEWPORT_MARGIN));
+    const cx = anchor.left + anchor.width / 2;
+    const cy = anchor.top + anchor.height / 2;
+    return { left, top, originX: clampValue(cx - left, 0, pw), originY: clampValue(cy - top, 0, ph) };
   }
-  return (
-    <motion.div
-      className="experience-flip-front-inner"
-      style={{ opacity: fill.body, y: fill.bodyY }}
-    >
-      {children}
-    </motion.div>
-  );
+
+  return {
+    left: Math.max(VIEWPORT_MARGIN, (vw - pw) / 2),
+    top: Math.max(VIEWPORT_MARGIN, (vh - ph) / 2),
+    originX: pw / 2,
+    originY: ph / 2,
+  };
 }
 
-type ExperienceFlipCardProps = {
+/** `useLayoutEffect` on the client, `useEffect` on the server (avoids the SSR warning). */
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+type ExperienceExpandCardProps = {
+  /** Stable id (the heading id) used as the single-open key. */
+  cardId: string;
   /** Id of the always-present `sr-only` heading that names the card. */
   headingId: string;
   /** The accessible heading text (role / degree). */
   headingText: string;
-  fill?: CardFill;
+  expansion: ExperienceExpansion;
   /** Stronger accent + "live" breathing on the current-role card. */
   current?: boolean;
-  /** Centred organisation-logo watermark behind both faces (served from `/public`). */
+  /** Centred organisation-logo watermark behind the expanded card (served from `/public`). */
   backgroundImage?: string;
   /** Render the watermark larger / more opaque (e.g. the Check Point wordmark). */
   prominentLogo?: boolean;
   /** Render the watermark smaller / more transparent (e.g. the private-tutor mark). */
   subduedLogo?: boolean;
-  /** Certificate trigger row at the top of the front face; omit when the entry has none. */
-  frontCertificates?: ReactNode;
-  /** Certificate trigger row at the top of the back face. Role cards reuse the front node;
-   *  the education card omits this and embeds its triggers inside `back` instead. */
-  backCertificates?: ReactNode;
-  /** Centred front content (role/company/dates). */
-  front: ReactNode;
-  /** Back content — the full detail layout. */
-  back: ReactNode;
+  /** Compact-card content (role/company/duration/logo + current badge). */
+  compact: ReactNode;
+  /** Expanded "big card" content — the full detail layout. */
+  panel: ReactNode;
 };
 
 /**
- * The flip shell shared by the role and education cards. A single transparent full-card
- * `<button>` toggles the flip (the faces are `pointer-events:none`, so clicks on empty space
- * fall through to it while the certificate/link controls re-enable pointer events). The
- * 3D flip, hover lift and shimmer are reduced-motion-gated in CSS (`.experience-flip*`).
+ * The shell shared by the role and education cards: a compact disclosure that expands into
+ * a larger overlay card. Open state is lifted to the parent (single-open), so opening one
+ * card closes any other.
  */
-function ExperienceFlipCard({
+function ExperienceExpandCard({
+  cardId,
   headingId,
   headingText,
-  fill,
+  expansion,
   current,
   backgroundImage,
   prominentLogo,
   subduedLogo,
-  frontCertificates,
-  backCertificates,
-  front,
-  back,
-}: ExperienceFlipCardProps) {
-  const [flipped, setFlipped] = useState(false);
-  const backId = useId();
-  const frontGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
-  const backGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
-  const glareContainerHandlers = {
-    onMouseEnter: () => { frontGlare.handlers.onMouseEnter(); backGlare.handlers.onMouseEnter(); },
-    onMouseLeave: () => { frontGlare.handlers.onMouseLeave(); backGlare.handlers.onMouseLeave(); },
+  compact,
+  panel,
+}: ExperienceExpandCardProps) {
+  const { expandedId, onExpandedChange, enhanced, hoverCapable } = expansion;
+  const open = enhanced && expandedId === cardId;
+  const mode: "anchored" | "sheet" = hoverCapable ? "anchored" : "sheet";
+
+  const panelId = useId();
+  const articleRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<number | null>(null);
+  const focusPanelRef = useRef(false);
+  // Latest open card id, read by the deferred close so a stale timer can't clobber a sibling
+  // the pointer moved straight onto (kept in sync via an effect to avoid a render-time write).
+  const expandedIdRef = useRef(expandedId);
+
+  const prefersReducedMotion = useReducedMotion();
+  const [pos, setPos] = useState<PanelPos | null>(null);
+  // The trigger's rect, captured on open: drives the panel width (anchored = card width) and
+  // its position. State (not a ref) so the width can be read during render without a lint error.
+  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
+
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const openCard = useCallback(() => {
+    clearCloseTimer();
+    setAnchorRect(buttonRef.current?.getBoundingClientRect() ?? null);
+    setPos(null);
+    onExpandedChange(cardId);
+  }, [cardId, clearCloseTimer, onExpandedChange]);
+
+  const closeCard = useCallback(() => {
+    clearCloseTimer();
+    onExpandedChange(null);
+  }, [clearCloseTimer, onExpandedChange]);
+
+  const scheduleClose = useCallback(() => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      // Only close if this card is still the open one — moving the pointer straight onto a
+      // sibling opens that sibling, and this stale timer must not then close it.
+      if (expandedIdRef.current === cardId) {
+        onExpandedChange(null);
+      }
+    }, CLOSE_DELAY_MS);
+  }, [cardId, clearCloseTimer, onExpandedChange]);
+
+  // Position the panel once it is mounted (before paint, so there is no flicker).
+  useIsomorphicLayoutEffect(() => {
+    if (!open || !panelRef.current) {
+      return;
+    }
+    setPos(computePanelPos(mode, anchorRect, panelRef.current));
+  }, [open, mode, anchorRect]);
+
+  // Move focus into the panel when it was opened via keyboard, so its links/certificate
+  // controls are reachable; the portalled panel is otherwise outside the tab sequence.
+  // Gated on `pos` because the panel is `visibility: hidden` until positioned, and a hidden
+  // element cannot receive focus.
+  useIsomorphicLayoutEffect(() => {
+    if (open && pos && focusPanelRef.current && panelRef.current) {
+      focusPanelRef.current = false;
+      panelRef.current.focus();
+    }
+  }, [open, pos]);
+
+  // While open: Escape dismisses (and returns focus to the trigger) even when the card was
+  // opened by hover and nothing inside it has focus (WCAG 1.4.13). Anchored overlays close
+  // on page scroll (they would otherwise drift from the trigger); both modes close on
+  // resize. Inner panel scrolling does not fire window `scroll`.
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const onResize = () => closeCard();
+    const onKeyDown = (event: KeyboardEvent) => {
+      // Let an open certificate <dialog> handle Escape first (it is the deeper modal).
+      if (event.key === "Escape" && !document.querySelector("dialog[open]")) {
+        closeCard();
+        buttonRef.current?.focus();
+      }
+    };
+    window.addEventListener("resize", onResize);
+    document.addEventListener("keydown", onKeyDown);
+    if (mode === "anchored") {
+      window.addEventListener("scroll", closeCard, { passive: true });
+    }
+    return () => {
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("scroll", closeCard);
+    };
+  }, [open, mode, closeCard]);
+
+  // Keep the latest open-card id available to the deferred close (see `scheduleClose`).
+  useEffect(() => {
+    expandedIdRef.current = expandedId;
+  }, [expandedId]);
+
+  // Clear any pending close timer on unmount.
+  useEffect(() => clearCloseTimer, [clearCloseTimer]);
+
+  const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    // `detail === 0` => keyboard activation (Enter/Space): focus into the panel on open.
+    focusPanelRef.current = event.detail === 0;
+    if (open && !hoverCapable) {
+      closeCard();
+    } else {
+      openCard();
+    }
   };
 
-  const logoStyle = backgroundImage
+  const handleFocusOut = (event: ReactFocusEvent) => {
+    if (!open) {
+      return;
+    }
+    const next = event.relatedTarget as Node | null;
+    if (articleRef.current?.contains(next) || panelRef.current?.contains(next)) {
+      return;
+    }
+    closeCard();
+  };
+
+  const logoStyle: CSSProperties | undefined = backgroundImage
     ? ({
         "--card-logo": `url(${backgroundImage})`,
         ...(prominentLogo
-          ? { "--card-logo-size": "clamp(10rem, 70%, 20rem)", "--card-logo-opacity": "0.18" }
+          ? { "--card-logo-size": "clamp(10rem, 60%, 18rem)", "--card-logo-opacity": "0.1" }
           : {}),
         ...(subduedLogo
-          ? { "--card-logo-size": "clamp(4.5rem, 34%, 9rem)", "--card-logo-opacity": "0.06" }
+          ? { "--card-logo-size": "clamp(4.5rem, 32%, 8rem)", "--card-logo-opacity": "0.04" }
           : {}),
       } as CSSProperties)
     : undefined;
 
-  const body = (
-    <>
-      {/* The single accessible heading; never inert, so the card stays named on either face. */}
+  // Medium-speed expansion: the panel grows in place rather than popping in.
+  const overlayTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: 0.34, ease: [0.22, 1, 0.36, 1] as const };
+  let panelMotion: {
+    initial: Record<string, number | string>;
+    animate: Record<string, number | string>;
+    exit: Record<string, number | string>;
+  };
+  if (prefersReducedMotion) {
+    panelMotion = { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } };
+  } else if (mode === "anchored" && anchorRect) {
+    // Anchored (hover): keep the card's header in place and unfold the detail beneath it by
+    // animating height from the compact card's height down to the panel's natural height.
+    panelMotion = {
+      initial: { opacity: 1, height: anchorRect.height },
+      animate: { opacity: 1, height: "auto" },
+      exit: { opacity: 0, height: anchorRect.height },
+    };
+  } else {
+    // Sheet (touch): centred card, so grow gently from a near-full scale instead of height.
+    panelMotion = {
+      initial: { opacity: 0, scale: 0.96 },
+      animate: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.98 },
+    };
+  }
+
+  // Anchored open is a morph: the box stays put and grows, while the detail crossfades in (the
+  // compact content fades out in CSS). Without this the differently-laid-out header snapped in
+  // at frame 0, which read as a "jump" rather than the card extending.
+  const panelInnerMotion =
+    prefersReducedMotion || mode !== "anchored"
+      ? null
+      : {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.22, delay: 0.06, ease: "easeOut" as const },
+        };
+
+  return (
+    <article
+      ref={articleRef}
+      aria-labelledby={headingId}
+      className={cn("experience-card", current && "experience-card--current")}
+      data-open={open || undefined}
+      onPointerEnter={enhanced && hoverCapable ? openCard : undefined}
+      onPointerLeave={enhanced && hoverCapable ? scheduleClose : undefined}
+      onBlur={enhanced ? handleFocusOut : undefined}
+    >
+      {/* The single accessible heading; names the card in every state. */}
       <h3 id={headingId} className="sr-only">
         {headingText}
       </h3>
 
-      <button
-        type="button"
-        className="experience-flip-toggle"
-        onClick={() => setFlipped((value) => !value)}
-        aria-expanded={flipped}
-        aria-controls={backId}
-      >
-        <span className="sr-only">
-          {headingText} — {flipped ? "hide details" : "show details"}
-        </span>
-      </button>
-
-      <div
-        className="experience-flip-inner"
-        onClick={(event) => {
-          if ((event.target as HTMLElement).closest("a, button")) return;
-          setFlipped((value) => !value);
-        }}
-      >
-        {/* Front — role/company/dates, centred and large. */}
-        <div className="experience-flip-face experience-flip-front" inert={flipped || undefined}>
-          <span aria-hidden="true" className="experience-flip-logo" />
-          <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
-          <FrontReveal fill={fill}>
-            {frontCertificates ? (
-              <div className="experience-flip-cert-row">{frontCertificates}</div>
-            ) : null}
-            <div aria-hidden="true" className="experience-flip-front-main">
-              {front}
-            </div>
-            <span aria-hidden="true" className="experience-flip-hint">
-              <span className="experience-flip-hint-icon">
-                <FlipGlyph />
-              </span>
-              Click to reveal details
-            </span>
-          </FrontReveal>
-        </div>
-
-        {/* Back — the full detail layout (same content as the former card body). */}
-        <div
-          id={backId}
-          aria-labelledby={headingId}
-          className="experience-flip-face experience-flip-back"
-          inert={!flipped || undefined}
-        >
-          <span aria-hidden="true" className="experience-flip-logo" />
-          <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
-          <div className="experience-flip-back-inner">
-            {backCertificates ? (
-              <div className="experience-flip-cert-row experience-flip-cert-row--back">
-                {backCertificates}
-              </div>
-            ) : null}
-            {back}
-            <span aria-hidden="true" className="experience-flip-hint experience-flip-hint--back">
-              <span className="experience-flip-hint-icon">
-                <FlipGlyph />
-              </span>
-              Click to go back
-            </span>
+      {enhanced ? (
+        <>
+          <div className="experience-card-compact" aria-hidden="true">
+            {compact}
           </div>
+          <button
+            type="button"
+            ref={buttonRef}
+            className="experience-card-toggle"
+            aria-expanded={open}
+            aria-controls={open ? panelId : undefined}
+            onClick={handleClick}
+          >
+            <span className="sr-only">
+              {headingText} — {open ? "hide details" : "show details"}
+            </span>
+          </button>
+
+          {createPortal(
+            <AnimatePresence>
+              {/* Backdrop only in sheet (touch) mode, where tap-outside is the close path. In
+                  anchored (hover) mode a full-screen backdrop would sit over the other cards
+                  and swallow their hover — there, pointer-leave / Escape / scroll close it. */}
+              {open && mode === "sheet" ? (
+                <motion.div
+                  key="backdrop"
+                  aria-hidden="true"
+                  className="experience-card-backdrop experience-card-backdrop--dim"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.15 }}
+                  onPointerDown={closeCard}
+                />
+              ) : null}
+              {open ? (
+                <motion.div
+                  key="panel"
+                  ref={panelRef}
+                  id={panelId}
+                  role="group"
+                  tabIndex={-1}
+                  aria-labelledby={headingId}
+                  className={cn(
+                    "experience-card-panel",
+                    mode === "sheet" && "experience-card-panel--sheet",
+                    current && "experience-card-panel--current",
+                  )}
+                  style={{
+                    position: "fixed",
+                    left: pos?.left ?? 0,
+                    top: pos?.top ?? 0,
+                    // Anchored: match the compact card's width so it grows in place. Sheet: CSS width.
+                    width: mode === "anchored" && anchorRect ? anchorRect.width : undefined,
+                    // Anchored grows by height, so clip the unfolding detail to its current height.
+                    overflow: mode === "anchored" ? "hidden" : undefined,
+                    transformOrigin: pos ? `${pos.originX}px ${pos.originY}px` : "center",
+                    visibility: pos ? "visible" : "hidden",
+                    ...logoStyle,
+                  }}
+                  {...panelMotion}
+                  transition={overlayTransition}
+                  onPointerEnter={mode === "anchored" ? clearCloseTimer : undefined}
+                  onPointerLeave={mode === "anchored" ? scheduleClose : undefined}
+                  onBlur={handleFocusOut}
+                >
+                  <span aria-hidden="true" className="experience-card-logo" />
+                  {panelInnerMotion ? (
+                    <motion.div className="experience-card-panel-inner" {...panelInnerMotion}>
+                      {panel}
+                    </motion.div>
+                  ) : (
+                    <div className="experience-card-panel-inner">{panel}</div>
+                  )}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>,
+            document.body,
+          )}
+        </>
+      ) : (
+        /* Pre-hydration / no-JS: full detail inline and visible (§7.5). */
+        <div className="experience-card-static" style={logoStyle}>
+          <span aria-hidden="true" className="experience-card-logo" />
+          <div className="experience-card-panel-inner">{panel}</div>
         </div>
-      </div>
-    </>
-  );
-
-  const className = cn("experience-flip", current && "experience-flip--current");
-
-  if (fill) {
-    return (
-      <motion.article
-        aria-labelledby={headingId}
-        className={className}
-        data-flipped={flipped}
-        style={{ opacity: fill.frame, "--card-frame": fill.frame, ...logoStyle } as MotionStyle}
-        {...glareContainerHandlers}
-      >
-        {body}
-      </motion.article>
-    );
-  }
-
-  return (
-    <article
-      aria-labelledby={headingId}
-      className={className}
-      data-flipped={flipped}
-      style={logoStyle}
-      {...glareContainerHandlers}
-    >
-      {body}
+      )}
     </article>
   );
 }
@@ -271,8 +461,7 @@ type NodeCardProps = {
   node: GraphNode;
   headingId: string;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
-  /** Scroll-fill MotionValues; omit for the static (pre-mount / reduced-motion) fallback. */
-  fill?: CardFill;
+  expansion: ExperienceExpansion;
 };
 
 /**
@@ -280,14 +469,14 @@ type NodeCardProps = {
  * `node.card.kind` discriminator picks the body; both layouts call this so the switch
  * lives in one place.
  */
-export function NodeCard({ node, headingId, onOpenCertificate, fill }: NodeCardProps) {
+export function NodeCard({ node, headingId, onOpenCertificate, expansion }: NodeCardProps) {
   if (node.card.kind === "education") {
     return (
       <EducationRootCard
         education={node.card.education}
         headingId={headingId}
         onOpenCertificate={onOpenCertificate}
-        fill={fill}
+        expansion={expansion}
       />
     );
   }
@@ -299,7 +488,7 @@ export function NodeCard({ node, headingId, onOpenCertificate, fill }: NodeCardP
       isCurrent={node.isCurrent}
       headingId={headingId}
       onOpenCertificate={onOpenCertificate}
-      fill={fill}
+      expansion={expansion}
     />
   );
 }
@@ -310,17 +499,17 @@ type ExperienceCardBodyProps = {
   isCurrent: boolean;
   headingId: string;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
-  fill?: CardFill;
+  expansion: ExperienceExpansion;
 };
 
-/** A role card — front: role/org/dates (centred); back: the full detail layout. */
+/** A role card — compact: role/org/dates/logo; expanded: the full detail layout. */
 export function ExperienceCardBody({
   experience,
   duration,
   isCurrent,
   headingId,
   onOpenCertificate,
-  fill,
+  expansion,
 }: ExperienceCardBodyProps) {
   const {
     organization,
@@ -353,35 +542,46 @@ export function ExperienceCardBody({
     </>
   );
 
-  const certificates = certificate ? (
-    <EducationCertificateTrigger certificate={certificate} onOpen={onOpenCertificate} />
-  ) : null;
+  const currentBadge = (
+    <span className="experience-current-tag">
+      <span className="experience-current-tag-dot" aria-hidden="true" />
+      Current
+    </span>
+  );
 
-  const front = (
+  const compact = (
     <>
-      <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
-      <p className="m-0 mt-2 text-body text-text-secondary">
+      {organizationLogo ? (
+        <img
+          src={organizationLogo}
+          alt=""
+          aria-hidden="true"
+          className="experience-card-compact-logo"
+        />
+      ) : null}
+      <p className="m-0 text-[1.0625rem] font-semibold leading-snug text-text-primary">{role}</p>
+      <p className="m-0 mt-1 text-small text-text-secondary">
         <span className="font-medium">{organization}</span>
         {organizationType ? <span className="text-text-muted"> · {organizationType}</span> : null}
       </p>
-      <p className="m-0 mt-3 font-mono text-small text-text-muted">
+      <p className="m-0 mt-1 font-mono text-small text-text-muted">
         {dateRange}
-        {duration ? (
-          <span className="mt-1 block text-text-secondary">{duration}</span>
-        ) : null}
+        {duration ? <span className="text-text-secondary"> · {duration}</span> : null}
       </p>
-      {employmentType ? (
-        <span className="mt-3 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
-          {employmentType}
-        </span>
-      ) : null}
+      {isCurrent ? <span className="mt-2 inline-flex">{currentBadge}</span> : null}
     </>
   );
 
-  const back = (
+  const panel = (
     <>
+      {certificate ? (
+        <div className="experience-card-cert-row">
+          <EducationCertificateTrigger certificate={certificate} onOpen={onOpenCertificate} />
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        <p className="m-0 text-body font-semibold text-text-primary">{role}</p>
+        <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
         {employmentType ? (
           <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
             {employmentType}
@@ -389,7 +589,7 @@ export function ExperienceCardBody({
         ) : null}
       </div>
 
-      <p className="mt-1 text-small text-text-secondary">
+      <p className="mt-1.5 text-body text-text-secondary">
         <span className="font-medium">{organization}</span>
         {organizationType ? <span className="text-text-muted"> · {organizationType}</span> : null}
       </p>
@@ -398,6 +598,8 @@ export function ExperienceCardBody({
         {dateRange}
         {duration ? <span className="text-text-secondary"> · {duration}</span> : null}
       </p>
+
+      {isCurrent ? <div className="mt-3">{currentBadge}</div> : null}
 
       <p className="mt-3 text-body text-text-secondary">{description}</p>
 
@@ -438,18 +640,17 @@ export function ExperienceCardBody({
   );
 
   return (
-    <ExperienceFlipCard
+    <ExperienceExpandCard
+      cardId={headingId}
       headingId={headingId}
       headingText={role}
-      fill={fill}
+      expansion={expansion}
       current={isCurrent}
       backgroundImage={organizationLogo}
       prominentLogo={Boolean(organizationLogo?.includes("check-point"))}
       subduedLogo={Boolean(organizationLogo?.includes("private-tutor"))}
-      frontCertificates={certificates}
-      backCertificates={certificates}
-      front={front}
-      back={back}
+      compact={compact}
+      panel={panel}
     />
   );
 }
@@ -458,10 +659,10 @@ type EducationRootCardProps = {
   education: AboutEducation;
   headingId: string;
   onOpenCertificate: (certificate: EducationCertificateRef) => void;
-  fill?: CardFill;
+  expansion: ExperienceExpansion;
 };
 
-/** The root node — the B.Sc. degree — as a flip card with the same in-page certificate
+/** The root node — the B.Sc. degree — as an expand card with the same in-page certificate
  *  viewer as the About section (degree + Dean's List). Content is pulled from
  *  `about.education`. Each certificate trigger is paired with its context so the two
  *  "Preview certificate" buttons stay unambiguous: the standalone trigger is the degree's
@@ -470,7 +671,7 @@ export function EducationRootCard({
   education,
   headingId,
   onOpenCertificate,
-  fill,
+  expansion,
 }: EducationRootCardProps) {
   const honorGroup =
     education.honor || education.honorCertificate ? (
@@ -490,31 +691,45 @@ export function EducationRootCard({
       </span>
     ) : null;
 
-  const frontCertificates = (
+  const compact = (
     <>
-      <EducationCertificateTrigger
-        certificate={education.degreeCertificate}
-        onOpen={onOpenCertificate}
-      />
-      {honorGroup}
+      {education.institutionLogo ? (
+        <img
+          src={education.institutionLogo}
+          alt=""
+          aria-hidden="true"
+          className="experience-card-compact-logo"
+        />
+      ) : null}
+      <p className="m-0 text-[1.0625rem] font-semibold leading-snug text-text-primary">
+        {education.degree}
+      </p>
+      <p className="m-0 mt-1 text-small text-text-secondary">{education.institution}</p>
+      <p className="m-0 mt-1 font-mono text-small text-text-muted">{education.dateRange}</p>
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+        <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+          Education
+        </span>
+      </div>
+      {education.honor ? (
+        <span className="mt-2 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small font-semibold text-text-secondary">
+          {education.honor}
+        </span>
+      ) : null}
     </>
   );
 
-  const front = (
+  const panel = (
     <>
-      <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{education.degree}</p>
-      <p className="m-0 mt-2 text-body text-text-secondary">{education.institution}</p>
-      <p className="m-0 mt-3 font-mono text-small text-text-muted">{education.dateRange}</p>
-      <span className="mt-3 inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
-        Education
-      </span>
-    </>
-  );
+      <div className="experience-card-cert-row">
+        <EducationCertificateTrigger
+          certificate={education.degreeCertificate}
+          onOpen={onOpenCertificate}
+        />
+      </div>
 
-  const back = (
-    <>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        <p className="m-0 text-body font-semibold text-text-primary">
+        <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">
           <span className="block">{education.degree}</span>
           <span className="mt-0.5 block text-small font-normal text-text-secondary">
             {education.institution}
@@ -527,13 +742,6 @@ export function EducationRootCard({
 
       <p className="mt-1 font-mono text-small text-text-muted">{education.dateRange}</p>
 
-      <p className="mt-2">
-        <EducationCertificateTrigger
-          certificate={education.degreeCertificate}
-          onOpen={onOpenCertificate}
-        />
-      </p>
-
       <p className="mt-3 text-body text-text-secondary">{education.summary}</p>
 
       {honorGroup ? (
@@ -543,14 +751,14 @@ export function EducationRootCard({
   );
 
   return (
-    <ExperienceFlipCard
+    <ExperienceExpandCard
+      cardId={headingId}
       headingId={headingId}
       headingText={education.degree}
-      fill={fill}
+      expansion={expansion}
       backgroundImage={education.institutionLogo}
-      frontCertificates={frontCertificates}
-      front={front}
-      back={back}
+      compact={compact}
+      panel={panel}
     />
   );
 }

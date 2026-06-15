@@ -44,7 +44,7 @@ function FlipGlyph() {
 }
 
 export function ProjectCard({ project, headingId, backgroundImage }: ProjectCardProps) {
-  const { name, role, shortDescription, problemSolved, backendFocus, techStack } = project;
+  const { name, role, workplace, shortDescription, problemSolved, backendFocus, techStack } = project;
   const [flipped, setFlipped] = useState(false);
   const backId = useId();
   const frontGlare = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
@@ -89,6 +89,18 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
               {name}
             </h3>
             <span className="project-role-pill">{role}</span>
+            {workplace ? (
+              <span className="project-workplace">
+                <img
+                  src={workplace.logo}
+                  alt={workplace.name}
+                  className="project-workplace-logo"
+                />
+                {workplace.showName ? (
+                  <span className="project-workplace-name">{workplace.name}</span>
+                ) : null}
+              </span>
+            ) : null}
           </div>
           <span className="project-flip-hint">
             <span className="project-flip-hint-icon">
@@ -107,7 +119,21 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
         >
           <div aria-hidden="true" className="project-card-bg" />
           <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
-          <p className="project-flip-back-title">{name}</p>
+          <div className="project-flip-back-header">
+            <p className="project-flip-back-title">{name}</p>
+            {workplace ? (
+              <span className="project-workplace project-workplace--back">
+                <img
+                  src={workplace.logo}
+                  alt={workplace.name}
+                  className="project-workplace-logo"
+                />
+                {workplace.showName ? (
+                  <span className="project-workplace-name">{workplace.name}</span>
+                ) : null}
+              </span>
+            ) : null}
+          </div>
           <p className="m-0 text-small text-text-secondary">{shortDescription}</p>
 
           <dl className="mt-3 space-y-2">

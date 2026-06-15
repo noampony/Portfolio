@@ -24,6 +24,7 @@ const projectData = [
     // §8.4 Project 1 — owner-approved; scale stated generically (not "2 Billion Events").
     name: "Microsoft & Google Events",
     role: "Project Leader",
+    workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
       "Developed a service that subscribes to Microsoft and Google APIs, retrieves events via webhook, processes them, and writes billions of events weekly to a database.",
     problemSolved:
@@ -38,6 +39,7 @@ const projectData = [
     // §8.4 Project 2 — owner-approved; public-safe product + tech-stack wording.
     name: "Email Archiving Service",
     role: "Developer in a team",
+    workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
       "Implemented a long-term email archiving solution together with my team.",
     problemSolved:
@@ -60,6 +62,7 @@ const projectData = [
     // §8.4 Project 3 — owner-approved; internal processing mechanics softened.
     name: "Final-Failure Watchdog",
     role: "Project Leader",
+    workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
       "A service acting as the final watchdog. It is responsible for identifying stuck entities in the system and quickly releasing them to the customer, bypassing normal processing flow.",
     problemSolved:
@@ -83,6 +86,7 @@ const projectData = [
     // `backendFocus` omitted (not applicable for this project).
     name: "At-Risk Teenagers Monitoring System",
     role: "Team Leader",
+    workplace: { name: "Max Impact", logo: "/logos/max-impact.png", showName: true },
     shortDescription:
       "A web application for tracking and monitoring at-risk teenagers with eating disorders, developed through volunteer work for a non-profit organization.",
     problemSolved:

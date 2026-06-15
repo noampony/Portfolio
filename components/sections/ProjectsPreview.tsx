@@ -113,7 +113,7 @@ export function ProjectsPreview() {
           variants={revealItemVariants}
           className="projects-reveal m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
         >
-          Selected Work
+          Featured Projects
         </motion.h2>
         <motion.p
           variants={revealItemVariants}
