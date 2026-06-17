@@ -1459,22 +1459,24 @@ html {
   }
 }
 
-/* Gentle reveal-on-scroll for the Experience tree — cards rise + fade, connector lines fade
-   in just after, top-to-bottom. `data-reveal` is set by JS only once the tree is / scrolls
-   into view; this whole block is reduced-motion-gated, and no-JS never sets the attribute,
-   so reduced-motion and no-JS users always see the tree fully drawn (§7.5). */
+/* Gentle reveal-on-scroll for the Experience tree. Each card reveals individually as it
+   scrolls into view (`data-reveal` is set per card by JS) so a card never finishes its
+   entrance before you reach it; the connector lines fade in once with the tree wrapper
+   (`data-reveal` on the container). This whole block is reduced-motion-gated, and no-JS never
+   sets the attribute, so reduced-motion and no-JS users always see the tree fully drawn (§7.5). */
 @media (prefers-reduced-motion: no-preference) {
-  [data-reveal="armed"] .experience-card {
+  .experience-card[data-reveal="armed"] {
     opacity: 0;
     transform: translateY(14px);
   }
 
-  [data-reveal="revealed"] .experience-card {
+  .experience-card[data-reveal="revealed"] {
     opacity: 1;
     transform: none;
+    /* Slow, well-seen reveal matching the Learning Roadmap cards (~1.1s, same easing). */
     transition:
-      opacity 520ms ease,
-      transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   [data-reveal="armed"] .git-line,
@@ -1495,28 +1497,7 @@ html {
   [data-reveal="revealed"] .tree-merge-stem,
   [data-reveal="revealed"] .tree-merge-head {
     opacity: 1;
-    transition: opacity 640ms ease 160ms;
-  }
-
-  /* Top-to-bottom stagger (cells / rows are in chronological DOM order). */
-  [data-reveal="revealed"] .experience-tree-cell:nth-child(2) .experience-card,
-  [data-reveal="revealed"] .git-graph-row:nth-child(2) .experience-card {
-    transition-delay: 80ms;
-  }
-  [data-reveal="revealed"] .experience-tree-cell:nth-child(3) .experience-card,
-  [data-reveal="revealed"] .git-graph-row:nth-child(3) .experience-card {
-    transition-delay: 160ms;
-  }
-  [data-reveal="revealed"] .experience-tree-cell:nth-child(4) .experience-card,
-  [data-reveal="revealed"] .git-graph-row:nth-child(4) .experience-card {
-    transition-delay: 240ms;
-  }
-  [data-reveal="revealed"] .experience-tree-cell:nth-child(5) .experience-card,
-  [data-reveal="revealed"] .git-graph-row:nth-child(5) .experience-card {
-    transition-delay: 320ms;
-  }
-  [data-reveal="revealed"] .git-graph-row:nth-child(6) .experience-card {
-    transition-delay: 400ms;
+    transition: opacity 760ms ease 520ms;
   }
 }
 

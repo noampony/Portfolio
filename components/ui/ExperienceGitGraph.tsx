@@ -40,11 +40,13 @@ export function ExperienceGitGraph({ graph }: { graph: ExperienceGraph }) {
   const enhanced = useMounted();
   const total = graph.nodes.length;
 
-  // Gentle reveal-on-scroll for the cards + connector lines. The wrapper carries a
-  // `data-reveal` state that drives a CSS transition (reduced-motion-gated, so reduced-motion
-  // and no-JS users always see the tree fully). If the tree is already on screen at mount we
-  // skip straight to "revealed" (no entrance), avoiding a flash against the SSR→client swap;
-  // otherwise we "arm" it (hidden) and reveal once it scrolls into view.
+  // Gentle reveal-on-scroll for the connector lines. The wrapper carries a `data-reveal`
+  // state that drives a CSS transition (reduced-motion-gated, so reduced-motion and no-JS
+  // users always see the tree fully). If the tree is already on screen at mount we skip
+  // straight to "revealed" (no entrance), avoiding a flash against the SSR→client swap;
+  // otherwise we "arm" it (hidden) and reveal once it scrolls into view. The cards themselves
+  // reveal individually (see the effect below) so a card never finishes its entrance before
+  // you have scrolled to it.
   const treeRef = useRef<HTMLDivElement>(null);
   const [reveal, setReveal] = useState<"idle" | "armed" | "revealed">("idle");
 
@@ -90,6 +92,48 @@ export function ExperienceGitGraph({ graph }: { graph: ExperienceGraph }) {
     graph.nodes.some((node) => node.branchPoint) &&
     mainBranchCount === 1 &&
     sideCount === 2;
+
+  // Per-card reveal: each card animates as it individually scrolls into view, so a card never
+  // finishes its entrance before you reach it (a single tree-wide trigger revealed the lower
+  // cards while they were still off-screen). `data-reveal` is set on each card's article; the
+  // CSS transition is reduced-motion-gated and no-JS never gets the attribute, so those users
+  // see the tree fully drawn. Re-runs on layout swap (git tree ⇄ upward tree) to re-observe
+  // the freshly mounted cards; already-revealed cards are left alone so a re-run can't re-hide
+  // one that scrolled out of view.
+  useEffect(() => {
+    const root = treeRef.current;
+    if (!root) {
+      return;
+    }
+    const cards = Array.from(root.querySelectorAll<HTMLElement>(".experience-card"));
+    if (cards.length === 0) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.setAttribute("data-reveal", "revealed");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.06 },
+    );
+    for (const card of cards) {
+      if (card.getAttribute("data-reveal") === "revealed") {
+        continue;
+      }
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.9 && rect.bottom > 0) {
+        card.setAttribute("data-reveal", "revealed");
+      } else {
+        card.setAttribute("data-reveal", "armed");
+        observer.observe(card);
+      }
+    }
+    return () => observer.disconnect();
+  }, [isLargeScreen, canRenderTree, total]);
 
   return (
     <div
