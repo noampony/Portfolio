@@ -641,32 +641,32 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   .cert-viewer-dialog {
     opacity: 0;
-    transform: translateY(12px) scale(0.96);
+    transform: scale(0.96);
     transition:
-      opacity 420ms ease,
-      transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
-      overlay 520ms ease allow-discrete,
-      display 520ms ease allow-discrete;
+      opacity 280ms ease,
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      overlay 320ms ease allow-discrete,
+      display 320ms ease allow-discrete;
   }
 
   .cert-viewer-dialog[open] {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
   }
 
   @starting-style {
     .cert-viewer-dialog[open] {
       opacity: 0;
-      transform: translateY(12px) scale(0.96);
+      transform: scale(0.96);
     }
   }
 
   .cert-viewer-dialog::backdrop {
     opacity: 0;
     transition:
-      opacity 420ms ease,
-      overlay 520ms ease allow-discrete,
-      display 520ms ease allow-discrete;
+      opacity 280ms ease,
+      overlay 320ms ease allow-discrete,
+      display 320ms ease allow-discrete;
   }
 
   .cert-viewer-dialog[open]::backdrop {
@@ -1669,6 +1669,13 @@ html {
   width: fit-content;
 }
 
+/* Front-face variant: name stacked below the logo. */
+.project-workplace--stacked {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .project-workplace-logo {
   height: 2.2rem;
   width: auto;
@@ -2278,11 +2285,12 @@ html {
   }
 
   .roadmap-paths > li:nth-child(odd) .roadmap-path-order::after {
-    left: 100%;
+    /* Start from the outer edge of the border (left: 100% lands on the inner border edge). */
+    left: calc(100% + 2px);
   }
 
   .roadmap-paths > li:nth-child(even) .roadmap-path-order::before {
-    right: 100%;
+    right: calc(100% + 2px);
   }
 
   /* Odd paths → right side. */

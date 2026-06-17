@@ -61,9 +61,12 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       // Anchor the road to the top and bottom edges so it "exits" the frame like a real road.
       // The bottom anchor extends well beyond h so the bezier's "return to centre" phase is
       // clipped by the SVG viewport — only the outgoing arc is visible before the mask fades.
+      // Offset the bottom anchor x in the natural curve direction so the exit continues
+      // curving rather than going straight down.
       const first = centres[0];
       const last = centres[centres.length - 1];
-      const points = [{ x: first.x, y: 0 }, ...centres, { x: last.x, y: h + BULGE * 3 }];
+      const bottomSegDir = centres.length % 2 === 0 ? 1 : -1;
+      const points = [{ x: first.x, y: 0 }, ...centres, { x: last.x + BULGE * bottomSegDir, y: h + BULGE * 3 }];
 
       let d = `M ${first.x.toFixed(1)} 0`;
       for (let i = 0; i < points.length - 1; i += 1) {
