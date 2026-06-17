@@ -58,15 +58,20 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
         return { x: x + n.offsetWidth / 2, y: y + n.offsetHeight / 2 };
       });
 
-      // Anchor the road to the top and bottom edges so it "exits" the frame like a real road.
-      // The bottom anchor extends well beyond h so the bezier's "return to centre" phase is
-      // clipped by the SVG viewport — only the outgoing arc is visible before the mask fades.
-      // Offset the bottom anchor x in the natural curve direction so the exit continues
-      // curving rather than going straight down.
+      // Anchor the road to the top edge so it "enters" the frame like a real road, then
+      // continue the weave past the last node with virtual centre-line points one gap apart
+      // until the road has crossed the bottom edge. This keeps the exit identical to the
+      // inter-node arcs (out to a bulge and back to centre) and lets the SVG viewport clip it
+      // mid-curve — instead of a single long bezier whose return phase falls off-screen, which
+      // left only its near-straight outgoing leg visible and made the road trail off straight.
       const first = centres[0];
       const last = centres[centres.length - 1];
-      const bottomSegDir = centres.length % 2 === 0 ? 1 : -1;
-      const points = [{ x: first.x, y: 0 }, ...centres, { x: last.x + BULGE * bottomSegDir, y: h + BULGE * 3 }];
+      const gap =
+        centres.length > 1 ? (last.y - first.y) / (centres.length - 1) : h - last.y;
+      const points = [{ x: first.x, y: 0 }, ...centres];
+      for (let vy = last.y + gap; vy < h + gap; vy += gap) {
+        points.push({ x: last.x, y: vy });
+      }
 
       let d = `M ${first.x.toFixed(1)} 0`;
       for (let i = 0; i < points.length - 1; i += 1) {
