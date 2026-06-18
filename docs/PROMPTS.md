@@ -461,7 +461,7 @@ Task focus: all categories grouped and scannable; accessible badge labels; notes
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/9.2-skills-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 9.3 — Style, Make Responsive, and Animate the Skills Section
+## ✅ Task 9.3 — Style, Make Responsive, and Animate the Skills Section
 
 ```text
 Implement ONLY Task 9.3 — "Style, Make Responsive, and Animate the Skills Section" — for the Noam Pony portfolio. Depends on Task 9.2.
