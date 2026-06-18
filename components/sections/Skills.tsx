@@ -9,27 +9,36 @@ import { skills } from "@/lib/content/data/skills";
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 const revealVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: easeOut },
+    transition: { duration: 0.55, ease: easeOut },
   },
 };
 
 const staggerContainerVariants: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.07, delayChildren: 0.05 },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: easeOut },
   },
 };
 
 const badgeRevealVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.92 },
+  hidden: { opacity: 0, scale: 0.88 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.35, ease: easeOut },
+    transition: { duration: 0.3, ease: easeOut },
   },
 };
 
@@ -41,7 +50,6 @@ function groupByCategory(list: typeof skills) {
     bucket.push(skill);
     map.set(skill.category, bucket);
   }
-  // Sort each bucket by displayOrder
   map.forEach((bucket) => {
     bucket.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
   });
@@ -51,14 +59,11 @@ function groupByCategory(list: typeof skills) {
 const grouped = groupByCategory(skills);
 
 /**
- * Technical Skills section (spec §8.6, Task 9.2).
+ * Technical Skills section (spec §8.6, Task 9.3).
  *
- * All categories are rendered as grouped rows of scannable badges. Notes are
- * shown inline — never hover-only. Badges with no notes render the name only,
- * with no empty artifact. Icons are deferred until a license-safe source is
- * approved (spec §6.8); this component ships text/badge-only.
- *
- * The section exposes the `#skills` anchor for in-page navigation.
+ * Desktop: 3-column card grid. Tablet: 2-column. Mobile: single column.
+ * Badges wrap naturally; long notes (AWS) stay readable via break-words.
+ * Subtle reveal animation; fully reduced-motion-safe via useReducedMotion.
  */
 export function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -109,39 +114,52 @@ export function Skills() {
           </p>
         </motion.div>
 
-        {/* Skill categories */}
+        {/* Skill categories grid */}
         <motion.div
           initial="hidden"
           animate={shouldReduceMotion ? staticState : animateState}
           variants={staggerContainerVariants}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           {Array.from(grouped.entries()).map(([category, categorySkills]) => (
             <motion.div
               key={category}
-              variants={revealVariants}
-              className="rounded-lg border border-border bg-bg-surface p-5"
+              variants={cardVariants}
+              className={[
+                "group relative flex flex-col overflow-hidden rounded-lg",
+                "border border-border bg-bg-surface",
+                "transition-colors duration-200",
+                "hover:border-accent/40 hover:bg-bg-surface-raised",
+              ].join(" ")}
             >
-              <h3 className="mb-4 font-mono text-small font-semibold uppercase tracking-widest text-accent">
-                {category}
-              </h3>
-              <motion.ul
-                className="flex flex-wrap gap-2"
-                aria-label={`${category} skills`}
-                variants={staggerContainerVariants}
-                initial="hidden"
-                animate={shouldReduceMotion ? staticState : animateState}
-              >
-                {categorySkills.map((skill) => (
-                  <motion.li
-                    key={skill.name}
-                    variants={badgeRevealVariants}
-                    className="list-none"
-                  >
-                    <SkillBadge skill={skill} />
-                  </motion.li>
-                ))}
-              </motion.ul>
+              {/* Top accent line */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              />
+
+              <div className="flex flex-1 flex-col p-5">
+                <h3 className="mb-4 font-mono text-small font-semibold uppercase tracking-widest text-accent">
+                  {category}
+                </h3>
+                <motion.ul
+                  className="flex flex-1 flex-wrap content-start gap-2"
+                  aria-label={`${category} skills`}
+                  variants={staggerContainerVariants}
+                  initial="hidden"
+                  animate={shouldReduceMotion ? staticState : animateState}
+                >
+                  {categorySkills.map((skill) => (
+                    <motion.li
+                      key={skill.name}
+                      variants={badgeRevealVariants}
+                      className="list-none"
+                    >
+                      <SkillBadge skill={skill} />
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              </div>
             </motion.div>
           ))}
         </motion.div>
