@@ -22,6 +22,7 @@ const PROJECT_BACKGROUNDS: Record<string, string> = {
   "Email Archiving Service": "/images/projects/email-archiving-service.png",
   "Final-Failure Watchdog": "/images/projects/final-failure-watchdog.png",
   "At-Risk Teenagers Monitoring System": "/images/projects/students-tracking-system.png",
+  "Developer Portfolio Website": "/images/projects/portfolio-website.png",
 };
 
 /**
