@@ -50,33 +50,47 @@ function offsetWithin(el: HTMLElement, container: HTMLElement) {
 /** Horizontal bulge of the road between consecutive nodes (px); alternates side each segment. */
 const BULGE = 70;
 
+/** Soft feather (px) on the fill's leading edge so it pours in rather than ending in a hard
+ *  horizontal line (which reads as a green "bridge" wherever the road bends near-horizontal). */
+const FILL_FEATHER = 22;
+
 export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
   const [geom, setGeom] = useState<{ w: number; h: number; d: string } | null>(null);
 
   // Latest measured road height + node anchors, kept in refs so the scroll-driven fill reads
   // fresh values without re-creating the motion transform / re-subscribing on every resize.
   const heightRef = useRef(0);
-  const nodesRef = useRef<{ el: HTMLElement; y: number }[]>([]);
+  const nodesRef = useRef<{ el: HTMLElement; top: number; height: number }[]>([]);
 
   const reduceMotion = useReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const fillEnabled = isDesktop && !reduceMotion;
 
-  const clipId = useId().replace(/:/g, "");
+  const uid = useId().replace(/:/g, "");
+  const maskId = `roadmap-fill-mask-${uid}`;
+  const gradId = `roadmap-fill-grad-${uid}`;
 
   // Progress is 0 when the paths list's top crosses the viewport centre and 1 when its bottom
   // does — i.e. it maps scroll position linearly onto the road's local Y. `fillY` is therefore
-  // the road point currently at screen centre (and the clip-rect height that reveals the fill).
+  // the road point currently at screen centre: the leading edge of the emerald fill.
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start center", "end center"],
   });
   const fillY = useTransform(scrollYProgress, (p) => p * heightRef.current);
 
-  // Recolour each node the moment the fill front passes it (cheap data-attr toggle, no re-render).
+  // Reveal mask geometry: a fully-opaque rect up to the feather band, then a white→black gradient
+  // band that fades the green out over the last FILL_FEATHER px ending at the front (`fillY`).
+  const solidHeight = useTransform(fillY, (y) => Math.max(0, y - FILL_FEATHER));
+  const featherY = useTransform(fillY, (y) => Math.max(0, y - FILL_FEATHER));
+  const featherHeight = useTransform(fillY, (y) => Math.max(0, Math.min(FILL_FEATHER, y)));
+
+  // Fill each node's ring/connector in step with the road: `--road-fill` (0→1) is the fraction of
+  // the node's own height the front has crossed, so the ring "pours" at exactly the road's speed.
   const syncNodes = (frontY: number) => {
     for (const node of nodesRef.current) {
-      node.el.dataset.roadReached = frontY >= node.y ? "true" : "false";
+      const fraction = Math.max(0, Math.min(1, (frontY - node.top) / node.height));
+      node.el.style.setProperty("--road-fill", fraction.toFixed(3));
     }
   };
 
@@ -85,12 +99,12 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
     syncNodes(value);
   });
 
-  // When the fill is disabled (reduced motion / below desktop), clear any reached markers so no
-  // node is left stuck emerald; when (re)enabled, sync once so the initial scroll position shows.
+  // When the fill is disabled (reduced motion / below desktop), reset every node to empty so none
+  // is left stuck emerald; when (re)enabled, sync once so the initial scroll position shows.
   useEffect(() => {
     if (!fillEnabled) {
-      // A front below every node clears any emerald state; under reduced motion the recolour
-      // CSS is gated off anyway, so the attribute value is inert there.
+      // A front above every node sets all fractions to 0; under reduced motion the fill CSS is
+      // gated off anyway, so the value is inert there.
       syncNodes(Number.NEGATIVE_INFINITY);
       return;
     }
@@ -148,7 +162,11 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       }
 
       heightRef.current = h;
-      nodesRef.current = nodes.map((el, i) => ({ el, y: centres[i].y }));
+      nodesRef.current = nodes.map((el, i) => ({
+        el,
+        top: centres[i].y - el.offsetHeight / 2,
+        height: el.offsetHeight,
+      }));
       setGeom({ w, h, d });
     };
 
@@ -192,9 +210,16 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
     >
       {fillEnabled ? (
         <defs>
-          <clipPath id={`roadmap-fill-${clipId}`} clipPathUnits="userSpaceOnUse">
-            <motion.rect x={0} y={0} width={geom.w} height={fillY} />
-          </clipPath>
+          {/* Vertical white→transparent ramp used to feather the fill's leading edge. */}
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#fff" />
+            <stop offset="1" stopColor="#000" />
+          </linearGradient>
+          {/* Reveal mask: opaque up to the feather band, then the ramp fades green out at `fillY`. */}
+          <mask id={maskId} maskUnits="userSpaceOnUse" x={0} y={0} width={geom.w} height={geom.h}>
+            <motion.rect x={0} y={0} width={geom.w} height={solidHeight} fill="#fff" />
+            <motion.rect x={0} y={featherY} width={geom.w} height={featherHeight} fill={`url(#${gradId})`} />
+          </mask>
         </defs>
       ) : null}
 
@@ -203,10 +228,10 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       <path className="roadmap-road-surface" d={geom.d} />
       <path className="roadmap-road-lane" d={geom.d} />
 
-      {/* Emerald fill, revealed top→down by the clip rect. Re-drawing the (dark) surface over the
-          emerald edge leaves only the road's two side borders green, not the whole band. */}
+      {/* Emerald fill, revealed top→down by the feathered mask. Re-drawing the (dark) surface over
+          the emerald edge leaves only the road's two side borders green, not the whole band. */}
       {fillEnabled ? (
-        <g clipPath={`url(#roadmap-fill-${clipId})`}>
+        <g mask={`url(#${maskId})`}>
           <path className="roadmap-road-edge roadmap-road-edge--fill" d={geom.d} />
           <path className="roadmap-road-surface" d={geom.d} />
           <path className="roadmap-road-lane roadmap-road-lane--fill" d={geom.d} />

@@ -49,6 +49,27 @@ function ExternalLinkIcon() {
   );
 }
 
+/** Small "opens the certificate" affordance shown after the trigger label. */
+function CertificateOpenIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      className="about-cert-trigger-open-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    </svg>
+  );
+}
+
 type EducationCertificateTriggerProps = {
   certificate: EducationCertificateRef;
   onOpen: (certificate: EducationCertificateRef) => void;
@@ -77,6 +98,7 @@ export function EducationCertificateTrigger({
     >
       <CertificateDocumentIcon />
       <span className="about-cert-trigger-label">Preview certificate</span>
+      <CertificateOpenIcon />
     </button>
   );
 }

@@ -589,12 +589,22 @@ export function ExperienceCardBody({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
-        {employmentType ? (
-          <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
-            {employmentType}
-          </span>
+      <div className="experience-panel-header">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+          <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
+          {employmentType ? (
+            <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+              {employmentType}
+            </span>
+          ) : null}
+        </div>
+        {organizationLogo ? (
+          <img
+            src={organizationLogo}
+            alt=""
+            aria-hidden="true"
+            className="experience-card-corner-logo"
+          />
         ) : null}
       </div>
 
@@ -655,9 +665,6 @@ export function ExperienceCardBody({
       headingText={role}
       expansion={expansion}
       current={isCurrent}
-      backgroundImage={organizationLogo}
-      prominentLogo={Boolean(organizationLogo?.includes("check-point"))}
-      subduedLogo={Boolean(organizationLogo?.includes("private-tutor"))}
       compact={compact}
       panel={panel}
     />

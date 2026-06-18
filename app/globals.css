@@ -518,63 +518,49 @@ html {
   min-height: 0;
 }
 
+/* Matches the subtle "Education" tag (pill, hairline border, faint fill, secondary text),
+   just bolder and with the Dean's-List star — gentle enough to sit with the rest of the card. */
 .about-education-honor-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--border));
-  border-radius: 0.375rem;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent) 16%, var(--bg-surface-raised)),
-      color-mix(in srgb, var(--gradient-to) 10%, var(--bg-surface-raised))
-    );
-  padding: 0.3125rem 0.625rem;
-  color: var(--accent-hover);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.08);
+  padding: 0.25rem 0.625rem;
+  color: var(--text-secondary);
   font-size: var(--type-small);
-  font-weight: 600;
+  font-weight: 700;
   line-height: var(--leading-small);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-    0 0 1rem color-mix(in srgb, var(--accent) 16%, transparent);
 }
 
+/* Same gentle "Education" tag look as the honour badge, but bold + underlined with an "open"
+   glyph so it reads as a clickable control that opens the certificate. */
 .about-cert-trigger {
   display: inline-flex;
   flex: none;
   align-items: center;
   gap: 0.375rem;
-  margin-top: 0.0625rem;
-  padding: 0.25rem 0.5rem 0.25rem 0.4375rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
-  border-radius: 0.5rem;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent) 18%, var(--bg-surface-raised)),
-      color-mix(in srgb, var(--gradient-to) 12%, var(--bg-surface-raised))
-    );
-  color: var(--accent-hover);
-  font-family: var(--font-mono), var(--font-mono-fallback);
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.08);
+  color: var(--text-secondary);
   font-size: var(--type-small);
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  line-height: var(--leading-small);
+  font-weight: 700;
   cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-    0 0 1rem color-mix(in srgb, var(--accent) 16%, transparent);
   transition:
     border-color 160ms ease,
     background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+    color 160ms ease;
 }
 
 .about-cert-trigger-label {
   white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: from-font;
 }
 
 .about-cert-trigger-icon {
@@ -583,29 +569,26 @@ html {
   flex: none;
 }
 
+.about-cert-trigger-open-icon {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  flex: none;
+  opacity: 0.75;
+}
+
 .about-cert-trigger:hover {
-  border-color: color-mix(in srgb, var(--accent) 68%, var(--border));
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent) 24%, var(--bg-surface-raised)),
-      color-mix(in srgb, var(--gradient-to) 16%, var(--bg-surface-raised))
-    );
+  border-color: color-mix(in srgb, var(--text-secondary) 40%, var(--border));
+  background: rgb(255 255 255 / 0.12);
   color: var(--text-primary);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
-    0 0 1.25rem color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.about-cert-trigger:hover .about-cert-trigger-open-icon {
+  opacity: 1;
 }
 
 .about-cert-trigger:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .about-cert-trigger:hover {
-    transform: translateY(-0.0625rem);
-  }
 }
 
 .cert-viewer-dialog {
@@ -1365,6 +1348,25 @@ html {
   pointer-events: none;
 }
 
+/* Expanded role-card header: role/employment-type on the left, organisation logo badge
+   pinned to the top-right corner — mirrors the Projects card back-face header. */
+.experience-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.experience-card-corner-logo {
+  flex-shrink: 0;
+  height: 2rem;
+  width: auto;
+  max-width: 6rem;
+  object-fit: contain;
+  opacity: 0.7;
+  filter: grayscale(0.2) brightness(1.15);
+}
+
 /* Certificate trigger row at the top of the expanded card. */
 .experience-card-cert-row {
   display: flex;
@@ -1393,8 +1395,7 @@ html {
 }
 
 .experience-honor-group .about-cert-trigger {
-  margin-top: 0;
-  border-radius: 0.375rem; /* match the badge so the joined pill's corners agree */
+  border-radius: 9999px; /* match the badge so the joined pill's corners agree */
 }
 
 /* Corner-zeroing comes after the radius normalisation above (equal specificity). */
@@ -1425,13 +1426,13 @@ html {
   }
 
   .experience-honor-group > :not(:first-child) {
-    border-radius: 0 0 0.375rem 0.375rem;
+    border-radius: 0 0 9999px 9999px;
     border-left-width: 1px;
     border-top-width: 0;
   }
 
   .experience-honor-group > :not(:last-child) {
-    border-radius: 0.375rem 0.375rem 0 0;
+    border-radius: 9999px 9999px 0 0;
   }
 
   .experience-honor-group .about-education-honor-badge,
@@ -2059,26 +2060,49 @@ html {
   color: var(--accent);
 }
 
-/* As the scroll-driven road fill passes a node, RoadmapRoad flags it `data-road-reached` so the
-   ring, number, glow, and (desktop) connector recolour to emerald in step with the road. Gated on
-   reduced motion so a reduced-motion user (where the fill never runs) never sees a stuck-green node. */
-@media (prefers-reduced-motion: no-preference) {
+/* `--road-fill` (0→1) is set per-node by RoadmapRoad as the scroll-driven road fill crosses that
+   node's height, so the ring + connector "pour" emerald top-down at exactly the road's speed.
+   Registered so calc()/gradient stops resolve and frame-to-frame changes stay smooth. */
+@property --road-fill {
+  syntax: "<number>";
+  /* Must inherit so the value set on the node also reaches its connector ::before / ::after. */
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Gradual emerald fill of the node ring + connector, driven by `--road-fill` (desktop only, where
+   the winding road runs; gated on reduced motion so the fill never appears when it can't animate). */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  /* Ring via the gradient-border trick: a dark centre (padding-box) keeps cutting the road, while
+     the border-box gradient hard-stops at `--road-fill` so emerald wipes top→down as the front
+     crosses the node — at the same speed as the road itself. */
   .roadmap-path-order {
-    transition:
-      border-color 300ms ease,
-      color 300ms ease,
-      box-shadow 300ms ease;
+    border-color: transparent;
+    background:
+      linear-gradient(var(--bg-base), var(--bg-base)) padding-box,
+      linear-gradient(
+        to bottom,
+        var(--roadmap-fill-green) calc(var(--road-fill) * 100%),
+        var(--accent) calc(var(--road-fill) * 100%)
+      ) border-box;
+    color: color-mix(in srgb, var(--roadmap-fill-green) calc(var(--road-fill) * 100%), var(--accent));
   }
 
-  .roadmap-path-order[data-road-reached="true"] {
-    border-color: var(--roadmap-fill-green);
-    color: var(--roadmap-fill-green);
-    box-shadow: 0 0 0.75rem color-mix(in srgb, var(--roadmap-fill-green) 35%, transparent);
+  /* Connector fills outward from the node (odd → rightwards, even → leftwards) in the same step. */
+  .roadmap-paths > li:nth-child(odd) .roadmap-path-order::after {
+    background: linear-gradient(
+      to right,
+      var(--roadmap-fill-green) calc(var(--road-fill) * 100%),
+      color-mix(in srgb, var(--accent) 45%, var(--border)) calc(var(--road-fill) * 100%)
+    );
   }
 
-  .roadmap-path-order[data-road-reached="true"]::before,
-  .roadmap-path-order[data-road-reached="true"]::after {
-    background: var(--roadmap-fill-green);
+  .roadmap-paths > li:nth-child(even) .roadmap-path-order::before {
+    background: linear-gradient(
+      to left,
+      var(--roadmap-fill-green) calc(var(--road-fill) * 100%),
+      color-mix(in srgb, var(--accent) 45%, var(--border)) calc(var(--road-fill) * 100%)
+    );
   }
 }
 
