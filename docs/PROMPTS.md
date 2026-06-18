@@ -449,7 +449,7 @@ Task focus: encode all §8.6 categories/skills; keep only the REAL notes (AWS, J
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/9.1-skills-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 9.2 — Implement the Skills Section Layout (Grouped Badges)
+## ✅ Task 9.2 — Implement the Skills Section Layout (Grouped Badges)
 
 ```text
 Implement ONLY Task 9.2 — "Implement the Skills Section Layout (Grouped Badges)" — for the Noam Pony portfolio. Depends on Task 9.1.
