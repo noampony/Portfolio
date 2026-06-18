@@ -20,6 +20,7 @@
   --accent: #2DD4BF;
   --accent-hover: #5EEAD4;
   --accent-contrast: #0B0F14;
+  --roadmap-fill-green: #34D399; /* emerald "progress" fill for the roadmap road */
   --gradient-from: #2DD4BF;
   --gradient-to: #3B82F6;
   --danger: #F87171;
@@ -1936,6 +1937,16 @@ html {
   stroke-linecap: round;
 }
 
+/* Scroll-driven "fill": emerald copies of the borders + dashed lane, clipped to the fill front
+   (see RoadmapRoad). Same geometry as the base paths, so the green lands exactly on them. */
+.roadmap-road-edge--fill {
+  stroke: var(--roadmap-fill-green);
+}
+
+.roadmap-road-lane--fill {
+  stroke: var(--roadmap-fill-green);
+}
+
 /* Vertical stack of paths; hosts the spine. The spine x sits at the node centre so the
    line threads through every node. */
 .roadmap-paths {
@@ -2046,6 +2057,29 @@ html {
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--accent);
+}
+
+/* As the scroll-driven road fill passes a node, RoadmapRoad flags it `data-road-reached` so the
+   ring, number, glow, and (desktop) connector recolour to emerald in step with the road. Gated on
+   reduced motion so a reduced-motion user (where the fill never runs) never sees a stuck-green node. */
+@media (prefers-reduced-motion: no-preference) {
+  .roadmap-path-order {
+    transition:
+      border-color 300ms ease,
+      color 300ms ease,
+      box-shadow 300ms ease;
+  }
+
+  .roadmap-path-order[data-road-reached="true"] {
+    border-color: var(--roadmap-fill-green);
+    color: var(--roadmap-fill-green);
+    box-shadow: 0 0 0.75rem color-mix(in srgb, var(--roadmap-fill-green) 35%, transparent);
+  }
+
+  .roadmap-path-order[data-road-reached="true"]::before,
+  .roadmap-path-order[data-road-reached="true"]::after {
+    background: var(--roadmap-fill-green);
+  }
 }
 
 .roadmap-path-title {

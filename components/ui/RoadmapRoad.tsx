@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useState, type RefObject } from "react";
+import { useEffect, useId, useRef, useState, type RefObject } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 /**
  * Decorative winding "road" drawn down the centre of the roadmap (desktop only), replacing the
@@ -10,6 +19,12 @@ import { useEffect, useState, type RefObject } from "react";
  * Node positions are read from layout via the offset chain (transform-independent, so the
  * reveal animation doesn't skew the curve) and recomputed on resize. Purely decorative
  * (aria-hidden); renders nothing until measured and is hidden below the desktop breakpoint.
+ *
+ * As the user scrolls, an emerald copy of the road's borders + dashed lane "fills in" from the
+ * top, clipped by a horizontal line pinned to the viewport's vertical centre (so the fill front
+ * always sits mid-screen and reverses on scroll up). When the front passes a node, that node is
+ * marked `data-road-reached` so CSS can recolour its ring/number to match. The fill is a
+ * desktop-only progressive enhancement and is skipped entirely under reduced motion.
  */
 
 type RoadmapRoadProps = {
@@ -38,6 +53,50 @@ const BULGE = 70;
 export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
   const [geom, setGeom] = useState<{ w: number; h: number; d: string } | null>(null);
 
+  // Latest measured road height + node anchors, kept in refs so the scroll-driven fill reads
+  // fresh values without re-creating the motion transform / re-subscribing on every resize.
+  const heightRef = useRef(0);
+  const nodesRef = useRef<{ el: HTMLElement; y: number }[]>([]);
+
+  const reduceMotion = useReducedMotion();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const fillEnabled = isDesktop && !reduceMotion;
+
+  const clipId = useId().replace(/:/g, "");
+
+  // Progress is 0 when the paths list's top crosses the viewport centre and 1 when its bottom
+  // does — i.e. it maps scroll position linearly onto the road's local Y. `fillY` is therefore
+  // the road point currently at screen centre (and the clip-rect height that reveals the fill).
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"],
+  });
+  const fillY = useTransform(scrollYProgress, (p) => p * heightRef.current);
+
+  // Recolour each node the moment the fill front passes it (cheap data-attr toggle, no re-render).
+  const syncNodes = (frontY: number) => {
+    for (const node of nodesRef.current) {
+      node.el.dataset.roadReached = frontY >= node.y ? "true" : "false";
+    }
+  };
+
+  useMotionValueEvent(fillY, "change", (value) => {
+    if (!fillEnabled) return;
+    syncNodes(value);
+  });
+
+  // When the fill is disabled (reduced motion / below desktop), clear any reached markers so no
+  // node is left stuck emerald; when (re)enabled, sync once so the initial scroll position shows.
+  useEffect(() => {
+    if (!fillEnabled) {
+      // A front below every node clears any emerald state; under reduced motion the recolour
+      // CSS is gated off anyway, so the attribute value is inert there.
+      syncNodes(Number.NEGATIVE_INFINITY);
+      return;
+    }
+    syncNodes(fillY.get());
+  }, [fillEnabled, fillY, geom]);
+
   useEffect(() => {
     let raf = 0;
     let observer: ResizeObserver | null = null;
@@ -48,6 +107,7 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       const nodes = Array.from(container.querySelectorAll<HTMLElement>(".roadmap-path-order"));
       if (nodes.length === 0) {
         setGeom(null);
+        nodesRef.current = [];
         return;
       }
 
@@ -87,6 +147,8 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
         d += ` Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
       }
 
+      heightRef.current = h;
+      nodesRef.current = nodes.map((el, i) => ({ el, y: centres[i].y }));
       setGeom({ w, h, d });
     };
 
@@ -128,9 +190,28 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       aria-hidden="true"
       focusable="false"
     >
+      {fillEnabled ? (
+        <defs>
+          <clipPath id={`roadmap-fill-${clipId}`} clipPathUnits="userSpaceOnUse">
+            <motion.rect x={0} y={0} width={geom.w} height={fillY} />
+          </clipPath>
+        </defs>
+      ) : null}
+
+      {/* Base road: faint accent shoulder, asphalt surface, dashed lane — widest → narrowest. */}
       <path className="roadmap-road-edge" d={geom.d} />
       <path className="roadmap-road-surface" d={geom.d} />
       <path className="roadmap-road-lane" d={geom.d} />
+
+      {/* Emerald fill, revealed top→down by the clip rect. Re-drawing the (dark) surface over the
+          emerald edge leaves only the road's two side borders green, not the whole band. */}
+      {fillEnabled ? (
+        <g clipPath={`url(#roadmap-fill-${clipId})`}>
+          <path className="roadmap-road-edge roadmap-road-edge--fill" d={geom.d} />
+          <path className="roadmap-road-surface" d={geom.d} />
+          <path className="roadmap-road-lane roadmap-road-lane--fill" d={geom.d} />
+        </g>
+      ) : null}
     </svg>
   );
 }
