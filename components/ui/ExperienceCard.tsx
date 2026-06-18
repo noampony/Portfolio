@@ -561,6 +561,7 @@ export function ExperienceCardBody({
   const compact = (
     <>
       {organizationLogo ? (
+        // eslint-disable-next-line @next/next/no-img-element -- logo dimensions are variable SVGs; next/image requires explicit width/height
         <img
           src={organizationLogo}
           alt=""
@@ -599,6 +600,7 @@ export function ExperienceCardBody({
           ) : null}
         </div>
         {organizationLogo ? (
+          // eslint-disable-next-line @next/next/no-img-element -- logo dimensions are variable SVGs; next/image requires explicit width/height
           <img
             src={organizationLogo}
             alt=""
@@ -710,6 +712,7 @@ export function EducationRootCard({
   const compact = (
     <>
       {education.institutionLogo ? (
+        // eslint-disable-next-line @next/next/no-img-element -- logo dimensions are variable SVGs; next/image requires explicit width/height
         <img
           src={education.institutionLogo}
           alt=""

@@ -77,6 +77,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
         {/* Front — title + affordance. */}
         <div className="project-flip-face project-flip-front" aria-hidden={flipped}>
           <div aria-hidden="true" className="project-card-bg" />
+          {/* eslint-disable-next-line react-hooks/refs -- glare hook; ref.current not accessed during render */}
           <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
           <span aria-hidden="true" className="font-mono text-small tracking-wider text-accent">
             {"// project"}
@@ -91,6 +92,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
             <span className="project-role-pill">{role}</span>
             {workplace ? (
               <span className="project-workplace project-workplace--stacked">
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo dimensions are variable SVGs; next/image requires explicit width/height */}
                 <img
                   src={workplace.logo}
                   alt={workplace.name}
@@ -118,11 +120,13 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
           aria-hidden={!flipped}
         >
           <div aria-hidden="true" className="project-card-bg" />
+          {/* eslint-disable-next-line react-hooks/refs -- glare hook; ref.current not accessed during render */}
           <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
           <div className="project-flip-back-header">
             <p className="project-flip-back-title">{name}</p>
             {workplace ? (
               <span className="project-workplace project-workplace--back">
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo dimensions are variable SVGs; next/image requires explicit width/height */}
                 <img
                   src={workplace.logo}
                   alt={workplace.name}

@@ -279,6 +279,7 @@ function FloatingQuoteCard({ zone, initialLayout, staticPosition, reducedMotion,
     return () => {
       cancelled = true;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- initialDelay is mount-only; re-running on change would restart the animation unintentionally
   }, [controls, reducedMotion]);
 
   if (reducedMotion) {
