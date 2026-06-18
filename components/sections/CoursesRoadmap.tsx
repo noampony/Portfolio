@@ -98,11 +98,13 @@ export function CoursesRoadmap() {
 
         <div className="roadmap-paths-wrap mt-10">
           <RoadmapRoad containerRef={pathsRef} pathCount={learningPaths.length} />
+          {/* Each path owns its own scroll reveal (see RoadmapPath), so the list items are
+              plain elements — animating them here too would double the motion. */}
           <ol ref={pathsRef} className="roadmap-paths list-none p-0">
             {learningPaths.map((path) => (
-              <motion.li key={path.id} variants={revealItemVariants} className="courses-reveal">
+              <li key={path.id}>
                 <RoadmapPath path={path} headingId={`path-${path.id}-heading`} />
-              </motion.li>
+              </li>
             ))}
           </ol>
         </div>

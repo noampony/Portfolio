@@ -90,7 +90,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
             </h3>
             <span className="project-role-pill">{role}</span>
             {workplace ? (
-              <span className="project-workplace">
+              <span className="project-workplace project-workplace--stacked">
                 <img
                   src={workplace.logo}
                   alt={workplace.name}
@@ -128,9 +128,6 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
                   alt={workplace.name}
                   className="project-workplace-logo"
                 />
-                {workplace.showName ? (
-                  <span className="project-workplace-name">{workplace.name}</span>
-                ) : null}
               </span>
             ) : null}
           </div>

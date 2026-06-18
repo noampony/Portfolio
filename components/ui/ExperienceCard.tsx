@@ -14,7 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, type TargetAndTransition } from "framer-motion";
 
 import { EducationCertificateTrigger } from "@/components/sections/EducationCertificateViewer";
 import type { GraphNode } from "@/lib/content/experienceGraph";
@@ -296,6 +296,11 @@ function ExperienceExpandCard({
     if (articleRef.current?.contains(next) || panelRef.current?.contains(next)) {
       return;
     }
+    // Don't close the card when focus moves into a modal dialog (e.g. the certificate viewer).
+    // Matches the Escape-key guard above so Escape still closes the card after the dialog closes.
+    if (document.querySelector("dialog[open]")) {
+      return;
+    }
     closeCard();
   };
 
@@ -314,21 +319,27 @@ function ExperienceExpandCard({
   // Medium-speed expansion: the panel grows in place rather than popping in.
   const overlayTransition = prefersReducedMotion
     ? { duration: 0 }
-    : { duration: 0.34, ease: [0.22, 1, 0.36, 1] as const };
+    : { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const };
   let panelMotion: {
-    initial: Record<string, number | string>;
-    animate: Record<string, number | string>;
-    exit: Record<string, number | string>;
+    initial: TargetAndTransition;
+    animate: TargetAndTransition;
+    exit: TargetAndTransition;
   };
   if (prefersReducedMotion) {
     panelMotion = { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } };
   } else if (mode === "anchored" && anchorRect) {
-    // Anchored (hover): keep the card's header in place and unfold the detail beneath it by
-    // animating height from the compact card's height down to the panel's natural height.
+    // Anchored (hover): scale the panel from the compact card's centre so it "grows in place"
+    // regardless of whether it opens above or below the trigger. transformOrigin is set on the
+    // element style to the trigger's centre within the panel, so the animation is anchored to
+    // the compact card position in both directions.
     panelMotion = {
-      initial: { opacity: 1, height: anchorRect.height },
-      animate: { opacity: 1, height: "auto" },
-      exit: { opacity: 0, height: anchorRect.height },
+      initial: { scaleY: 0.08 },
+      animate: { scaleY: 1 },
+      exit: {
+        opacity: 0,
+        scaleY: 0.08,
+        transition: { duration: 0.22, ease: "easeIn" },
+      },
     };
   } else {
     // Sheet (touch): centred card, so grow gently from a near-full scale instead of height.
@@ -420,8 +431,6 @@ function ExperienceExpandCard({
                     top: pos?.top ?? 0,
                     // Anchored: match the compact card's width so it grows in place. Sheet: CSS width.
                     width: mode === "anchored" && anchorRect ? anchorRect.width : undefined,
-                    // Anchored grows by height, so clip the unfolding detail to its current height.
-                    overflow: mode === "anchored" ? "hidden" : undefined,
                     transformOrigin: pos ? `${pos.originX}px ${pos.originY}px` : "center",
                     visibility: pos ? "visible" : "hidden",
                     ...logoStyle,
@@ -580,12 +589,22 @@ export function ExperienceCardBody({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
-        {employmentType ? (
-          <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
-            {employmentType}
-          </span>
+      <div className="experience-panel-header">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+          <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
+          {employmentType ? (
+            <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
+              {employmentType}
+            </span>
+          ) : null}
+        </div>
+        {organizationLogo ? (
+          <img
+            src={organizationLogo}
+            alt=""
+            aria-hidden="true"
+            className="experience-card-corner-logo"
+          />
         ) : null}
       </div>
 
@@ -646,9 +665,6 @@ export function ExperienceCardBody({
       headingText={role}
       expansion={expansion}
       current={isCurrent}
-      backgroundImage={organizationLogo}
-      prominentLogo={Boolean(organizationLogo?.includes("check-point"))}
-      subduedLogo={Boolean(organizationLogo?.includes("private-tutor"))}
       compact={compact}
       panel={panel}
     />
