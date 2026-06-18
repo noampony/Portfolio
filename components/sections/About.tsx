@@ -234,10 +234,12 @@ export function About() {
             whileInView={animate ? "visible" : undefined}
             viewport={{ once: true, margin: "-80px" }}
             variants={revealVariants}
+            /* eslint-disable react-hooks/refs -- glare hook returns stable handler fns and a ref object; ref.current is not accessed during render */
             onMouseEnter={fieldsGlare.handlers.onMouseEnter}
             onMouseLeave={fieldsGlare.handlers.onMouseLeave}
           >
             <div ref={fieldsGlare.overlayRef} style={fieldsGlare.overlayStyle} aria-hidden="true" />
+            {/* eslint-enable react-hooks/refs */}
             <div className="flex items-center justify-between gap-4">
               <h3 className="m-0 text-body font-semibold text-text-primary">
                 Main Fields Of Development

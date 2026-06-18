@@ -501,6 +501,21 @@ export function validateTerminalCommand(data: unknown): TerminalCommand {
   });
 }
 
+export function validateSkillList(data: unknown): Skill[] {
+  return validateList(data, "Skill[]", (item, index) => {
+    const path = `Skill[${index}]`;
+    const raw = assertObject(item, path);
+    return omitUndefined({
+      name: assertRequiredString(raw.name, `${path}.name`),
+      category: assertRequiredString(raw.category, `${path}.category`),
+      notes: assertOptionalString(raw.notes, `${path}.notes`),
+      icon: assertOptionalString(raw.icon, `${path}.icon`),
+      proficiency: assertOptionalString(raw.proficiency, `${path}.proficiency`),
+      displayOrder: assertOptionalNumber(raw.displayOrder, `${path}.displayOrder`),
+    });
+  });
+}
+
 /** Work-related models that carry the §15.4 confidentiality gate. */
 export type ConfidentialityGated = Experience | Project;
 

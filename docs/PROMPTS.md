@@ -437,7 +437,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/8.4-cou
 # Phase 9 — Technical Skills Section
 Phase file: [tasks/phase-09-skills.md](../tasks/phase-09-skills.md)
 
-## ⬜ Task 9.1 — Define Skills Data
+## ✅ Task 9.1 — Define Skills Data
 
 ```text
 Implement ONLY Task 9.1 — "Define Skills Data" — for the Noam Pony portfolio. Depends on Tasks 8.4, 3.2.

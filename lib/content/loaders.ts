@@ -18,6 +18,7 @@ import {
   validateProjectList,
   validateResume,
   validateSkill,
+  validateSkillList,
   validateSocialLink,
   validateTerminalCommand,
 } from "./validate";
@@ -37,6 +38,7 @@ export {
   validateProjectList,
   validateResume,
   validateSkill,
+  validateSkillList,
   validateSocialLink,
   validateTerminalCommand,
 } from "./validate";
@@ -77,6 +79,10 @@ export function loadCourseList(data: unknown) {
 
 export function loadSkill(data: unknown) {
   return validateSkill(data);
+}
+
+export function loadSkillList(data: unknown) {
+  return validateSkillList(data);
 }
 
 export function loadResume(data: unknown) {
