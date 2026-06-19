@@ -1,12 +1,21 @@
 "use client";
 
-import { motion, useInView, useReducedMotion, type Variants } from "framer-motion";
-import { useRef } from "react";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 import { SkillBadge } from "@/components/ui/SkillBadge";
 import { skills } from "@/lib/content/data/skills";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+
+// Icon tile: ~80px tall (incl. padding). 3 rows + gaps ≈ 292px at narrowest grid.
+// Collapse only categories whose content exceeds 3 rows at any viewport width.
+const COLLAPSED_HEIGHT = 300;
 
 const revealVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -20,7 +29,7 @@ const revealVariants: Variants = {
 const staggerContainerVariants: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.07, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.04 },
   },
 };
 
@@ -33,16 +42,15 @@ const cardVariants: Variants = {
   },
 };
 
-const badgeRevealVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.88 },
+const tileRevealVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.85 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.3, ease: easeOut },
+    transition: { duration: 0.28, ease: easeOut },
   },
 };
 
-/** Group an array of skills by their `category`, preserving `displayOrder`. */
 function groupByCategory(list: typeof skills) {
   const map = new Map<string, typeof skills>();
   for (const skill of list) {
@@ -58,12 +66,126 @@ function groupByCategory(list: typeof skills) {
 
 const grouped = groupByCategory(skills);
 
+interface SkillCategoryCardProps {
+  category: string;
+  categorySkills: typeof skills;
+  animateState: "visible" | "hidden";
+  shouldReduceMotion: boolean | null;
+}
+
+function SkillCategoryCard({
+  category,
+  categorySkills,
+  animateState,
+  shouldReduceMotion,
+}: SkillCategoryCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const gridRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const check = () => setHasOverflow(el.scrollHeight > COLLAPSED_HEIGHT);
+
+    // Defer one frame so the CSS grid finishes column resolution before we measure.
+    const raf = requestAnimationFrame(check);
+
+    // Re-check whenever the element resizes (e.g. viewport width change).
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, []);
+
+  const targetHeight =
+    expanded || !hasOverflow ? "auto" : COLLAPSED_HEIGHT;
+
+  return (
+    <motion.div
+      variants={cardVariants}
+      className={[
+        "group relative flex flex-col overflow-hidden rounded-xl",
+        "border border-border bg-bg-surface",
+        "transition-colors duration-200",
+        "hover:border-accent/30 hover:bg-bg-surface-raised",
+      ].join(" ")}
+    >
+      {/* Top accent line */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      />
+
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <h3 className="mb-4 font-mono text-[0.65rem] font-semibold uppercase tracking-widest text-accent">
+          {category}
+        </h3>
+
+        <motion.div
+          animate={{ height: targetHeight }}
+          initial={false}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.45,
+            ease: easeOut,
+          }}
+          className="overflow-hidden"
+          style={{
+            height: !expanded && hasOverflow ? COLLAPSED_HEIGHT : undefined,
+          }}
+        >
+          <motion.ul
+            ref={gridRef}
+            className="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-2 sm:grid-cols-[repeat(auto-fill,minmax(84px,1fr))]"
+            aria-label={`${category} skills`}
+            variants={staggerContainerVariants}
+            initial="hidden"
+            animate={shouldReduceMotion ? "visible" : animateState}
+          >
+            {categorySkills.map((skill) => (
+              <motion.li
+                key={skill.name}
+                variants={tileRevealVariants}
+                className="list-none"
+              >
+                <SkillBadge skill={skill} />
+              </motion.li>
+            ))}
+          </motion.ul>
+        </motion.div>
+
+        {hasOverflow && (
+          <button
+            type="button"
+            onClick={() => setExpanded((prev) => !prev)}
+            aria-expanded={expanded}
+            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md py-1.5 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            {expanded ? (
+              <>
+                <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15" /></svg>
+                Show less
+              </>
+            ) : (
+              <>
+                <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                Show all {categorySkills.length}
+              </>
+            )}
+          </button>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 /**
  * Technical Skills section (spec §8.6, Task 9.3).
- *
- * Desktop: 3-column card grid. Tablet: 2-column. Mobile: single column.
- * Badges wrap naturally; long notes (AWS) stay readable via break-words.
- * Subtle reveal animation; fully reduced-motion-safe via useReducedMotion.
+ * Two independent flex columns of category cards, each containing an icon grid.
  */
 export function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -71,7 +193,18 @@ export function Skills() {
   const shouldReduceMotion = useReducedMotion();
 
   const animateState = isInView && !shouldReduceMotion ? "visible" : "hidden";
-  const staticState = "visible";
+
+  const categories = Array.from(grouped.entries());
+  const leftCol = categories.filter((_, i) => i % 2 === 0);
+  const rightCol = categories.filter((_, i) => i % 2 === 1);
+
+  const cardProps = (category: string, categorySkills: typeof skills) => ({
+    key: category,
+    category,
+    categorySkills,
+    animateState: animateState as "visible" | "hidden",
+    shouldReduceMotion,
+  });
 
   return (
     <section
@@ -80,7 +213,6 @@ export function Skills() {
       aria-labelledby="skills-heading"
       className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
     >
-      {/* Subtle radial accent background */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_88%_16%,color-mix(in_srgb,var(--accent)_10%,transparent),transparent_28%),radial-gradient(circle_at_10%_80%,color-mix(in_srgb,var(--gradient-to)_10%,transparent),transparent_30%)]"
@@ -90,7 +222,7 @@ export function Skills() {
         {/* Section header */}
         <motion.div
           initial="hidden"
-          animate={shouldReduceMotion ? staticState : animateState}
+          animate={shouldReduceMotion ? "visible" : animateState}
           variants={revealVariants}
           className="mb-10 lg:mb-14"
         >
@@ -114,54 +246,23 @@ export function Skills() {
           </p>
         </motion.div>
 
-        {/* Skill categories grid */}
+        {/* Two independent flex columns */}
         <motion.div
           initial="hidden"
-          animate={shouldReduceMotion ? staticState : animateState}
+          animate={shouldReduceMotion ? "visible" : animateState}
           variants={staggerContainerVariants}
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="flex flex-col gap-4 sm:flex-row sm:gap-5"
         >
-          {Array.from(grouped.entries()).map(([category, categorySkills]) => (
-            <motion.div
-              key={category}
-              variants={cardVariants}
-              className={[
-                "group relative flex flex-col overflow-hidden rounded-lg",
-                "border border-border bg-bg-surface",
-                "transition-colors duration-200",
-                "hover:border-accent/40 hover:bg-bg-surface-raised",
-              ].join(" ")}
-            >
-              {/* Top accent line */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              />
-
-              <div className="flex flex-1 flex-col p-5">
-                <h3 className="mb-4 font-mono text-small font-semibold uppercase tracking-widest text-accent">
-                  {category}
-                </h3>
-                <motion.ul
-                  className="flex flex-1 flex-wrap content-start gap-2"
-                  aria-label={`${category} skills`}
-                  variants={staggerContainerVariants}
-                  initial="hidden"
-                  animate={shouldReduceMotion ? staticState : animateState}
-                >
-                  {categorySkills.map((skill) => (
-                    <motion.li
-                      key={skill.name}
-                      variants={badgeRevealVariants}
-                      className="list-none"
-                    >
-                      <SkillBadge skill={skill} />
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              </div>
-            </motion.div>
-          ))}
+          <div className="flex flex-1 flex-col gap-4 sm:gap-5">
+            {leftCol.map(([category, categorySkills]) => (
+              <SkillCategoryCard {...cardProps(category, categorySkills)} />
+            ))}
+          </div>
+          <div className="flex flex-1 flex-col gap-4 sm:gap-5">
+            {rightCol.map(([category, categorySkills]) => (
+              <SkillCategoryCard {...cardProps(category, categorySkills)} />
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

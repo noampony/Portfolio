@@ -106,7 +106,7 @@ const learningPathData = [
         "Unlocking Information Security (Tel Aviv University)",
         "/courses/unlocking-information-security.webp",
       ),
-      course("WEBSEC – לזהות חולשות, לבנות הגנות", "/courses/websec.png"),
+      course("WEBSEC - Mitigating Vulnerabilities", "/courses/websec.png"),
     ],
   },
   {
