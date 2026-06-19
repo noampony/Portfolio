@@ -20,8 +20,8 @@ export function SkillBadge({ skill, className }: SkillBadgeProps) {
     <div
       className={cn(
         "group flex flex-col items-center gap-2 rounded-xl border border-border bg-bg-surface",
-        "px-1.5 pb-2.5 pt-3 transition-all duration-200",
-        "hover:border-accent/40 hover:bg-bg-surface-raised hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.25)]",
+        "px-1.5 pb-2.5 pt-3 transition-all duration-300",
+        "hover:border-accent/40 hover:bg-bg-surface-raised hover:-translate-y-2 hover:scale-105 hover:shadow-[0_8px_20px_rgba(0,0,0,0.35)]",
         className,
       )}
     >
@@ -30,12 +30,12 @@ export function SkillBadge({ skill, className }: SkillBadgeProps) {
           <svg
             viewBox="0 0 24 24"
             aria-hidden="true"
-            className="h-7 w-7 fill-current text-accent/75 transition-colors duration-200 group-hover:text-accent"
+            className="h-7 w-7 fill-current text-accent transition-transform duration-300 group-hover:scale-110"
           >
             <path d={iconPath} />
           </svg>
         ) : (
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/15 font-mono text-sm font-bold text-accent">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/15 font-mono text-sm font-bold text-accent transition-transform duration-300 group-hover:scale-110">
             {skill.name.charAt(0)}
           </span>
         )}
