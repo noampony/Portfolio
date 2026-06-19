@@ -13,9 +13,8 @@ import { skills } from "@/lib/content/data/skills";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
-// Icon tile: ~92px tall (incl. padding). 2 rows + 1 gap ≈ 192px at narrowest grid.
-// Collapse only categories whose content exceeds 2 rows at any viewport width.
-const COLLAPSED_HEIGHT = 200;
+// Fallback collapsed height before DOM measurement fires.
+const COLLAPSED_HEIGHT_FALLBACK = 176;
 
 const revealVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -88,8 +87,9 @@ function SkillCategoryCard({
 }: SkillCategoryCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
+  const [collapsedHeight, setCollapsedHeight] = useState(COLLAPSED_HEIGHT_FALLBACK);
   const [expandCount, setExpandCount] = useState(0);
-  // Index of the first badge that was below COLLAPSED_HEIGHT at expand time.
+  // Index of the first badge that was below the collapsed height at expand time.
   // MAX_SAFE_INTEGER means "not yet measured" — all badges inherit the parent stagger.
   const [splitIndex, setSplitIndex] = useState(Number.MAX_SAFE_INTEGER);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -103,13 +103,39 @@ function SkillCategoryCard({
     const el = gridRef.current;
     if (!el) return;
 
-    const check = () => setHasOverflow(el.scrollHeight > COLLAPSED_HEIGHT);
+    const measure = () => {
+      const items = Array.from(el.querySelectorAll<HTMLElement>(":scope > li"));
+      if (items.length === 0) { setHasOverflow(false); return; }
+
+      const gridTop = el.getBoundingClientRect().top;
+      // Determine the bottom edge of each row by grouping items with the same top.
+      const rowBottoms: number[] = [];
+      let lastTop = -Infinity;
+
+      for (const item of items) {
+        const rect = item.getBoundingClientRect();
+        const top = Math.round(rect.top - gridTop);
+        const bottom = Math.round(rect.bottom - gridTop);
+        if (top > lastTop + 1) {
+          rowBottoms.push(bottom);
+          lastTop = top;
+        } else {
+          rowBottoms[rowBottoms.length - 1] = Math.max(rowBottoms[rowBottoms.length - 1], bottom);
+        }
+      }
+
+      const moreThanTwoRows = rowBottoms.length > 2;
+      setHasOverflow(moreThanTwoRows);
+      if (moreThanTwoRows && rowBottoms[1] > 0) {
+        setCollapsedHeight(rowBottoms[1]);
+      }
+    };
 
     // Defer one frame so the CSS grid finishes column resolution before we measure.
-    const raf = requestAnimationFrame(check);
+    const raf = requestAnimationFrame(measure);
 
     // Re-check whenever the element resizes (e.g. viewport width change).
-    const ro = new ResizeObserver(check);
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
 
     return () => {
@@ -119,7 +145,7 @@ function SkillCategoryCard({
   }, []);
 
   const targetHeight =
-    expanded || !hasOverflow ? "auto" : COLLAPSED_HEIGHT;
+    expanded || !hasOverflow ? "auto" : collapsedHeight;
 
   return (
     <motion.div
@@ -154,7 +180,7 @@ function SkillCategoryCard({
           }}
           className="overflow-hidden"
           style={{
-            height: !expanded && hasOverflow ? COLLAPSED_HEIGHT : undefined,
+            height: !expanded && hasOverflow ? collapsedHeight : undefined,
           }}
         >
           <motion.ul
@@ -191,39 +217,43 @@ function SkillCategoryCard({
           </motion.ul>
         </motion.div>
 
-        {hasOverflow && (
-          <button
-            type="button"
-            onClick={() => {
-              if (!expanded && gridRef.current) {
-                const gridRect = gridRef.current.getBoundingClientRect();
-                const items = gridRef.current.querySelectorAll(":scope > li");
-                let split = items.length;
-                for (let i = 0; i < items.length; i++) {
-                  const itemTop = (items[i] as HTMLElement).getBoundingClientRect().top - gridRect.top;
-                  if (itemTop >= COLLAPSED_HEIGHT) { split = i; break; }
-                }
-                setSplitIndex(split);
-                setExpandCount((c) => c + 1);
+        {/* Always rendered so all cards reserve the same button height; invisible when no overflow. */}
+        <button
+          type="button"
+          onClick={() => {
+            if (!expanded && gridRef.current) {
+              const gridRect = gridRef.current.getBoundingClientRect();
+              const items = gridRef.current.querySelectorAll(":scope > li");
+              let split = items.length;
+              for (let i = 0; i < items.length; i++) {
+                const itemTop = (items[i] as HTMLElement).getBoundingClientRect().top - gridRect.top;
+                if (itemTop >= collapsedHeight) { split = i; break; }
               }
-              setExpanded((prev) => !prev);
-            }}
-            aria-expanded={expanded}
-            className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md py-0 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            {expanded ? (
-              <>
-                <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15" /></svg>
-                Show less
-              </>
-            ) : (
-              <>
-                <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-                Show all {categorySkills.length}
-              </>
-            )}
-          </button>
-        )}
+              setSplitIndex(split);
+              setExpandCount((c) => c + 1);
+            }
+            setExpanded((prev) => !prev);
+          }}
+          aria-expanded={hasOverflow ? expanded : undefined}
+          aria-hidden={!hasOverflow}
+          tabIndex={hasOverflow ? undefined : -1}
+          className={[
+            "mt-1 flex w-full items-center justify-center gap-1.5 rounded-md py-0 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+            !hasOverflow ? "invisible pointer-events-none" : "",
+          ].join(" ")}
+        >
+          {expanded ? (
+            <>
+              <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15" /></svg>
+              Show less
+            </>
+          ) : (
+            <>
+              <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+              Show all {categorySkills.length}
+            </>
+          )}
+        </button>
       </div>
     </motion.div>
   );
