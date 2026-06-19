@@ -37,6 +37,7 @@ const skillData: unknown[] = [
   { name: "VectorDB (Vespa.ai)", category: "Databases", displayOrder: 4 },
   { name: "Elastic Search",  category: "Databases", displayOrder: 5 },
   { name: "Parquet DB",      category: "Databases", displayOrder: 6 },
+  { name: "Apache Iceberg",  category: "Databases", displayOrder: 7 },
 
   // ── Concepts & Methodologies ─────────────────────────────────────────────
   { name: "Computer Networking",    category: "Concepts & Methodologies", displayOrder: 1 },
@@ -56,12 +57,12 @@ const skillData: unknown[] = [
   { name: "AWS OpenSearch",      category: "Cloud", displayOrder: 6 },
   { name: "AWS S3",              category: "Cloud", displayOrder: 7 },
   { name: "AWS Cloud Formation",  category: "Cloud", displayOrder: 8 },
-  { name: "AWS Firehose",        category: "Cloud", displayOrder: 9 },
+  { name: "AWS Kinesis Firehose", category: "Cloud", displayOrder: 9 },
   { name: "AWS RDS",             category: "Cloud", displayOrder: 10 },
   { name: "AWS Secrets Manager", category: "Cloud", displayOrder: 11 },
   { name: "AWS API Gateway",     category: "Cloud", displayOrder: 12 },
   { name: "AWS Lambda",          category: "Cloud", displayOrder: 13 },
-  { name: "AWS Iceberg",         category: "Cloud", displayOrder: 14 },
+  { name: "AWS Glue",            category: "Cloud", displayOrder: 14 },
   { name: "AWS Athena",          category: "Cloud", displayOrder: 15 },
   { name: "AWS KMS",             category: "Cloud", displayOrder: 16 },
   { name: "AWS EventBridge",     category: "Cloud", displayOrder: 17 },

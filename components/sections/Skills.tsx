@@ -16,6 +16,13 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 // Fallback collapsed height before DOM measurement fires.
 const COLLAPSED_HEIGHT_FALLBACK = 176;
 
+// Vertical headroom inside the (overflow-hidden) clip box so the hover lift on
+// first-row tiles isn't clipped at the top. Matches the badge lift
+// (hover:-translate-y-2 = 8px) plus a little slack for the hover scale. It's
+// offset by an equal negative margin below, so the resting gap above the first
+// row is unchanged; the height target is bumped so exactly two rows still show.
+const LIFT_HEADROOM = 12;
+
 const revealVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
   visible: {
@@ -147,7 +154,7 @@ function SkillCategoryCard({
   }, []);
 
   const targetHeight =
-    expanded || !hasOverflow ? "auto" : collapsedHeight;
+    expanded || !hasOverflow ? "auto" : collapsedHeight + LIFT_HEADROOM;
 
   return (
     <motion.div
@@ -182,7 +189,14 @@ function SkillCategoryCard({
           }}
           className="overflow-hidden"
           style={{
-            height: !expanded && hasOverflow ? collapsedHeight : undefined,
+            // Headroom for the hover lift, cancelled by an equal negative
+            // margin so the resting layout (and the gap above row 1) is unchanged.
+            paddingTop: LIFT_HEADROOM,
+            marginTop: -LIFT_HEADROOM,
+            height:
+              !expanded && hasOverflow
+                ? collapsedHeight + LIFT_HEADROOM
+                : undefined,
           }}
         >
           <motion.ul
