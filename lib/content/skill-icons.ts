@@ -123,7 +123,7 @@ export const SKILL_ICONS: Record<string, string> = {
   Bash: BASH,
   Flask: FLASK,
   Pytest: PYTEST,
-  Lint: CODE,
+  "Linting (Ruff)": CODE,
 
   // Tools & Infrastructures
   Docker: DOCKER,

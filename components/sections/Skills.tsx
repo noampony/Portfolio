@@ -273,8 +273,6 @@ export function Skills() {
   const headerAnimateState = isHeaderInView && !shouldReduceMotion ? "visible" : "hidden";
 
   const categories = Array.from(grouped.entries());
-  const leftCol = categories.filter((_, i) => i % 2 === 0);
-  const rightCol = categories.filter((_, i) => i % 2 === 1);
 
   return (
     <section
@@ -321,28 +319,16 @@ export function Skills() {
           </p>
         </motion.div>
 
-        {/* Two independent flex columns — each card observes itself */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
-          <div className="flex flex-1 flex-col gap-4 sm:gap-5">
-            {leftCol.map(([category, categorySkills]) => (
-              <SkillCategoryCard
-                key={category}
-                category={category}
-                categorySkills={categorySkills}
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            ))}
-          </div>
-          <div className="flex flex-1 flex-col gap-4 sm:gap-5">
-            {rightCol.map(([category, categorySkills]) => (
-              <SkillCategoryCard
-                key={category}
-                category={category}
-                categorySkills={categorySkills}
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            ))}
-          </div>
+        {/* 2-column grid — same-row cards share height automatically */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+          {categories.map(([category, categorySkills]) => (
+            <SkillCategoryCard
+              key={category}
+              category={category}
+              categorySkills={categorySkills}
+              shouldReduceMotion={shouldReduceMotion}
+            />
+          ))}
         </div>
       </div>
     </section>

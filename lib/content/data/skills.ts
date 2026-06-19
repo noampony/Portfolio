@@ -16,7 +16,7 @@ const skillData: unknown[] = [
   { name: "Bash",   category: "Programming", displayOrder: 3 },
   { name: "Flask",  category: "Programming", displayOrder: 4 },
   { name: "Pytest", category: "Programming", displayOrder: 5 },
-  { name: "Lint",   category: "Programming", displayOrder: 6 },
+  { name: "Linting (Ruff)",   category: "Programming", displayOrder: 6 },
 
   // ── Tools & Infrastructures ──────────────────────────────────────────────
   { name: "Docker",               category: "Tools & Infrastructures", displayOrder: 1 },
