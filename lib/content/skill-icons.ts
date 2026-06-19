@@ -162,7 +162,7 @@ export const SKILL_ICONS: Record<string, string> = {
   "AWS ElasticCache": AWS,
   "AWS OpenSearch": OPENSEARCH,
   "AWS S3": AMAZONS3,
-  "AWS CloudFormation": AWS,
+  "AWS Cloud Formation": AWS,
   "AWS Firehose": AWS,
   "AWS RDS": AMAZONRDS,
   "AWS Secrets Manager": SHIELD,

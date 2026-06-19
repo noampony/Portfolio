@@ -55,7 +55,7 @@ const skillData: unknown[] = [
   { name: "AWS ElasticCache",    category: "Cloud", displayOrder: 5 },
   { name: "AWS OpenSearch",      category: "Cloud", displayOrder: 6 },
   { name: "AWS S3",              category: "Cloud", displayOrder: 7 },
-  { name: "AWS CloudFormation",  category: "Cloud", displayOrder: 8 },
+  { name: "AWS Cloud Formation",  category: "Cloud", displayOrder: 8 },
   { name: "AWS Firehose",        category: "Cloud", displayOrder: 9 },
   { name: "AWS RDS",             category: "Cloud", displayOrder: 10 },
   { name: "AWS Secrets Manager", category: "Cloud", displayOrder: 11 },

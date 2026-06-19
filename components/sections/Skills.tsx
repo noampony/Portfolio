@@ -109,14 +109,16 @@ function SkillCategoryCard({
 
       const gridTop = el.getBoundingClientRect().top;
       // Determine the bottom edge of each row by grouping items with the same top.
+      // Keep fractional pixel values so the collapsed height matches the natural
+      // grid height of 2-row cards exactly (avoids 1px subpixel discrepancy).
       const rowBottoms: number[] = [];
       let lastTop = -Infinity;
 
       for (const item of items) {
         const rect = item.getBoundingClientRect();
-        const top = Math.round(rect.top - gridTop);
-        const bottom = Math.round(rect.bottom - gridTop);
-        if (top > lastTop + 1) {
+        const top = rect.top - gridTop;
+        const bottom = rect.bottom - gridTop;
+        if (top > lastTop + 0.5) {
           rowBottoms.push(bottom);
           lastTop = top;
         } else {
