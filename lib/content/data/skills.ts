@@ -44,6 +44,8 @@ const skillData: unknown[] = [
   { name: "REST API Design",        category: "Concepts & Methodologies", displayOrder: 3 },
   { name: "Multi-Threading",        category: "Concepts & Methodologies", displayOrder: 4 },
   { name: "Microservices",          category: "Concepts & Methodologies", displayOrder: 5 },
+  { name: "OOP",                    category: "Concepts & Methodologies", displayOrder: 6 },
+  { name: "Clean Code",             category: "Concepts & Methodologies", displayOrder: 7 },
 
   // ── Cloud ────────────────────────────────────────────────────────────────
   { name: "AWS ECS",             category: "Cloud", displayOrder: 1 },

@@ -30,6 +30,14 @@ const GRID =
 const CHAT =
   "M20,2H4C2.9,2 2,2.9 2,4V22L6,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2Z";
 
+// Hierarchy/inheritance tree — represents OOP class relationships (MDI sitemap)
+const OOP_ICON =
+  "M4,2H7A2,2 0 0,1 9,4V5H15V4A2,2 0 0,1 17,2H20A2,2 0 0,1 22,4V7A2,2 0 0,1 20,9H17A2,2 0 0,1 15,7V6H13V15H15V14A2,2 0 0,1 17,12H20A2,2 0 0,1 22,14V17A2,2 0 0,1 20,19H17A2,2 0 0,1 15,17V16H9V17A2,2 0 0,1 7,19H4A2,2 0 0,1 2,17V14A2,2 0 0,1 4,12H7A2,2 0 0,1 9,14V15H11V6H9V7A2,2 0 0,1 7,9H4A2,2 0 0,1 2,7V4A2,2 0 0,1 4,2M4,4V7H7V4H4M17,4V7H20V4H17M4,14V17H7V14H4M17,14V17H20V14H17Z";
+
+// Quality badge with checkmark — represents clean, verified code (MDI check-decagram)
+const CLEAN_CODE =
+  "M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.54L3.44,9.22L1,12L3.44,14.78L3.1,18.46L6.71,19.28L8.6,22.46L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z";
+
 // ── Brand icon paths — Simple Icons (CC0 1.0 Universal) ──────────────────────
 
 const PYTHON =
@@ -143,6 +151,8 @@ export const SKILL_ICONS: Record<string, string> = {
   "REST API Design": CODE,
   "Multi-Threading": LIGHTNING,
   Microservices: GRID,
+  OOP: OOP_ICON,
+  "Clean Code": CLEAN_CODE,
 
   // Cloud — AWS
   "AWS ECS": AMAZONECS,
