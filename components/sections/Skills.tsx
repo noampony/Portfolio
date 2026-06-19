@@ -114,17 +114,21 @@ function SkillCategoryCard({
       const items = Array.from(el.querySelectorAll<HTMLElement>(":scope > li"));
       if (items.length === 0) { setHasOverflow(false); return; }
 
-      const gridTop = el.getBoundingClientRect().top;
-      // Determine the bottom edge of each row by grouping items with the same top.
-      // Keep fractional pixel values so the collapsed height matches the natural
-      // grid height of 2-row cards exactly (avoids 1px subpixel discrepancy).
+      // Use layout-box metrics (offsetTop/offsetHeight), NOT getBoundingClientRect:
+      // tiles render in their "hidden" variant (scale: 0.82) until the card scrolls
+      // into view, and getBoundingClientRect would report those transformed, compressed
+      // sizes — yielding a too-short collapsed height that never self-corrects (a child
+      // transform doesn't resize the grid, so the ResizeObserver never re-fires). offset*
+      // ignores transforms, so the measurement is correct regardless of animation state.
+      // offsetTop is sibling-relative; since the grid has no top padding, item 0 sits at
+      // the grid's content top, so each row bottom relative to it is the grid's own height.
+      const baseTop = items[0].offsetTop;
       const rowBottoms: number[] = [];
       let lastTop = -Infinity;
 
       for (const item of items) {
-        const rect = item.getBoundingClientRect();
-        const top = rect.top - gridTop;
-        const bottom = rect.bottom - gridTop;
+        const top = item.offsetTop - baseTop;
+        const bottom = top + item.offsetHeight;
         if (top > lastTop + 0.5) {
           rowBottoms.push(bottom);
           lastTop = top;
@@ -147,7 +151,17 @@ function SkillCategoryCard({
     const ro = new ResizeObserver(measure);
     ro.observe(el);
 
+    // Fonts can swap in after the first measure and nudge tile heights; re-measure
+    // once they're ready so the collapsed height matches the final typography.
+    let cancelled = false;
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (!cancelled) measure();
+      });
+    }
+
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
@@ -333,8 +347,9 @@ export function Skills() {
           </p>
         </motion.div>
 
-        {/* 2-column grid — same-row cards share height automatically */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+        {/* 2-column grid — items-start so each card sizes to its own content
+            and expanding one never stretches its row-mate */}
+        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-5">
           {categories.map(([category, categorySkills]) => (
             <SkillCategoryCard
               key={category}
