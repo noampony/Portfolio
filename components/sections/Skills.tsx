@@ -6,7 +6,7 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { SkillBadge } from "@/components/ui/SkillBadge";
 import { skills } from "@/lib/content/data/skills";
@@ -80,6 +80,27 @@ function groupByCategory(list: typeof skills) {
 }
 
 const grouped = groupByCategory(skills);
+
+// Tailwind `sm` breakpoint — below it the cards stack into a single column.
+const TWO_COLUMN_QUERY = "(min-width: 640px)";
+
+// useLayoutEffect on the client (so the column count is corrected before the
+// first paint, avoiding any flash), useEffect on the server to silence the SSR
+// warning. The state still defaults to the SSR value so hydration matches.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// Round-robin so reading order is preserved: with 2 columns the cards lay out
+// exactly as a row-major grid would (item 0,2,4 left; 1,3,5 right), and with 1
+// column they stay in source order. Each column is its own flex stack, so
+// expanding a card only shifts the cards below it in that column.
+function distributeIntoColumns<T>(items: T[], columnCount: number): T[][] {
+  const columns: T[][] = Array.from({ length: columnCount }, () => []);
+  items.forEach((item, index) => {
+    columns[index % columnCount].push(item);
+  });
+  return columns;
+}
 
 interface SkillCategoryCardProps {
   category: string;
@@ -300,7 +321,20 @@ export function Skills() {
 
   const headerAnimateState = isHeaderInView && !shouldReduceMotion ? "visible" : "hidden";
 
+  // Default to 2 (the SSR/desktop value) so hydration matches; the layout effect
+  // drops it to 1 on narrow viewports before the first paint.
+  const [columnCount, setColumnCount] = useState(2);
+
+  useIsomorphicLayoutEffect(() => {
+    const mq = window.matchMedia(TWO_COLUMN_QUERY);
+    const update = () => setColumnCount(mq.matches ? 2 : 1);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   const categories = Array.from(grouped.entries());
+  const columns = distributeIntoColumns(categories, columnCount);
 
   return (
     <section
@@ -347,16 +381,24 @@ export function Skills() {
           </p>
         </motion.div>
 
-        {/* 2-column grid — items-start so each card sizes to its own content
-            and expanding one never stretches its row-mate */}
-        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-5">
-          {categories.map(([category, categorySkills]) => (
-            <SkillCategoryCard
-              key={category}
-              category={category}
-              categorySkills={categorySkills}
-              shouldReduceMotion={shouldReduceMotion}
-            />
+        {/* Independent flex columns (masonry-style): each column is its own
+            vertical stack, so expanding a card only pushes down the cards below
+            it in the same column — never the rest of the row. */}
+        <div className="flex items-start gap-4 sm:gap-5">
+          {columns.map((columnCategories, columnIndex) => (
+            <div
+              key={columnIndex}
+              className="flex min-w-0 flex-1 flex-col gap-4 sm:gap-5"
+            >
+              {columnCategories.map(([category, categorySkills]) => (
+                <SkillCategoryCard
+                  key={category}
+                  category={category}
+                  categorySkills={categorySkills}
+                  shouldReduceMotion={shouldReduceMotion}
+                />
+              ))}
+            </div>
           ))}
         </div>
       </div>
