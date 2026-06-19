@@ -67,6 +67,15 @@ const revealItemVariants: Variants = {
   },
 };
 
+const accentLineRevealVariants: Variants = {
+  hidden: { opacity: 0, x: -128 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 2.1, ease: easeOut },
+  },
+};
+
 /** No-JS fallback: keep the section visible and unfold the flip cards (front + back stacked). */
 const NO_JS_FALLBACK = `
 .projects-reveal{opacity:1!important;transform:none!important}
@@ -103,27 +112,30 @@ export function ProjectsPreview() {
         viewport={{ once: true, margin: "-80px" }}
         variants={staggerContainerVariants}
       >
-        <motion.p
+        <motion.div
           variants={revealItemVariants}
-          className="projects-reveal mb-3 font-mono text-small tracking-wider text-accent"
+          className="projects-reveal relative"
         >
-          SYS://PROJECTS
-        </motion.p>
-        <motion.h2
-          id="projects-heading"
-          variants={revealItemVariants}
-          className="projects-reveal m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-        >
-          Featured Projects
-        </motion.h2>
-        <motion.p
-          variants={revealItemVariants}
-          className="projects-reveal mt-4 max-w-measure text-body text-text-secondary"
-        >
-          A few backend systems I&apos;ve built and led.
-          <br />
-          Tap a card to flip it over.
-        </motion.p>
+          <motion.span
+            aria-hidden="true"
+            className="about-copy-accent-line"
+            variants={accentLineRevealVariants}
+          />
+          <p className="mb-3 font-mono text-small tracking-wider text-accent">
+            SYS://PROJECTS
+          </p>
+          <h2
+            id="projects-heading"
+            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
+          >
+            Featured Projects
+          </h2>
+          <p className="mt-4 max-w-measure text-body text-text-secondary">
+            A few backend systems I&apos;ve built and led.
+            <br />
+            Tap a card to flip it over.
+          </p>
+        </motion.div>
 
         <ul className="mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {reviewed.map((project, index) => (

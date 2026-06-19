@@ -43,6 +43,15 @@ const revealItemVariants: Variants = {
   },
 };
 
+const accentLineRevealVariants: Variants = {
+  hidden: { opacity: 0, x: -128 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 2.1, ease: easeOut },
+  },
+};
+
 /** No-JS fallback: keep the reveal-animated content visible when scripting never runs. */
 const NO_JS_FALLBACK = `.courses-reveal{opacity:1!important;transform:none!important}`;
 
@@ -75,26 +84,29 @@ export function CoursesRoadmap() {
         viewport={{ once: true, margin: "-80px" }}
         variants={staggerContainerVariants}
       >
-        <motion.p
+        <motion.div
           variants={revealItemVariants}
-          className="courses-reveal mb-3 font-mono text-small tracking-wider text-accent"
+          className="courses-reveal relative"
         >
-          SYS://COURSES
-        </motion.p>
-        <motion.h2
-          id="courses-heading"
-          variants={revealItemVariants}
-          className="courses-reveal m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-        >
-          Learning Roadmap
-        </motion.h2>
-        <motion.p
-          variants={revealItemVariants}
-          className="courses-reveal mt-4 max-w-measure text-body text-text-secondary"
-        >
-          A deliberate progression — grouped into focused paths, from language depth and
-          backend systems to architecture, security, and AI-augmented development.
-        </motion.p>
+          <motion.span
+            aria-hidden="true"
+            className="about-copy-accent-line"
+            variants={accentLineRevealVariants}
+          />
+          <p className="mb-3 font-mono text-small tracking-wider text-accent">
+            SYS://COURSES
+          </p>
+          <h2
+            id="courses-heading"
+            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
+          >
+            Learning Roadmap
+          </h2>
+          <p className="mt-4 max-w-measure text-body text-text-secondary">
+            A deliberate progression — grouped into focused paths, from language depth and
+            backend systems to architecture, security, and AI-augmented development.
+          </p>
+        </motion.div>
 
         <div className="roadmap-paths-wrap mt-10">
           <RoadmapRoad containerRef={pathsRef} pathCount={learningPaths.length} />
