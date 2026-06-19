@@ -13,9 +13,9 @@ import { skills } from "@/lib/content/data/skills";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
-// Icon tile: ~80px tall (incl. padding). 3 rows + gaps ≈ 292px at narrowest grid.
-// Collapse only categories whose content exceeds 3 rows at any viewport width.
-const COLLAPSED_HEIGHT = 300;
+// Icon tile: ~92px tall (incl. padding). 2 rows + 1 gap ≈ 192px at narrowest grid.
+// Collapse only categories whose content exceeds 2 rows at any viewport width.
+const COLLAPSED_HEIGHT = 200;
 
 const revealVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -140,7 +140,7 @@ function SkillCategoryCard({
         className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
 
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
+      <div className="flex flex-1 flex-col px-4 pb-1 pt-4 sm:px-5 sm:pb-1.5 sm:pt-5">
         <h3 className="mb-4 font-mono text-[0.65rem] font-semibold uppercase tracking-widest text-accent">
           {category}
         </h3>
@@ -209,7 +209,7 @@ function SkillCategoryCard({
               setExpanded((prev) => !prev);
             }}
             aria-expanded={expanded}
-            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md py-1.5 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md py-0 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {expanded ? (
               <>

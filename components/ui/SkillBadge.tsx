@@ -40,7 +40,7 @@ export function SkillBadge({ skill, className }: SkillBadgeProps) {
           </span>
         )}
       </div>
-      <span className="line-clamp-2 w-full text-center font-mono text-[0.6rem] font-medium leading-tight tracking-wide text-text-secondary group-hover:text-text-primary">
+      <span className="line-clamp-2 flex h-[2em] w-full items-center justify-center text-center font-mono text-[0.6rem] font-medium leading-tight tracking-wide text-text-secondary group-hover:text-text-primary">
         {skill.name}
       </span>
     </div>
