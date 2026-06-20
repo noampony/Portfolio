@@ -6,7 +6,7 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { SkillBadge } from "@/components/ui/SkillBadge";
 import { skills } from "@/lib/content/data/skills";
@@ -15,6 +15,13 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 
 // Fallback collapsed height before DOM measurement fires.
 const COLLAPSED_HEIGHT_FALLBACK = 176;
+
+// Vertical headroom inside the (overflow-hidden) clip box so the hover lift on
+// first-row tiles isn't clipped at the top. Matches the badge lift
+// (hover:-translate-y-2 = 8px) plus a little slack for the hover scale. It's
+// offset by an equal negative margin below, so the resting gap above the first
+// row is unchanged; the height target is bumped so exactly two rows still show.
+const LIFT_HEADROOM = 12;
 
 const revealVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -74,6 +81,27 @@ function groupByCategory(list: typeof skills) {
 
 const grouped = groupByCategory(skills);
 
+// Tailwind `sm` breakpoint — below it the cards stack into a single column.
+const TWO_COLUMN_QUERY = "(min-width: 640px)";
+
+// useLayoutEffect on the client (so the column count is corrected before the
+// first paint, avoiding any flash), useEffect on the server to silence the SSR
+// warning. The state still defaults to the SSR value so hydration matches.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// Round-robin so reading order is preserved: with 2 columns the cards lay out
+// exactly as a row-major grid would (item 0,2,4 left; 1,3,5 right), and with 1
+// column they stay in source order. Each column is its own flex stack, so
+// expanding a card only shifts the cards below it in that column.
+function distributeIntoColumns<T>(items: T[], columnCount: number): T[][] {
+  const columns: T[][] = Array.from({ length: columnCount }, () => []);
+  items.forEach((item, index) => {
+    columns[index % columnCount].push(item);
+  });
+  return columns;
+}
+
 interface SkillCategoryCardProps {
   category: string;
   categorySkills: typeof skills;
@@ -107,17 +135,21 @@ function SkillCategoryCard({
       const items = Array.from(el.querySelectorAll<HTMLElement>(":scope > li"));
       if (items.length === 0) { setHasOverflow(false); return; }
 
-      const gridTop = el.getBoundingClientRect().top;
-      // Determine the bottom edge of each row by grouping items with the same top.
-      // Keep fractional pixel values so the collapsed height matches the natural
-      // grid height of 2-row cards exactly (avoids 1px subpixel discrepancy).
+      // Use layout-box metrics (offsetTop/offsetHeight), NOT getBoundingClientRect:
+      // tiles render in their "hidden" variant (scale: 0.82) until the card scrolls
+      // into view, and getBoundingClientRect would report those transformed, compressed
+      // sizes — yielding a too-short collapsed height that never self-corrects (a child
+      // transform doesn't resize the grid, so the ResizeObserver never re-fires). offset*
+      // ignores transforms, so the measurement is correct regardless of animation state.
+      // offsetTop is sibling-relative; since the grid has no top padding, item 0 sits at
+      // the grid's content top, so each row bottom relative to it is the grid's own height.
+      const baseTop = items[0].offsetTop;
       const rowBottoms: number[] = [];
       let lastTop = -Infinity;
 
       for (const item of items) {
-        const rect = item.getBoundingClientRect();
-        const top = rect.top - gridTop;
-        const bottom = rect.bottom - gridTop;
+        const top = item.offsetTop - baseTop;
+        const bottom = top + item.offsetHeight;
         if (top > lastTop + 0.5) {
           rowBottoms.push(bottom);
           lastTop = top;
@@ -140,14 +172,24 @@ function SkillCategoryCard({
     const ro = new ResizeObserver(measure);
     ro.observe(el);
 
+    // Fonts can swap in after the first measure and nudge tile heights; re-measure
+    // once they're ready so the collapsed height matches the final typography.
+    let cancelled = false;
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (!cancelled) measure();
+      });
+    }
+
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
   }, []);
 
   const targetHeight =
-    expanded || !hasOverflow ? "auto" : collapsedHeight;
+    expanded || !hasOverflow ? "auto" : collapsedHeight + LIFT_HEADROOM;
 
   return (
     <motion.div
@@ -182,7 +224,14 @@ function SkillCategoryCard({
           }}
           className="overflow-hidden"
           style={{
-            height: !expanded && hasOverflow ? collapsedHeight : undefined,
+            // Headroom for the hover lift, cancelled by an equal negative
+            // margin so the resting layout (and the gap above row 1) is unchanged.
+            paddingTop: LIFT_HEADROOM,
+            marginTop: -LIFT_HEADROOM,
+            height:
+              !expanded && hasOverflow
+                ? collapsedHeight + LIFT_HEADROOM
+                : undefined,
           }}
         >
           <motion.ul
@@ -272,9 +321,20 @@ export function Skills() {
 
   const headerAnimateState = isHeaderInView && !shouldReduceMotion ? "visible" : "hidden";
 
+  // Default to 2 (the SSR/desktop value) so hydration matches; the layout effect
+  // drops it to 1 on narrow viewports before the first paint.
+  const [columnCount, setColumnCount] = useState(2);
+
+  useIsomorphicLayoutEffect(() => {
+    const mq = window.matchMedia(TWO_COLUMN_QUERY);
+    const update = () => setColumnCount(mq.matches ? 2 : 1);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   const categories = Array.from(grouped.entries());
-  const leftCol = categories.filter((_, i) => i % 2 === 0);
-  const rightCol = categories.filter((_, i) => i % 2 === 1);
+  const columns = distributeIntoColumns(categories, columnCount);
 
   return (
     <section
@@ -321,28 +381,25 @@ export function Skills() {
           </p>
         </motion.div>
 
-        {/* Two independent flex columns — each card observes itself */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
-          <div className="flex flex-1 flex-col gap-4 sm:gap-5">
-            {leftCol.map(([category, categorySkills]) => (
-              <SkillCategoryCard
-                key={category}
-                category={category}
-                categorySkills={categorySkills}
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            ))}
-          </div>
-          <div className="flex flex-1 flex-col gap-4 sm:gap-5">
-            {rightCol.map(([category, categorySkills]) => (
-              <SkillCategoryCard
-                key={category}
-                category={category}
-                categorySkills={categorySkills}
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            ))}
-          </div>
+        {/* Independent flex columns (masonry-style): each column is its own
+            vertical stack, so expanding a card only pushes down the cards below
+            it in the same column — never the rest of the row. */}
+        <div className="flex items-start gap-4 sm:gap-5">
+          {columns.map((columnCategories, columnIndex) => (
+            <div
+              key={columnIndex}
+              className="flex min-w-0 flex-1 flex-col gap-4 sm:gap-5"
+            >
+              {columnCategories.map(([category, categorySkills]) => (
+                <SkillCategoryCard
+                  key={category}
+                  category={category}
+                  categorySkills={categorySkills}
+                  shouldReduceMotion={shouldReduceMotion}
+                />
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>
