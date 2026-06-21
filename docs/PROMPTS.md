@@ -555,7 +555,7 @@ Task focus: encode §8.8 values incl. the CORRECTED message ("Let's Work Togethe
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/11.1-contact-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 11.2 — Implement the Contact Section (Direct Links)
+## ✅ Task 11.2 — Implement the Contact Section (Direct Links)
 
 ```text
 Implement ONLY Task 11.2 — "Implement the Contact Section (Direct Links)" — for the Noam Pony portfolio. Depends on Task 11.1.
@@ -567,7 +567,7 @@ Task focus: heading, corrected message, email (mailto:), LinkedIn (new tab + rel
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/11.2-contact-section`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 11.3 — Wire the Hero Contact CTA (Remove No-Op)
+## ✅ Task 11.3 — Wire the Hero Contact CTA (Remove No-Op)
 
 ```text
 Implement ONLY Task 11.3 — "Wire the Hero Contact CTA (Remove No-Op)" — for the Noam Pony portfolio. Depends on Task 11.2.
