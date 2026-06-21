@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content/data/profile";
+import { resume } from "@/lib/content/data/resume";
 import { cn } from "@/lib/utils";
+import { ResumeViewer } from "@/components/sections/ResumeViewer";
 
 const PRIMARY_CTA_LABEL = "Resume";
 const SECONDARY_CTA_LABEL = "Contact";
@@ -38,7 +40,7 @@ const paragraphItemVariants = {
   },
 };
 
-function DownloadIcon() {
+function ResumeIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -53,9 +55,10 @@ function DownloadIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6" />
+      <line x1="8" y1="13" x2="16" y2="13" />
+      <line x1="8" y1="17" x2="13" y2="17" />
     </svg>
   );
 }
@@ -136,6 +139,18 @@ type HeroContentProps = {
 export function HeroContent({ initials }: HeroContentProps) {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const [greetingReady, setGreetingReady] = useState(prefersReducedMotion);
+  const [resumeOpen, setResumeOpen] = useState(false);
+
+  // Open the resume preview modal. On narrow mobile, embedded PDF iframes don't
+  // render, so open the PDF directly in a new tab instead (same fallback the
+  // certificate viewer uses).
+  const openResume = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 420) {
+      window.open(resume.publicUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setResumeOpen(true);
+  };
 
   const { displayed: displayedName, complete: nameComplete } = useTypewriter(
     profile.name,
@@ -275,13 +290,16 @@ export function HeroContent({ initials }: HeroContentProps) {
         >
           <button
             type="button"
+            onClick={openResume}
+            aria-haspopup="dialog"
+            aria-expanded={resumeOpen}
             className={cn(
               ctaBaseClasses,
               "w-full border border-white/10 bg-accent text-accent-contrast shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_0_0_rgba(45,212,191,0)] backdrop-blur hover:bg-accent-hover hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
             )}
           >
             {PRIMARY_CTA_LABEL}
-            <DownloadIcon />
+            <ResumeIcon />
           </button>
           {/*
            * Secondary CTA → Contact section (§8.1, §8.8 wiring note). A real
@@ -359,6 +377,8 @@ export function HeroContent({ initials }: HeroContentProps) {
           </div>
         )}
       </motion.div>
+
+      <ResumeViewer open={resumeOpen} onClose={() => setResumeOpen(false)} />
     </div>
   );
 }
