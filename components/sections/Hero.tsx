@@ -15,7 +15,8 @@ function getInitials(name: string): string {
 
 /**
  * Hero section — layout (Task 4.1), styling (Task 4.2), animations (Task 4.3).
- * CTAs render as keyboard-focusable no-ops (no href, no dead links).
+ * The Contact CTA links to the `#contact` section (Task 11.3); the Resume CTA
+ * remains a keyboard-focusable no-op until it is wired (Task 10.3).
  */
 export function Hero() {
   const initials = getInitials(profile.name);

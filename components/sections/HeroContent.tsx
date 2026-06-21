@@ -283,8 +283,14 @@ export function HeroContent({ initials }: HeroContentProps) {
             {PRIMARY_CTA_LABEL}
             <DownloadIcon />
           </button>
-          <button
-            type="button"
+          {/*
+           * Secondary CTA → Contact section (§8.1, §8.8 wiring note). A real
+           * in-page anchor (not a no-op): keyboard-operable by default, and it
+           * inherits the global smooth scroll + `scroll-padding-top` (and the
+           * reduced-motion fallback to an instant jump) from globals.css.
+           */}
+          <a
+            href="#contact"
             className={cn(
               ctaBaseClasses,
               "w-full border border-border bg-bg-surface-raised/90 text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] backdrop-blur hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.9))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] supports-[backdrop-filter]:bg-bg-surface-raised/75 supports-[backdrop-filter]:hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.75))] sm:w-auto"
@@ -292,7 +298,7 @@ export function HeroContent({ initials }: HeroContentProps) {
           >
             {SECONDARY_CTA_LABEL}
             <ContactIcon />
-          </button>
+          </a>
         </motion.div>
       </div>
 
