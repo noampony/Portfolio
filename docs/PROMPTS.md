@@ -579,7 +579,7 @@ Task focus: wire the Hero secondary (Contact) CTA to scroll to #contact and REMO
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/11.3-hero-contact-cta`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 11.4 — Contact Section Completion Review
+## ✅ Task 11.4 — Contact Section Completion Review
 
 ```text
 Implement ONLY Task 11.4 — "Contact Section Completion Review" — for the Noam Pony portfolio. Depends on Task 11.3.
