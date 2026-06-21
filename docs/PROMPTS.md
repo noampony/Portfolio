@@ -543,7 +543,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/10.4-re
 # Phase 11 — Contact Section
 Phase file: [tasks/phase-11-contact.md](../tasks/phase-11-contact.md)
 
-## ⬜ Task 11.1 — Define Contact Data (with Phone-Display Confirmation)
+## ✅ Task 11.1 — Define Contact Data (with Phone-Display Confirmation)
 
 ```text
 Implement ONLY Task 11.1 — "Define Contact Data (with Phone-Display Confirmation)" — for the Noam Pony portfolio. Depends on Tasks 10.4, 3.2.
