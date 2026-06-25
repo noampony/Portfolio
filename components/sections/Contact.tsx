@@ -173,14 +173,48 @@ function ContactIllustration({ animate }: { animate: boolean }) {
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          <motion.path
+          <defs>
+            {/* Traveling reveal window — right edge tracks the envelope, long tail trails behind */}
+            <mask id="envelope-highlight-mask">
+              <motion.rect
+                y="-5"
+                width="28"
+                height="70"
+                fill="white"
+                animate={animate ? { x: [-24, 64, 64] } : { x: -24 }}
+                transition={{
+                  duration: 2.6,
+                  repeat: Infinity,
+                  ease: "linear",
+                  times: [0, 0.62, 1],
+                }}
+              />
+            </mask>
+          </defs>
+
+          {/* Base arc — static dim */}
+          <path
             d="M4 30 Q50 5 96 30"
             stroke="currentColor"
             strokeWidth="0.7"
             strokeDasharray="3 3.5"
             fill="none"
-            animate={animate ? { opacity: [0.35, 0.65, 0.35] } : { opacity: 0.35 }}
-            transition={{ duration: 3, repeat: Infinity }}
+            opacity={0.28}
+          />
+          {/* Highlighted dashes — same pattern as base, revealed only inside the traveling window */}
+          <motion.path
+            d="M4 30 Q50 5 96 30"
+            stroke="currentColor"
+            strokeWidth="0.9"
+            strokeDasharray="3 3.5"
+            fill="none"
+            mask="url(#envelope-highlight-mask)"
+            animate={animate ? { opacity: [0, 0.38, 0.38, 0] } : { opacity: 0 }}
+            transition={{
+              duration: 2.6,
+              repeat: Infinity,
+              times: [0, 0.077, 0.62, 1],
+            }}
           />
         </svg>
 
@@ -316,7 +350,7 @@ function ContactMethodCard({ method, compact }: { method: ContactMethod; compact
         {method.icon}
       </span>
       <span className="min-w-0">
-        <span className="font-mono text-small uppercase tracking-wider text-text-muted">
+        <span className="font-mono text-small tracking-wider text-text-muted">
           {method.label}
         </span>
         <span className={`-mt-1 block truncate ${compact ? "text-small" : "text-body"} text-text-primary`}>
