@@ -3,6 +3,8 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
+import { useGlareHandlers } from "@/components/ui/GlareHover";
+
 import { contact } from "@/lib/content/data/contact";
 
 /**
@@ -134,13 +136,27 @@ function ContactIllustration({ animate }: { animate: boolean }) {
         color: "var(--accent)",
       }}
     >
-      {/* YOU — visitor silhouette */}
+      {/* YOU — visitor silhouette in a circle matching the ME avatar */}
       <motion.div
         className="flex flex-col items-center gap-1 flex-shrink-0"
         animate={animate ? { y: [-1.5, 1.5, -1.5] } : {}}
         transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       >
-        <HumanSilhouette />
+        <div
+          style={{
+            width: "84px",
+            height: "84px",
+            borderRadius: "50%",
+            background: "color-mix(in srgb, var(--bg-surface-raised) 62%, transparent)",
+            border: "1px solid color-mix(in srgb, var(--accent) 40%, var(--border))",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+          }}
+        >
+          <HumanSilhouette />
+        </div>
         <span className="font-mono text-[0.6rem] tracking-[0.18em] opacity-70">YOU</span>
       </motion.div>
 
@@ -232,21 +248,25 @@ function ContactIllustration({ animate }: { animate: boolean }) {
             animate={animate ? { scale: [1, 1.9], opacity: [0.22, 0] } : { opacity: 0 }}
             transition={{ duration: 1.8, repeat: Infinity, delay: 1.9 }}
           />
-          {/* Avatar — replace src with /contact-avatar.jpg once the file is in public/ */}
           <div
             style={{
-              width: "64px",
-              height: "64px",
+              width: "84px",
+              height: "84px",
               borderRadius: "50%",
-              background: "color-mix(in srgb, var(--bg-surface-raised) 62%, transparent)",
               border: "1px solid color-mix(in srgb, var(--accent) 40%, var(--border))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               overflow: "hidden",
+              flexShrink: 0,
             }}
           >
-            <span className="font-mono text-[0.7rem] tracking-wider text-accent select-none">NP</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/contact-avatar.png"
+              alt="Noam Pony"
+              width={84}
+              height={84}
+
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+            />
           </div>
         </div>
         <span className="font-mono text-[0.6rem] tracking-[0.18em] opacity-70">ME</span>
@@ -281,7 +301,7 @@ const methods: ContactMethod[] = [
   {
     id: "linkedin",
     label: "LinkedIn",
-    value: "noam-pony",
+    value: "Noam Pony",
     href: contact.linkedIn,
     external: true,
     icon: <LinkedInIcon />,
@@ -296,10 +316,12 @@ const methods: ContactMethod[] = [
 ];
 
 function ContactMethodCard({ method, compact }: { method: ContactMethod; compact?: boolean }) {
+  const { overlayRef, overlayStyle, handlers } = useGlareHandlers({ transitionDuration: 1300, playOnce: true });
   const baseClass = `contact-method-card${compact ? " contact-method-card--compact" : ""} group`;
 
   const inner = (
     <>
+      <div ref={overlayRef} style={overlayStyle} aria-hidden="true" />
       <span className="contact-method-icon" aria-hidden="true">
         {method.icon}
       </span>
@@ -307,7 +329,7 @@ function ContactMethodCard({ method, compact }: { method: ContactMethod; compact
         <span className="font-mono text-small uppercase tracking-wider text-text-muted">
           {method.label}
         </span>
-        <span className={`mt-0.5 block truncate ${compact ? "text-small" : "text-body"} text-text-primary`}>
+        <span className={`-mt-1 block truncate ${compact ? "text-small" : "text-body"} text-text-primary`}>
           {method.value}
         </span>
       </span>
@@ -316,7 +338,7 @@ function ContactMethodCard({ method, compact }: { method: ContactMethod; compact
 
   if (method.href === null) {
     return (
-      <div className={baseClass} aria-label={`${method.label}: ${method.value}`}>
+      <div className={baseClass} aria-label={`${method.label}: ${method.value}`} {...handlers}>
         {inner}
       </div>
     );
@@ -336,6 +358,7 @@ function ContactMethodCard({ method, compact }: { method: ContactMethod; compact
           : `${method.label}: ${method.value}`
       }
       className={`${baseClass} contact-method-link`}
+      {...handlers}
     >
       {inner}
     </a>
@@ -352,7 +375,7 @@ export function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
+      className="relative isolate overflow-hidden border-t border-border bg-bg-base py-6 lg:py-10"
     >
       <div
         aria-hidden="true"
@@ -366,48 +389,49 @@ export function Contact() {
         viewport={{ once: true, margin: "-80px" }}
         variants={staggerContainerVariants}
       >
-        {/* Heading block — unchanged from Task 11.2 */}
-        <motion.div variants={revealItemVariants} className="relative">
-          <motion.span
-            aria-hidden="true"
-            className="about-copy-accent-line"
-            variants={accentLineRevealVariants}
-          />
-          <p className="mb-3 font-mono text-small tracking-wider text-accent">
-            SYS://CONTACT
-          </p>
-          <h2
-            id="contact-heading"
-            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-          >
-            {contact.heading}
-          </h2>
-          <p className="mt-4 max-w-measure text-body text-text-secondary">
-            {contact.message.split("? ")[0]}?<br />
-            {contact.message.split("? ")[1]}
-          </p>
-        </motion.div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr] lg:gap-8 lg:items-center">
+          {/* Left: heading + text + illustration widget */}
+          <motion.div variants={revealItemVariants} className="flex flex-col gap-4">
+            <div className="relative">
+              <motion.span
+                aria-hidden="true"
+                className="about-copy-accent-line"
+                variants={accentLineRevealVariants}
+              />
+              <p className="mb-2 font-mono text-small tracking-wider text-accent">
+                SYS://CONTACT
+              </p>
+              <h2
+                id="contact-heading"
+                className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
+              >
+                {contact.heading}
+              </h2>
+              <p className="mt-3 max-w-measure text-body text-text-secondary">
+                {contact.message.split("? ")[0]}?<br />
+                {contact.message.split("? ")[1]}
+              </p>
+            </div>
 
-        {/* 50/50 illustration + cards */}
-        <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+            <ContactIllustration animate={animate} />
+          </motion.div>
+
+          {/* Right: 4-row cards, centered vertically */}
           <motion.div
             variants={revealItemVariants}
             className="flex items-center justify-center"
           >
-            <ContactIllustration animate={animate} />
+            <ul
+              aria-label="Contact methods"
+              className="m-0 list-none grid grid-cols-1 gap-3 p-0 w-full min-[560px]:grid-cols-2 lg:grid-cols-1 lg:w-3/4"
+            >
+              {methods.map((method) => (
+                <li key={method.id} className="flex">
+                  <ContactMethodCard method={method} compact />
+                </li>
+              ))}
+            </ul>
           </motion.div>
-
-          <motion.ul
-            variants={revealItemVariants}
-            aria-label="Contact methods"
-            className="m-0 list-none grid grid-cols-2 gap-6 p-0"
-          >
-            {methods.map((method) => (
-              <li key={method.id} className="flex">
-                <ContactMethodCard method={method} compact />
-              </li>
-            ))}
-          </motion.ul>
         </div>
       </motion.div>
     </section>
