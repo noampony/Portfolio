@@ -228,26 +228,16 @@ function ContactIllustration({ animate }: { animate: boolean }) {
         transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
       >
         <div className="relative">
-          {/* Outer ping ring */}
-          <motion.div
-            className="absolute rounded-full"
-            style={{
-              inset: "-4px",
-              border: "1px solid var(--accent)",
-            }}
-            animate={animate ? { scale: [1, 1.55], opacity: [0.35, 0] } : { opacity: 0 }}
-            transition={{ duration: 1.4, repeat: Infinity, delay: 1.6 }}
-          />
-          {/* Inner ping ring */}
-          <motion.div
-            className="absolute rounded-full"
-            style={{
-              inset: "-4px",
-              border: "1px solid var(--accent)",
-            }}
-            animate={animate ? { scale: [1, 1.9], opacity: [0.22, 0] } : { opacity: 0 }}
-            transition={{ duration: 1.8, repeat: Infinity, delay: 1.9 }}
-          />
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full"
+              style={{ inset: 0, border: "1px solid var(--accent)" }}
+              initial={{ opacity: 0, scale: 1 }}
+              animate={animate ? { scale: [1, 1.9], opacity: [0.4, 0] } : { opacity: 0 }}
+              transition={{ duration: 4, ease: "easeOut", repeat: Infinity, repeatDelay: 2, delay: i * 2 }}
+            />
+          ))}
           <div
             style={{
               width: "84px",
