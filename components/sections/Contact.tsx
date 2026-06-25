@@ -6,23 +6,13 @@ import type { ReactNode } from "react";
 import { contact } from "@/lib/content/data/contact";
 
 /**
- * Contact section (spec §8.8, Task 11.2).
+ * Contact section (spec §8.8, Task 11.2 + deliver-animation redesign).
  *
- * Direct contact links only — no contact form. The form is a nice-to-have
- * (§8.8 decision) and the direct links must ship first; we deliberately do not
- * render a placeholder/broken form.
+ * Layout: heading block (unchanged) above a 2/3 / 1/3 split:
+ *   - Left 2/3: ContactIllustration — looping flying-envelope animation
+ *   - Right 1/3: compact direct-link cards (Email, Phone, LinkedIn, Location)
  *
- * Renders the heading, corrected message, and the confirmed contact methods:
- *   - Email    → `mailto:`
- *   - Phone    → `tel:` (only when a confirmed number is present, §15.6)
- *   - LinkedIn → opens in a new tab with `rel="noopener noreferrer"`
- *   - Location → plain text (not a link)
- * plus the preferred contact method.
- *
- * The section exposes the `#contact` anchor (spec §5.3); per §5.1 the navbar
- * carries only Home/Projects/Courses/Resume, so `lib/navigation.ts` is
- * intentionally left unchanged. The Hero's Contact CTA is wired to `#contact`
- * later (Task 11.3).
+ * No contact form. The "Preferred" metadata has been removed per the redesign.
  */
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
@@ -112,6 +102,161 @@ function LocationIcon() {
   );
 }
 
+// ── Illustration sub-components ──────────────────────────────────────────────
+
+function HumanSilhouette() {
+  return (
+    <svg viewBox="0 0 46 56" width="46" height="56" fill="none" aria-hidden="true">
+      <circle cx="23" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" opacity={0.9} />
+      <path
+        d="M6 50 C6 36 10 30 23 30 C36 30 40 36 40 50"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        opacity={0.9}
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+function ContactIllustration({ animate }: { animate: boolean }) {
+  return (
+    <div
+      role="img"
+      aria-label="Animated illustration of a message being delivered"
+      className="relative w-full"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: "160px",
+        color: "var(--accent)",
+      }}
+    >
+      {/* YOU — visitor silhouette */}
+      <motion.div
+        className="flex flex-col items-center gap-1 flex-shrink-0"
+        animate={animate ? { y: [-1.5, 1.5, -1.5] } : {}}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <HumanSilhouette />
+        <span className="font-mono text-[0.6rem] tracking-[0.18em] opacity-70">YOU</span>
+      </motion.div>
+
+      {/* Middle — arc + flying envelope */}
+      {/*
+        Arc: M4 30 Q50 5 96 30 — starts/ends at y=30 (50% of viewBox height 60),
+        which maps to 50% of the 160px container = the vertical center of YOU and ME.
+        Envelope uses 4 keyframes to trace the arc: start → peak → arrive → fade.
+      */}
+      <div className="flex-1 relative mx-3" style={{ height: "160px" }}>
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 100 60"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <motion.path
+            d="M4 30 Q50 5 96 30"
+            stroke="currentColor"
+            strokeWidth="0.7"
+            strokeDasharray="3 3.5"
+            fill="none"
+            animate={animate ? { opacity: [0.35, 0.65, 0.35] } : { opacity: 0.35 }}
+            transition={{ duration: 3, repeat: Infinity }}
+          />
+        </svg>
+
+        {/*
+          9 sampled points along quadratic Bézier M4,30 Q50,5 96,30 (t=0..1).
+          Each left/top is x% of container width and y/60*100% of container height.
+          Rotation follows the arc tangent: negative (nose up) while ascending,
+          zero at peak, positive (nose down) while descending.
+        */}
+        <motion.div
+          className="absolute"
+          animate={
+            animate
+              ? {
+                  left:    ["4%","15.5%","27%","38.5%","50%","61.5%","73%","84.5%","92%","92%"],
+                  top:     ["50%","40.9%","34.4%","30.5%","29.2%","30.5%","34.4%","40.9%","50%","50%"],
+                  opacity: [0,   1,      1,     1,      1,    1,     1,    1,      1,     0],
+                  rotate:  [-10, -7,     -4,    -2,     0,    2,     4,    7,      10,    10],
+                }
+              : { opacity: 0 }
+          }
+          transition={{
+            duration: 2.6,
+            repeat: Infinity,
+            ease: "linear",
+            times: [0, 0.077, 0.155, 0.232, 0.31, 0.388, 0.465, 0.542, 0.62, 1],
+          }}
+          style={{ transform: "translate(-50%, -50%)" }}
+        >
+          <svg viewBox="0 0 26 18" width="26" height="18" aria-hidden="true" style={{ overflow: "visible" }}>
+            <rect x="0" y="0" width="26" height="18" rx="2" fill="currentColor" opacity={0.55} stroke="currentColor" strokeWidth="0.8" />
+            <path d="M0 0 L13 11 L26 0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity={0.9} />
+            {/* Speed-line streaks trailing behind the envelope */}
+            <line x1="-3" y1="6"  x2="-9"  y2="6"  stroke="currentColor" strokeWidth="0.6" opacity={0.75} />
+            <line x1="-3" y1="10" x2="-12" y2="10" stroke="currentColor" strokeWidth="0.5" opacity={0.6} />
+            <line x1="-3" y1="14" x2="-7"  y2="14" stroke="currentColor" strokeWidth="0.4" opacity={0.4} />
+          </svg>
+        </motion.div>
+      </div>
+
+      {/* ME — avatar with ping rings */}
+      <motion.div
+        className="flex flex-col items-center gap-1 flex-shrink-0"
+        animate={animate ? { y: [-1.5, 1.5, -1.5] } : {}}
+        transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+      >
+        <div className="relative">
+          {/* Outer ping ring */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              inset: "-4px",
+              border: "1px solid var(--accent)",
+            }}
+            animate={animate ? { scale: [1, 1.55], opacity: [0.35, 0] } : { opacity: 0 }}
+            transition={{ duration: 1.4, repeat: Infinity, delay: 1.6 }}
+          />
+          {/* Inner ping ring */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              inset: "-4px",
+              border: "1px solid var(--accent)",
+            }}
+            animate={animate ? { scale: [1, 1.9], opacity: [0.22, 0] } : { opacity: 0 }}
+            transition={{ duration: 1.8, repeat: Infinity, delay: 1.9 }}
+          />
+          {/* Avatar — replace src with /contact-avatar.jpg once the file is in public/ */}
+          <div
+            style={{
+              width: "64px",
+              height: "64px",
+              borderRadius: "50%",
+              background: "color-mix(in srgb, var(--bg-surface-raised) 62%, transparent)",
+              border: "1px solid color-mix(in srgb, var(--accent) 40%, var(--border))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+          >
+            <span className="font-mono text-[0.7rem] tracking-wider text-accent select-none">NP</span>
+          </div>
+        </div>
+        <span className="font-mono text-[0.6rem] tracking-[0.18em] opacity-70">ME</span>
+      </motion.div>
+    </div>
+  );
+}
+
+// ── Contact method cards ─────────────────────────────────────────────────────
+
 // Phone is included only when a confirmed number exists (§15.6 — otherwise it
 // would be omitted upstream in the data, never invented here).
 const methods: ContactMethod[] = [
@@ -150,11 +295,8 @@ const methods: ContactMethod[] = [
   },
 ];
 
-const isPreferred = (id: string) =>
-  contact.preferredContactMethod.toLowerCase() === id.toLowerCase();
-
-function ContactMethodCard({ method }: { method: ContactMethod }) {
-  const preferred = isPreferred(method.id);
+function ContactMethodCard({ method, compact }: { method: ContactMethod; compact?: boolean }) {
+  const baseClass = `contact-method-card${compact ? " contact-method-card--compact" : ""} group`;
 
   const inner = (
     <>
@@ -162,22 +304,15 @@ function ContactMethodCard({ method }: { method: ContactMethod }) {
         {method.icon}
       </span>
       <span className="min-w-0">
-        <span className="flex items-center gap-2">
-          <span className="font-mono text-small uppercase tracking-wider text-text-muted">
-            {method.label}
-          </span>
-          {preferred && (
-            <span className="contact-preferred-badge">Preferred</span>
-          )}
+        <span className="font-mono text-small uppercase tracking-wider text-text-muted">
+          {method.label}
         </span>
-        <span className="mt-0.5 block truncate text-body text-text-primary">
+        <span className={`mt-0.5 block truncate ${compact ? "text-small" : "text-body"} text-text-primary`}>
           {method.value}
         </span>
       </span>
     </>
   );
-
-  const baseClass = "contact-method-card group";
 
   if (method.href === null) {
     return (
@@ -207,6 +342,8 @@ function ContactMethodCard({ method }: { method: ContactMethod }) {
   );
 }
 
+// ── Section ──────────────────────────────────────────────────────────────────
+
 export function Contact() {
   const reduceMotion = useReducedMotion();
   const animate = !reduceMotion;
@@ -229,6 +366,7 @@ export function Contact() {
         viewport={{ once: true, margin: "-80px" }}
         variants={staggerContainerVariants}
       >
+        {/* Heading block — unchanged from Task 11.2 */}
         <motion.div variants={revealItemVariants} className="relative">
           <motion.span
             aria-hidden="true"
@@ -245,32 +383,32 @@ export function Contact() {
             {contact.heading}
           </h2>
           <p className="mt-4 max-w-measure text-body text-text-secondary">
-            {contact.message}
+            {contact.message.split("? ")[0]}?<br />
+            {contact.message.split("? ")[1]}
           </p>
         </motion.div>
 
-        <motion.ul
-          variants={revealItemVariants}
-          aria-label="Contact methods"
-          className="mt-10 grid list-none gap-3 p-0 sm:grid-cols-2 sm:gap-4"
-        >
-          {methods.map((method) => (
-            <li key={method.id} className="flex">
-              <ContactMethodCard method={method} />
-            </li>
-          ))}
-        </motion.ul>
+        {/* 50/50 illustration + cards */}
+        <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+          <motion.div
+            variants={revealItemVariants}
+            className="flex items-center justify-center"
+          >
+            <ContactIllustration animate={animate} />
+          </motion.div>
 
-        <motion.p
-          variants={revealItemVariants}
-          className="mt-6 text-small text-text-muted"
-        >
-          Preferred contact method:{" "}
-          <span className="font-medium text-text-secondary">
-            {contact.preferredContactMethod}
-          </span>
-          .
-        </motion.p>
+          <motion.ul
+            variants={revealItemVariants}
+            aria-label="Contact methods"
+            className="m-0 list-none grid grid-cols-2 gap-6 p-0"
+          >
+            {methods.map((method) => (
+              <li key={method.id} className="flex">
+                <ContactMethodCard method={method} compact />
+              </li>
+            ))}
+          </motion.ul>
+        </div>
       </motion.div>
     </section>
   );
