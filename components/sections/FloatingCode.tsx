@@ -44,6 +44,23 @@ const SNIPPET_POOL = [
 const BLOCK_WIDTH_VW = 14;
 const BLOCK_HEIGHT_VH = 10;
 
+/**
+ * Approximate bounding box of the left-column text content (vw / vh units).
+ * Blocks whose starting position falls within this rectangle are excluded so
+ * they don't spawn directly behind readable text. Values are intentionally
+ * conservative; partial overlap at the edges is acceptable.
+ *
+ * xMax  — right edge of the left text column (~half the screen)
+ * yMin  — top of the text content block (hero content is vertically centred)
+ * yMax  — bottom of the text content block
+ *
+ * Blocks in the left column (x < xMax) may still spawn above yMin - BLOCK_HEIGHT_VH
+ * or at/below yMax, so they appear in the top-left and bottom-left corners.
+ */
+const TEXT_EXCLUSION_X_MAX_VW = 50;
+const TEXT_EXCLUSION_Y_MIN_VH = 30;
+const TEXT_EXCLUSION_Y_MAX_VH = 70;
+
 const blockClassName =
   "absolute left-0 top-0 m-0 max-w-[15rem] whitespace-pre-wrap rounded-md border border-border bg-bg-surface p-3 font-mono text-small leading-snug text-[color-mix(in_srgb,var(--text-muted)_45%,var(--bg-surface))] will-change-transform lg:max-w-[17rem] xl:max-w-[18rem]";
 
@@ -132,10 +149,41 @@ function getPlacementBounds(zone: Zone): Zone {
   };
 }
 
-function randomPointInZone(zone: Zone): Point {
-  const bounds = getPlacementBounds(zone);
+/**
+ * Returns true if the zone has at least one valid spawn position outside the
+ * text exclusion rectangle. Left-column zones (x < TEXT_EXCLUSION_X_MAX_VW)
+ * are valid only if they have room above or below the text y-band.
+ */
+function zoneHasValidPosition(zone: Zone): boolean {
+  const b = getPlacementBounds(zone);
+  if (b.xMin >= TEXT_EXCLUSION_X_MAX_VW) return b.xMin <= b.xMax && b.yMin <= b.yMax;
+  // Left column: check for usable y space above or below the text band.
+  const clearAboveY = TEXT_EXCLUSION_Y_MIN_VH - BLOCK_HEIGHT_VH;
+  const aboveSize = Math.max(0, Math.min(clearAboveY, b.yMax) - b.yMin);
+  const belowSize = Math.max(0, b.yMax - Math.max(TEXT_EXCLUSION_Y_MAX_VH, b.yMin));
+  return aboveSize + belowSize > 0;
+}
 
-  return randomPointInBounds(bounds);
+function randomPointInZone(zone: Zone): Point {
+  const b = getPlacementBounds(zone);
+
+  // Right column — full placement area is valid.
+  if (b.xMin >= TEXT_EXCLUSION_X_MAX_VW) return randomPointInBounds(b);
+
+  // Left column — pick y from the region above or below the text band.
+  const clearAboveY = TEXT_EXCLUSION_Y_MIN_VH - BLOCK_HEIGHT_VH;
+  const aboveSize = Math.max(0, Math.min(clearAboveY, b.yMax) - b.yMin);
+  const belowSize = Math.max(0, b.yMax - Math.max(TEXT_EXCLUSION_Y_MAX_VH, b.yMin));
+  const total = aboveSize + belowSize;
+
+  // Fallback for zones with no valid position (shouldn't be reached after filtering).
+  if (total <= 0) return randomPointInBounds(b);
+
+  const x = randomBetween(b.xMin, b.xMax);
+  if (Math.random() * total < aboveSize) {
+    return { x, y: randomBetween(b.yMin, b.yMin + aboveSize) };
+  }
+  return { x, y: randomBetween(Math.max(TEXT_EXCLUSION_Y_MAX_VH, b.yMin), b.yMax) };
 }
 
 function randomPointInBounds(bounds: Zone): Point {
@@ -167,16 +215,18 @@ function createInitialLayout(zone: Zone): BlockLayout {
 }
 
 function createBlockSeeds(count: number): BlockSeed[] {
-  return Array.from({ length: count }, (_, index) => {
-    const zone = getZone(index, count);
+  // Skip zones that fall entirely inside the text exclusion rectangle.
+  const validZones = Array.from({ length: count }, (_, index) => getZone(index, count)).filter(
+    zoneHasValidPosition
+  );
 
-    return {
-      zone,
-      layout: createInitialLayout(zone),
-      staticPosition: randomPointInZone(zone),
-      initialDelay: index < INITIAL_CARDS_VISIBLE ? 0 : randomBetween(3000, 11000),
-    };
-  });
+  // Re-index after filtering so the first INITIAL_CARDS_VISIBLE valid blocks appear immediately.
+  return validZones.map((zone, filteredIndex) => ({
+    zone,
+    layout: createInitialLayout(zone),
+    staticPosition: randomPointInZone(zone),
+    initialDelay: filteredIndex < INITIAL_CARDS_VISIBLE ? 0 : randomBetween(3000, 11000),
+  }));
 }
 
 function sleep(ms: number): Promise<void> {
