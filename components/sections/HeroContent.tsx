@@ -198,14 +198,14 @@ export function HeroContent({ initials }: HeroContentProps) {
     <div className="flex w-full flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:gap-10 lg:gap-12">
       {/* Left column on md+; `contents` on mobile lets the image slot between text and buttons. */}
       <div className="contents md:flex md:min-w-0 md:flex-1 md:flex-col md:gap-8">
-        <div className="order-1 flex min-w-0 flex-col gap-3 sm:gap-4 md:order-none">
+        <div className="order-1 flex min-w-0 flex-col gap-0 md:order-none">
           <h1
             id="hero-heading"
             aria-label={`Hello! I'm ${profile.name}`}
-            className="m-0 text-[3.25rem] font-semibold leading-[1.08] tracking-tight sm:text-[3.75rem] lg:text-[5.5rem]"
+            className="m-0 text-[3.25rem] font-semibold leading-[1.0] tracking-tight sm:text-[3.75rem] lg:text-[5.5rem]"
           >
             <motion.span
-              className="mb-1 block text-body font-medium tracking-wide text-text-secondary sm:mb-1.5 lg:text-[1.875rem]"
+              className="mb-0 block text-body font-medium tracking-wide text-text-secondary lg:text-[1.875rem]"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.75, ease: easeOut }}
