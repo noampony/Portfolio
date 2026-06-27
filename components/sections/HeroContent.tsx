@@ -337,19 +337,19 @@ export function HeroContent({ initials }: HeroContentProps) {
              * spills outside. Fill + border fade in over the lower half only, leaving
              * the cropped head "popping out" of an unframed top.
              */}
-            {/* Glass version of the original blue fill — same oval and gradient stop. */}
+            {/* Glass version of the fill — same oval and gradient stop, teal accent colour. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-28px_76px_rgba(96,165,250,0.14),0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-2xl"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-28px_76px_rgba(45,212,191,0.14),0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-2xl"
               style={{
                 background:
-                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.3) 70%)",
+                  "linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--accent) 30%, transparent) 70%)",
               }}
             />
-            {/* Original lower-half border treatment, softened into a glass edge. */}
+            {/* Lower-half border treatment, softened into a glass edge — teal accent colour. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.62)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_34px_rgba(96,165,250,0.22)]"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(45,212,191,0.62)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_34px_rgba(45,212,191,0.22)]"
               style={{
                 WebkitMaskImage:
                   "linear-gradient(to bottom, transparent 40%, #000 62%)",
@@ -390,22 +390,28 @@ export function HeroContent({ initials }: HeroContentProps) {
                   delay: 1.9,
                 }}
                 className={cn(
-                  "flex flex-col items-center gap-1",
+                  "flex flex-col items-center",
                   "rounded-full",
-                  "bg-accent",
-                  "px-2.5 py-4",
-                  "shadow-[0_4px_20px_rgba(0,0,0,0.35)]",
-                  "sm:gap-1.5 sm:px-3 sm:py-5",
+                  "border border-accent/30",
+                  "backdrop-blur-md",
+                  "gap-1 px-3 py-4",
+                  "sm:gap-1.5 sm:px-3.5 sm:py-5",
                   "md:gap-2 md:px-5 md:py-9"
                 )}
+                style={{
+                  background:
+                    "linear-gradient(to bottom, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent) 12%, transparent))",
+                  boxShadow:
+                    "0 8px 32px color-mix(in srgb, var(--accent) 22%, transparent), inset 0 1px 0 rgba(255,255,255,0.15)",
+                }}
               >
                 <span
                   aria-hidden="true"
-                  className="font-bold leading-none text-accent-contrast text-base sm:text-xl md:text-4xl"
+                  className="font-bold leading-none text-white text-base sm:text-xl md:text-4xl"
                 >
                   {yearsOfExperience}+
                 </span>
-                <span className="text-center font-semibold leading-tight text-accent-contrast text-[7px] sm:text-[9px] md:text-[11px]">
+                <span className="text-center font-medium leading-tight text-white/70 text-[7px] sm:text-[9px] md:text-[11px]">
                   Years of
                   <br />
                   Experience
