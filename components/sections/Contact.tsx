@@ -126,7 +126,7 @@ function ContactIllustration({ animate }: { animate: boolean }) {
   return (
     <div
       role="img"
-      aria-label="Animated illustration of a message being delivered"
+      aria-label="Animated illustration of a network packet being delivered"
       className="relative w-full"
       style={{
         display: "flex",
@@ -244,13 +244,23 @@ function ContactIllustration({ animate }: { animate: boolean }) {
           }}
           style={{ transform: "translate(-50%, -50%)" }}
         >
-          <svg viewBox="0 0 26 18" width="26" height="18" aria-hidden="true" style={{ overflow: "visible" }}>
-            <rect x="0" y="0" width="26" height="18" rx="2" fill="currentColor" opacity={0.55} stroke="currentColor" strokeWidth="0.8" />
-            <path d="M0 0 L13 11 L26 0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity={0.9} />
-            {/* Speed-line streaks trailing behind the envelope */}
-            <line x1="-3" y1="6"  x2="-9"  y2="6"  stroke="currentColor" strokeWidth="0.6" opacity={0.75} />
-            <line x1="-3" y1="10" x2="-12" y2="10" stroke="currentColor" strokeWidth="0.5" opacity={0.6} />
-            <line x1="-3" y1="14" x2="-7"  y2="14" stroke="currentColor" strokeWidth="0.4" opacity={0.4} />
+          <svg viewBox="0 0 32 22" width="40" height="28" aria-hidden="true" style={{ overflow: "visible" }}>
+            {/*
+              Outer <g> sets the plane's orientation in SVG space:
+                translate(15,11) = place center at (15,11)
+                rotate(42)       = level the nose to point right
+                                   (nose is 42° above horizontal in the original asset)
+              Speed lines live INSIDE this <g> so they share the same axis as the plane body.
+              In local space: negative-x = behind the tail, y offsets = spread across the fuselage.
+            */}
+            <g
+              transform="translate(15,11) rotate(42) scale(0.11) translate(-896,-820.582)"
+              fill="currentColor"
+              fillRule="evenodd"
+              opacity={0.9}
+            >
+              <path d="M996,730.447l-196.455,82.151c-2.07,0.865-3.451,2.852-3.541,5.093c-0.09,2.242,1.126,4.333,3.12,5.362l49.678,25.639l6.244,54.77c0.383,3.348,2.73,6.082,5.98,6.969c0.702,0.189,1.426,0.287,2.153,0.287c2.555,0,4.998-1.219,6.537-3.258l26.032-34.537l61.196,31.582c1.627,0.838,3.556,0.857,5.198,0.047c1.642-0.809,2.803-2.348,3.129-4.15L996,730.447z M853.815,837.557l-36.861-19.024l131.591-55.027L853.815,837.557z M866.023,892.102l-5.088-44.635l94.289-73.707L866.023,892.102z M903.194,863.043l74.251-98.507l-22.628,125.152L903.194,863.043z" />
+            </g>
           </svg>
         </motion.div>
       </div>

@@ -13,6 +13,16 @@ const TYPEWRITER_CHAR_MS = 88;
 
 const heroTextLines = profile.heroText.split("\n").filter(Boolean);
 
+function yearsExperienceSince(startDate: string): number {
+  const [startYear, startMonth] = startDate.split("-").map(Number);
+  if (!startYear || !startMonth) return 0;
+  const now = new Date();
+  const delta = now.getFullYear() - startYear;
+  return Math.max(0, now.getMonth() + 1 >= startMonth ? delta : delta - 1);
+}
+
+const yearsOfExperience = yearsExperienceSince(profile.yearsExperienceStartDate);
+
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 const ctaBaseClasses =
@@ -355,6 +365,39 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />
+            {/* Experience tag — jumps in after the profile image settles */}
+            <motion.div
+              aria-label={`${yearsOfExperience}+ years of experience`}
+              initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
+              animate={
+                contentRevealed
+                  ? { scale: 1, opacity: 1 }
+                  : { scale: 0, opacity: 0 }
+              }
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { type: "spring", stiffness: 400, damping: 12, delay: 1.15 }
+              }
+              className={cn(
+                "absolute top-6 -left-8 z-20",
+                "rotate-6",
+                "flex flex-col items-center gap-0.5",
+                "rounded-md border-2 border-accent",
+                "bg-bg-surface-raised",
+                "px-2 py-1.5",
+                "shadow-[0_4px_16px_rgba(0,0,0,0.5)]",
+                "sm:top-8 sm:-left-5 sm:px-3 sm:py-2"
+              )}
+            >
+              <div aria-hidden="true" className="mb-0.5 h-1 w-1 rounded-full bg-accent sm:h-1.5 sm:w-1.5" />
+              <span aria-hidden="true" className="font-mono text-base font-bold leading-none text-accent sm:text-xl">
+                {yearsOfExperience}+
+              </span>
+              <span className="mt-0.5 text-[7px] font-semibold uppercase tracking-[0.12em] text-text-secondary sm:text-[9px]">
+                Years Exp
+              </span>
+            </motion.div>
           </div>
         ) : (
           <div
