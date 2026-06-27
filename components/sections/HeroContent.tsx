@@ -13,10 +13,20 @@ const TYPEWRITER_CHAR_MS = 88;
 
 const heroTextLines = profile.heroText.split("\n").filter(Boolean);
 
+function yearsExperienceSince(startDate: string): number {
+  const [startYear, startMonth] = startDate.split("-").map(Number);
+  if (!startYear || !startMonth) return 0;
+  const now = new Date();
+  const delta = now.getFullYear() - startYear;
+  return Math.max(0, now.getMonth() + 1 >= startMonth ? delta : delta - 1);
+}
+
+const yearsOfExperience = yearsExperienceSince(profile.yearsExperienceStartDate);
+
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 const ctaBaseClasses =
-  "group inline-flex min-h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-md px-5 py-2.5 text-body font-medium outline-none transition-[background-color,border-color,box-shadow,color,transform] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.015]";
+  "group inline-flex min-h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-full px-6 py-2.5 text-body font-medium outline-none transition-[background-color,border-color,box-shadow,color,transform] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.015]";
 
 const ctaIconClasses =
   "hero-cta-icon-bounce shrink-0";
@@ -198,14 +208,14 @@ export function HeroContent({ initials }: HeroContentProps) {
     <div className="flex w-full flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:gap-10 lg:gap-12">
       {/* Left column on md+; `contents` on mobile lets the image slot between text and buttons. */}
       <div className="contents md:flex md:min-w-0 md:flex-1 md:flex-col md:gap-8">
-        <div className="order-1 flex min-w-0 flex-col gap-5 sm:gap-6 md:order-none">
+        <div className="order-1 flex min-w-0 flex-col gap-0 md:order-none">
           <h1
             id="hero-heading"
             aria-label={`Hello! I'm ${profile.name}`}
-            className="m-0 text-[2.75rem] font-semibold leading-[1.08] tracking-tight sm:text-[3.25rem] lg:text-[4.75rem]"
+            className="m-0 text-[3.25rem] font-semibold leading-[1.0] tracking-tight sm:text-[3.75rem] lg:text-[5.5rem]"
           >
             <motion.span
-              className="mb-2 block text-body font-medium tracking-wide text-text-secondary sm:mb-3 sm:text-h2 lg:text-[1.875rem]"
+              className="mb-0 block text-body font-medium tracking-wide text-text-secondary lg:text-[1.875rem]"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.75, ease: easeOut }}
@@ -272,14 +282,6 @@ export function HeroContent({ initials }: HeroContentProps) {
             ))}
           </motion.div>
 
-          <motion.p
-            className="m-0 text-body text-text-secondary sm:text-lg"
-            initial={prefersReducedMotion ? false : { opacity: 0 }}
-            animate={contentRevealed ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.6, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.57 }}
-          >
-            {profile.location}
-          </motion.p>
         </div>
 
         <motion.div
@@ -335,19 +337,19 @@ export function HeroContent({ initials }: HeroContentProps) {
              * spills outside. Fill + border fade in over the lower half only, leaving
              * the cropped head "popping out" of an unframed top.
              */}
-            {/* Glass version of the original blue fill — same oval and gradient stop. */}
+            {/* Glass version of the fill — same oval and gradient stop, teal accent colour. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-28px_76px_rgba(96,165,250,0.14),0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-2xl"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-28px_76px_rgba(45,212,191,0.14),0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-2xl"
               style={{
                 background:
-                  "linear-gradient(to bottom, transparent 30%, rgba(96,165,250,0.3) 70%)",
+                  "linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--accent) 30%, transparent) 70%)",
               }}
             />
-            {/* Original lower-half border treatment, softened into a glass edge. */}
+            {/* Lower-half border treatment, softened into a glass edge — teal accent colour. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(96,165,250,0.62)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_34px_rgba(96,165,250,0.22)]"
+              className="pointer-events-none absolute inset-0 -z-10 rounded-[50%] border-[3px] border-[rgba(45,212,191,0.62)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_34px_rgba(45,212,191,0.22)]"
               style={{
                 WebkitMaskImage:
                   "linear-gradient(to bottom, transparent 40%, #000 62%)",
@@ -363,6 +365,59 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />
+            {/* Experience tag — jumps in after the profile image settles, then floats */}
+            <motion.div
+              aria-label={`${yearsOfExperience}+ years of experience`}
+              initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
+              animate={
+                contentRevealed
+                  ? { scale: 1, opacity: 1 }
+                  : { scale: 0, opacity: 0 }
+              }
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { type: "spring", stiffness: 400, damping: 12, delay: 1.15 }
+              }
+              className="absolute top-2 -left-8 z-20 sm:top-0 sm:-left-9 md:top-4 md:-left-12"
+            >
+              <motion.div
+                animate={contentRevealed && !prefersReducedMotion ? { y: [0, -8, 0] } : {}}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3,
+                  ease: "easeInOut",
+                  delay: 1.9,
+                }}
+                className={cn(
+                  "flex flex-col items-center",
+                  "rounded-full",
+                  "border border-[rgba(45,212,191,0.62)]",
+                  "backdrop-blur-2xl",
+                  "gap-1 px-3 py-4",
+                  "sm:gap-1.5 sm:px-3.5 sm:py-5",
+                  "md:gap-2 md:px-5 md:py-9"
+                )}
+                style={{
+                  background:
+                    "linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--accent) 30%, transparent) 70%)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -8px 20px rgba(45,212,191,0.14), 0 0 34px rgba(45,212,191,0.22)",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="font-bold leading-none text-white text-base sm:text-xl md:text-4xl"
+                >
+                  {yearsOfExperience}+
+                </span>
+                <span className="text-center font-medium leading-tight text-white/70 text-[7px] sm:text-[9px] md:text-[11px]">
+                  Years of
+                  <br />
+                  Experience
+                </span>
+              </motion.div>
+            </motion.div>
           </div>
         ) : (
           <div
