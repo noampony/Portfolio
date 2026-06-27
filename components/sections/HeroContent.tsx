@@ -392,17 +392,17 @@ export function HeroContent({ initials }: HeroContentProps) {
                 className={cn(
                   "flex flex-col items-center",
                   "rounded-full",
-                  "border border-accent/30",
-                  "backdrop-blur-md",
+                  "border border-[rgba(45,212,191,0.62)]",
+                  "backdrop-blur-2xl",
                   "gap-1 px-3 py-4",
                   "sm:gap-1.5 sm:px-3.5 sm:py-5",
                   "md:gap-2 md:px-5 md:py-9"
                 )}
                 style={{
                   background:
-                    "linear-gradient(to bottom, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent) 12%, transparent))",
+                    "linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--accent) 30%, transparent) 70%)",
                   boxShadow:
-                    "0 8px 32px color-mix(in srgb, var(--accent) 22%, transparent), inset 0 1px 0 rgba(255,255,255,0.15)",
+                    "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -8px 20px rgba(45,212,191,0.14), 0 0 34px rgba(45,212,191,0.22)",
                 }}
               >
                 <span
