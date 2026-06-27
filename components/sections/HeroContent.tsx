@@ -365,7 +365,7 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />
-            {/* Experience tag — jumps in after the profile image settles */}
+            {/* Experience tag — jumps in after the profile image settles, then floats */}
             <motion.div
               aria-label={`${yearsOfExperience}+ years of experience`}
               initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
@@ -379,24 +379,38 @@ export function HeroContent({ initials }: HeroContentProps) {
                   ? { duration: 0 }
                   : { type: "spring", stiffness: 400, damping: 12, delay: 1.15 }
               }
-              className={cn(
-                "absolute top-6 -left-8 z-20",
-                "rotate-6",
-                "flex flex-col items-center gap-0.5",
-                "rounded-md border-2 border-accent",
-                "bg-bg-surface-raised",
-                "px-2 py-1.5",
-                "shadow-[0_4px_16px_rgba(0,0,0,0.5)]",
-                "sm:top-8 sm:-left-5 sm:px-3 sm:py-2"
-              )}
+              className="absolute top-2 -left-8 z-20 sm:top-0 sm:-left-9 md:top-4 md:-left-12"
             >
-              <div aria-hidden="true" className="mb-0.5 h-1 w-1 rounded-full bg-accent sm:h-1.5 sm:w-1.5" />
-              <span aria-hidden="true" className="font-mono text-base font-bold leading-none text-accent sm:text-xl">
-                {yearsOfExperience}+
-              </span>
-              <span className="mt-0.5 text-[7px] font-semibold uppercase tracking-[0.12em] text-text-secondary sm:text-[9px]">
-                Years Exp
-              </span>
+              <motion.div
+                animate={contentRevealed && !prefersReducedMotion ? { y: [0, -8, 0] } : {}}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3,
+                  ease: "easeInOut",
+                  delay: 1.9,
+                }}
+                className={cn(
+                  "flex flex-col items-center gap-1",
+                  "rounded-full",
+                  "bg-accent",
+                  "px-2.5 py-4",
+                  "shadow-[0_4px_20px_rgba(0,0,0,0.35)]",
+                  "sm:gap-1.5 sm:px-3 sm:py-5",
+                  "md:gap-2 md:px-5 md:py-9"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className="font-bold leading-none text-accent-contrast text-base sm:text-xl md:text-4xl"
+                >
+                  {yearsOfExperience}+
+                </span>
+                <span className="text-center font-semibold leading-tight text-accent-contrast text-[7px] sm:text-[9px] md:text-[11px]">
+                  Years of
+                  <br />
+                  Experience
+                </span>
+              </motion.div>
             </motion.div>
           </div>
         ) : (
