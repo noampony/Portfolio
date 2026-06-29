@@ -116,6 +116,15 @@ function SkillCategoryCard({
   const [expanded, setExpanded] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [collapsedHeight, setCollapsedHeight] = useState(COLLAPSED_HEIGHT_FALLBACK);
+  // Full (expanded) content height, measured alongside the collapsed height.
+  const [fullHeight, setFullHeight] = useState(0);
+  // The clip box animates with a plain CSS `max-height` transition between two measured
+  // pixel values — NOT Framer animating a number against the "auto" string. That combination
+  // was unreliable here (React 19 / Framer): interrupting the open animation (Show all → Show
+  // less before it finished) left the panel desynced — collapsing with no transition, or
+  // stuck open. CSS transitions between two px values redirect from the current value
+  // mid-flight, so it stays smooth however fast the user toggles. The first clamp on mount is
+  // `none → px` (non-animatable), so it applies instantly with no "grow" on load.
   const [expandCount, setExpandCount] = useState(0);
   // Index of the first badge that was below the collapsed height at expand time.
   // MAX_SAFE_INTEGER means "not yet measured" — all badges inherit the parent stagger.
@@ -163,6 +172,11 @@ function SkillCategoryCard({
       if (moreThanTwoRows && rowBottoms[1] > 0) {
         setCollapsedHeight(rowBottoms[1]);
       }
+      // Full content height (bottom of the last row) — the expanded target.
+      const lastBottom = rowBottoms[rowBottoms.length - 1];
+      if (lastBottom > 0) {
+        setFullHeight(lastBottom);
+      }
     };
 
     // Defer one frame so the CSS grid finishes column resolution before we measure.
@@ -188,8 +202,16 @@ function SkillCategoryCard({
     };
   }, []);
 
-  const targetHeight =
-    expanded || !hasOverflow ? "auto" : collapsedHeight + LIFT_HEADROOM;
+  // Clip with `max-height` (not `height`): the box keeps its natural `auto` height so the
+  // card grows with its content via flex, while max-height caps what's visible — collapsed →
+  // two rows, expanded → full content (the cap equals the content, so nothing is hidden).
+  // `undefined` (no cap) when the card fits. Using `height` instead made the explicit pixel
+  // value a flex-basis that the card's `flex-1` inner column shrank back to the collapsed
+  // size; max-height stays out of flex sizing. It also animates px↔px reliably (unlike the
+  // old Framer number↔"auto" tween, which desynced when a toggle interrupted it).
+  const clipMaxHeight = hasOverflow
+    ? (expanded ? fullHeight : collapsedHeight) + LIFT_HEADROOM
+    : undefined;
 
   return (
     <motion.div
@@ -215,23 +237,17 @@ function SkillCategoryCard({
           {category}
         </h3>
 
-        <motion.div
-          animate={{ height: targetHeight }}
-          initial={false}
-          transition={{
-            duration: shouldReduceMotion ? 0 : 0.45,
-            ease: easeOut,
-          }}
+        <div
           className="overflow-hidden"
           style={{
             // Headroom for the hover lift, cancelled by an equal negative
             // margin so the resting layout (and the gap above row 1) is unchanged.
             paddingTop: LIFT_HEADROOM,
             marginTop: -LIFT_HEADROOM,
-            height:
-              !expanded && hasOverflow
-                ? collapsedHeight + LIFT_HEADROOM
-                : undefined,
+            maxHeight: clipMaxHeight,
+            transition: shouldReduceMotion
+              ? undefined
+              : "max-height 450ms cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
           <motion.ul
@@ -266,7 +282,7 @@ function SkillCategoryCard({
               );
             })}
           </motion.ul>
-        </motion.div>
+        </div>
 
         {/* Always rendered so all cards reserve the same button height; invisible when no overflow. */}
         <button

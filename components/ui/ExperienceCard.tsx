@@ -381,6 +381,9 @@ function ExperienceExpandCard({
         <>
           <div className="experience-card-compact" aria-hidden="true">
             {compact}
+            <span className="experience-card-hint">
+              {hoverCapable ? "Hover to know more" : "Tap to know more"}
+            </span>
           </div>
           <button
             type="button"

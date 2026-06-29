@@ -108,7 +108,8 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
             <span className="project-flip-hint-icon">
               <FlipGlyph />
             </span>
-            Tap to know more
+            <span className="project-flip-hint-text--pointer">Click to know more</span>
+            <span className="project-flip-hint-text--touch">Tap to know more</span>
           </span>
         </div>
 

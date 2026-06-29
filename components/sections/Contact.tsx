@@ -4,6 +4,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 import { useGlareHandlers } from "@/components/ui/GlareHover";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 import { contact } from "@/lib/content/data/contact";
 
@@ -122,7 +123,31 @@ function HumanSilhouette() {
   );
 }
 
+// Arc geometry shared by the dashed path and the flying plane so the two always trace the
+// same curve. Quadratic Bézier (4,30) → control(50, cy) → (96,30) in the 100×60 viewBox;
+// y=30 is the vertical center (the YOU / ME avatars). Because Bx(t) = 4 + 92t (the t² terms
+// cancel for this control point), t is linear in x, so each plane x-stop maps cleanly to a y.
+// A LARGER `cy` is a FLATTER arc — used on narrow viewports, where a tall arc compresses into
+// a too-steep angle once the horizontal span shrinks between the avatars.
+const PLANE_X = [4, 15.5, 27, 38.5, 50, 61.5, 73, 84.5, 92, 92];
+
+function arcGeometry(cy: number) {
+  const tops = PLANE_X.map((x, i) => {
+    // The last two stops are the "arrive" + "fade" frames, pinned to ME's center (50%).
+    if (i >= PLANE_X.length - 2) return "50%";
+    const t = (x - 4) / 92;
+    const by = 30 * (1 - 2 * t + 2 * t * t) + 2 * (t - t * t) * cy;
+    return `${((by / 60) * 100).toFixed(1)}%`;
+  });
+  return { path: `M4 30 Q50 ${cy} 96 30`, tops };
+}
+
 function ContactIllustration({ animate }: { animate: boolean }) {
+  // Flatten the arc on narrow screens so the dashed line + plane don't curve too sharply.
+  const isWide = useMediaQuery("(min-width: 640px)");
+  const { path: arcPath, tops: planeTops } = arcGeometry(isWide ? 5 : 16);
+  const planeLeft = PLANE_X.map((x) => `${x}%`);
+
   return (
     <div
       role="img"
@@ -194,7 +219,7 @@ function ContactIllustration({ animate }: { animate: boolean }) {
 
           {/* Base arc — static dim */}
           <path
-            d="M4 30 Q50 5 96 30"
+            d={arcPath}
             stroke="currentColor"
             strokeWidth="0.7"
             strokeDasharray="3 3.5"
@@ -203,7 +228,7 @@ function ContactIllustration({ animate }: { animate: boolean }) {
           />
           {/* Highlighted dashes — same pattern as base, revealed only inside the traveling window */}
           <motion.path
-            d="M4 30 Q50 5 96 30"
+            d={arcPath}
             stroke="currentColor"
             strokeWidth="0.9"
             strokeDasharray="3 3.5"
@@ -219,7 +244,7 @@ function ContactIllustration({ animate }: { animate: boolean }) {
         </svg>
 
         {/*
-          9 sampled points along quadratic Bézier M4,30 Q50,5 96,30 (t=0..1).
+          9 sampled points along the quadratic Bézier (left/top from `arcGeometry`).
           Each left/top is x% of container width and y/60*100% of container height.
           Rotation follows the arc tangent: negative (nose up) while ascending,
           zero at peak, positive (nose down) while descending.
@@ -229,8 +254,8 @@ function ContactIllustration({ animate }: { animate: boolean }) {
           animate={
             animate
               ? {
-                  left:    ["4%","15.5%","27%","38.5%","50%","61.5%","73%","84.5%","92%","92%"],
-                  top:     ["50%","40.9%","34.4%","30.5%","29.2%","30.5%","34.4%","40.9%","50%","50%"],
+                  left:    planeLeft,
+                  top:     planeTops,
                   opacity: [0,   1,      1,     1,      1,    1,     1,    1,      1,     0],
                   rotate:  [-10, -7,     -4,    -2,     0,    2,     4,    7,      10,    10],
                 }
