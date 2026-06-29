@@ -69,7 +69,12 @@ export function CourseCarousel({ courses, label }: CourseCarouselProps) {
   const showArrows = canScrollLeft || canScrollRight;
 
   return (
-    <div className="roadmap-carousel">
+    <div
+      className="roadmap-carousel"
+      // Reserve the prev/next arrow gutters even when the arrows are hidden, so a path
+      // whose cards all fit starts at the same horizontal offset as one that scrolls.
+      data-arrows={showArrows || undefined}
+    >
       {showArrows ? (
         <button
           type="button"

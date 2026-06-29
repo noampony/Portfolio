@@ -1496,6 +1496,36 @@ html {
   pointer-events: none;
 }
 
+/* Visible "know more" affordance on the compact card. Purely decorative (aria-hidden):
+   the accessible disclosure name lives on `.experience-card-toggle`. Subtle by default,
+   brightening when the card is hovered/focused so it reads as an interactive hint. */
+.experience-card-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.65rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  padding: 0.18rem 0.6rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--accent) 80%, var(--text-secondary));
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.experience-card:hover .experience-card-hint,
+.experience-card:focus-within .experience-card-hint {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
 /* Transparent full-card toggle — sits over the (aria-hidden) compact content and is the
    accessible disclosure control; it carries the focus ring. */
 .experience-card-toggle {
@@ -1959,6 +1989,22 @@ html {
   height: 0.8rem;
 }
 
+/* Show "Click to know more" on pointer/hover devices, "Tap to know more" on touch. */
+.project-flip-hint-text--pointer {
+  display: none;
+}
+.project-flip-hint-text--touch {
+  display: inline;
+}
+@media (hover: hover) and (pointer: fine) {
+  .project-flip-hint-text--pointer {
+    display: inline;
+  }
+  .project-flip-hint-text--touch {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .project-flip:hover .project-flip-hint-icon {
     transform: rotate(180deg);
@@ -2340,6 +2386,13 @@ html {
   display: flex;
   align-items: stretch;
   gap: 0.5rem;
+}
+
+/* When all cards fit there are no arrow buttons, so reserve their footprint
+   (2rem arrow + 0.5rem gap on each side) as padding — the track then starts at the
+   same offset whether or not the carousel scrolls. */
+.roadmap-carousel:not([data-arrows]) {
+  padding-inline: calc(2rem + 0.5rem);
 }
 
 .roadmap-carousel-track {
