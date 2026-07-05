@@ -13,8 +13,10 @@ import { ImpactCard } from "@/components/ui/ImpactCard";
  * along a 3D arc, the centre card upright and fully readable, the rest rotated and
  * dimmed but still present.
  *
- * Carousel behaviour (spec §8.2, Task 5.3): the gallery auto-advances every 3s,
- * pausing while the carousel is hovered or has keyboard focus; prev/next buttons,
+ * Carousel behaviour (spec §8.2, Task 5.3): the gallery auto-advances every 5s,
+ * pausing while the carousel is hovered or has keyboard focus, and only once the
+ * gallery has actually scrolled into view (so a slow scroll to the section never
+ * "steals" the first card before the visitor has seen it); prev/next buttons,
  * horizontal wheel/trackpad gestures, and touch swipes all move the active card;
  * `prefers-reduced-motion` disables autoplay and removes the arc transition while
  * keeping every manual navigation path fully functional.
@@ -23,8 +25,19 @@ import { ImpactCard } from "@/components/ui/ImpactCard";
 /** Number of cards shown on each side of the centre before a slide fades out. */
 const VISIBLE_SIDE = 2;
 
+/** Extra side card shown once the viewport is wide enough to fit it (spec §8.2). */
+const VISIBLE_SIDE_WIDE = 3;
+
+/** Minimum viewport width (px) at which the wider, 7-card arc is used. */
+const WIDE_LAYOUT_QUERY = "(min-width: 1440px)";
+
+/** Non-linear translateX step per depth level — tapers so the gap between the 2nd/3rd
+ *  cards visually matches the gap between the centre and 1st card, compensating for
+ *  the scale/rotation shrink applied at each depth (indexed by `abs`). */
+const STEP_MULTIPLIERS = [0, 1, 1.65, 2.15];
+
 /** Autoplay interval, per spec §8.2. */
-const AUTOPLAY_MS = 3000;
+const AUTOPLAY_MS = 5000;
 
 /** Minimum horizontal wheel delta to count as an intentional navigation gesture. */
 const WHEEL_THRESHOLD = 12;
@@ -63,9 +76,42 @@ export function MyImpact() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [hasEnteredView, setHasEnteredView] = useState(
+    () => typeof IntersectionObserver === "undefined",
+  );
+  const [visibleSide, setVisibleSide] = useState(VISIBLE_SIDE);
   const baseId = useId();
+  const galleryRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  // Widen the arc to show one more card on each side once there's room for it.
+  useEffect(() => {
+    const query = window.matchMedia(WIDE_LAYOUT_QUERY);
+    const update = () => setVisibleSide(query.matches ? VISIBLE_SIDE_WIDE : VISIBLE_SIDE);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  // Detect when the gallery first scrolls into view, independent of the entrance
+  // animation above — a dedicated observer with no negative margin so autoplay can
+  // start as soon as any part of the carousel is actually on screen.
+  useEffect(() => {
+    const el = galleryRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasEnteredView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const goTo = useCallback(
     (index: number) => setActiveIndex(((index % total) + total) % total),
@@ -74,13 +120,15 @@ export function MyImpact() {
   const goNext = useCallback(() => setActiveIndex((prev) => (prev + 1) % total), [total]);
   const goPrev = useCallback(() => setActiveIndex((prev) => (prev - 1 + total) % total), [total]);
 
-  // Autoplay: advances every 3s unless reduced motion is requested or the carousel is
-  // being interacted with by mouse hover or keyboard focus (spec §8.2).
+  // Autoplay: advances every 5s unless reduced motion is requested, the carousel is
+  // being interacted with by mouse hover or keyboard focus, or the gallery hasn't
+  // scrolled into view yet — otherwise the timer could burn through cards before the
+  // visitor ever sees the first one (spec §8.2).
   useEffect(() => {
-    if (reduceMotion || isHovered || isFocused) return;
+    if (reduceMotion || isHovered || isFocused || !hasEnteredView) return;
     const id = window.setInterval(goNext, AUTOPLAY_MS);
     return () => window.clearInterval(id);
-  }, [reduceMotion, isHovered, isFocused, goNext]);
+  }, [reduceMotion, isHovered, isFocused, hasEnteredView, goNext]);
 
   // Horizontal mouse wheel / trackpad navigation. Vertical-dominant gestures are left
   // alone so normal page scrolling over the carousel keeps working.
@@ -165,12 +213,13 @@ export function MyImpact() {
             My Impact
           </h2>
           <p className="mt-4 text-body text-text-secondary sm:text-[1.0625rem]">
-            A selection of what I&apos;ve built across backend engineering, security
-            products, operations, and volunteer work — and the outcomes each one drove.
+            A selection of impact I made during my career — and the outcomes each one
+            drove.
           </p>
         </motion.div>
 
         <motion.div
+          ref={galleryRef}
           className="impact-gallery"
           initial={animate ? "hidden" : false}
           whileInView={animate ? "visible" : undefined}
@@ -204,7 +253,9 @@ export function MyImpact() {
               const offset = circularOffset(index, activeIndex, total);
               const abs = Math.abs(offset);
               const isActive = offset === 0;
-              const isVisible = abs <= VISIBLE_SIDE;
+              const isVisible = abs <= visibleSide;
+              const step = STEP_MULTIPLIERS[abs] ?? abs;
+              const adjustedOffset = Math.sign(offset) * step;
 
               return (
                 <li
@@ -216,7 +267,7 @@ export function MyImpact() {
                   inert={isVisible ? undefined : true}
                   style={
                     {
-                      "--offset": offset,
+                      "--offset": adjustedOffset,
                       "--abs": abs,
                       zIndex: total - abs,
                     } as React.CSSProperties

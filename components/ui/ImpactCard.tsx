@@ -25,7 +25,10 @@ type ImpactCardProps = {
 };
 
 export function ImpactCard({ impact, headingId, active, onActivate }: ImpactCardProps) {
-  const { overlayRef, overlayStyle, handlers } = useGlareHandlers({ transitionDuration: 900 });
+  const { overlayRef, overlayStyle, handlers } = useGlareHandlers({
+    transitionDuration: 900,
+    playOnce: true,
+  });
 
   return (
     <article
