@@ -765,33 +765,7 @@ Each impact card must include:
 
 ### Impact Cards
 
-#### 8.2.1 Team Knowledge Base
-
-| Field | Value |
-|---|---|
-| Title | Team Knowledge Base |
-| Description | Built a central hub for services, guides, templates, and engineering knowledge. |
-
-Impact bullets:
-
-- Faster knowledge sharing across the team
-- Easier onboarding and daily development
-- Less time searching for information
-
-#### 8.2.2 AI Agent Skills
-
-| Field | Value |
-|---|---|
-| Title | AI Agent Skills |
-| Description | Created AI Agent plugins that simplify everyday engineering tasks, including PR creation, code reviews, and unit test improvements. |
-
-Impact bullets:
-
-- Made AI tools easier to use across the team
-- Increased adoption of AI for daily engineering work
-- Reduced effort for repetitive development tasks
-
-#### 8.2.3 Crisis Scenario Management
+#### 8.2.1 Crisis Scenario Management
 
 | Field | Value |
 |---|---|
@@ -803,47 +777,9 @@ Impact bullets:
 - Improved product reliability
 - Better visibility during incidents
 - Greater confidence in production deployments
+- Drove measurable improvements to incident response and product resilience
 
-#### 8.2.4 Revealed Valuable Data Mine
-
-| Field | Value |
-|---|---|
-| Title | Revealed Valuable Data Mine |
-| Description | Exposed hundreds of Microsoft 365 event types through a single service, unlocking valuable security insights. |
-
-Impact bullets:
-
-- Powered multiple customer-facing features
-- Enabled detection of malicious email activity
-- Opened the door for many future product capabilities
-
-#### 8.2.5 Weekly Security Reports
-
-| Field | Value |
-|---|---|
-| Title | Weekly Security Reports |
-| Description | Redesigned the weekly customer report to provide clearer insights into customers' security incidents and activity. |
-
-Impact bullets:
-
-- Increased transparency for customers
-- Became valuable for technical leaders and managers
-- Helped sales teams demonstrate product value
-
-#### 8.2.6 Grafana Dashboards
-
-| Field | Value |
-|---|---|
-| Title | Grafana Dashboards |
-| Description | Created dozens of Grafana dashboards to monitor services, performance, and production health in real time. |
-
-Impact bullets:
-
-- Faster issue investigation
-- Better operational visibility
-- Became the team's Grafana expert
-
-#### 8.2.7 System Architecture
+#### 8.2.2 System Architecture
 
 | Field | Value |
 |---|---|
@@ -855,8 +791,9 @@ Impact bullets:
 - Reduced rework and design changes
 - Smoother development process
 - Higher-quality, more reliable systems
+- Contributed to the team's long-term technical growth and delivery success
 
-#### 8.2.8 Legacy System Modernization
+#### 8.2.3 Legacy System Modernization
 
 | Field | Value |
 |---|---|
@@ -868,8 +805,9 @@ Impact bullets:
 - Cleaner and easier-to-maintain code
 - Better monitoring and debugging
 - Improved scalability and production stability
+- Turned aging systems into a stronger foundation for future growth
 
-#### 8.2.9 Supporting At-Risk Teenagers
+#### 8.2.4 Supporting At-Risk Teenagers
 
 | Field | Value |
 |---|---|
@@ -883,6 +821,76 @@ Impact bullets:
 - Helped teams respond sooner to girls at higher risk
 - Contributed to improving the safety and well-being of vulnerable teenagers
 
+#### 8.2.5 AI Agent Skills
+
+| Field | Value |
+|---|---|
+| Title | AI Agent Skills |
+| Description | Created AI Agent plugins that simplify everyday engineering tasks, including PR creation, code reviews, and unit test improvements. |
+
+Impact bullets:
+
+- Made AI tools easier to use across the team
+- Increased adoption of AI for daily engineering work
+- Reduced effort for repetitive development tasks
+- Helped drive the team's growth in AI-assisted engineering practices
+
+#### 8.2.6 Grafana Dashboards
+
+| Field | Value |
+|---|---|
+| Title | Grafana Dashboards |
+| Description | Created dozens of Grafana dashboards to monitor services, performance, and production health in real time. |
+
+Impact bullets:
+
+- Faster issue investigation
+- Better operational visibility
+- Became the team's Grafana expert
+- Strengthened the team's operational maturity and reliability
+
+#### 8.2.7 Team Knowledge Base
+
+| Field | Value |
+|---|---|
+| Title | Team Knowledge Base |
+| Description | Built a central hub for services, guides, templates, and engineering knowledge. |
+
+Impact bullets:
+
+- Faster knowledge sharing across the team
+- Easier onboarding and daily development
+- Less time searching for information
+- Helped the team scale its knowledge and grow more efficiently
+
+#### 8.2.8 Weekly Security Reports
+
+| Field | Value |
+|---|---|
+| Title | Weekly Security Reports |
+| Description | Redesigned the weekly customer report to provide clearer insights into customers' security incidents and activity. |
+
+Impact bullets:
+
+- Increased transparency for customers
+- Became valuable for technical leaders and managers
+- Helped sales teams demonstrate product value
+- Contributed directly to customer retention and business success
+
+#### 8.2.9 Revealed Valuable Data Mine
+
+| Field | Value |
+|---|---|
+| Title | Revealed Valuable Data Mine |
+| Description | Exposed hundreds of Microsoft 365 event types through a single service, unlocking valuable security insights. |
+
+Impact bullets:
+
+- Powered multiple customer-facing features
+- Enabled detection of malicious email activity
+- Opened the door for many future product capabilities
+- Became a foundation for continued product growth and success
+
 ### Carousel and Animation Requirements
 
 The My Impact cards must appear in a carousel using the Circular Gallery animation from React Bits animations.
@@ -891,7 +899,7 @@ Implementation requirements:
 
 - Use a Circular Gallery / Circle Gallery style interaction from React Bits or an equivalent local implementation that matches React Bits' circular carousel behavior.
 - The carousel must visually match the existing website style: dark surfaces, subtle borders, accent highlights, polished card hover/focus states, and the palette defined in §6.3.
-- The carousel must auto-advance to the next card every 3 seconds.
+- The carousel must auto-advance to the next card every 5 seconds.
 - Auto-advance must pause while the active card or carousel is hovered by the mouse.
 - Auto-advance should also pause while the carousel or a card has keyboard focus to avoid moving content while a keyboard user is interacting with it.
 - Users must be able to move to the previous or next card using visible buttons on both sides of the carousel.
@@ -939,7 +947,7 @@ Impact wording should remain outcome-focused and public-safe.
 - Each card includes title, description, and impact bullets.
 - Cards use styling consistent with the website's dark developer aesthetic.
 - Cards appear in a Circular Gallery carousel inspired by React Bits animations.
-- Carousel auto-advances every 3 seconds.
+- Carousel auto-advances every 5 seconds.
 - Auto-advance pauses on mouse hover and keyboard focus.
 - Users can navigate with left/right carousel buttons.
 - Users can navigate by sideways scrolling or horizontal gestures.
