@@ -9,6 +9,7 @@ import { profile } from "./data/profile";
 import { about } from "./data/about";
 import { courses } from "./data/courses";
 import { experiences } from "./data/experience";
+import { impacts } from "./data/impact";
 import { projects } from "./data/projects";
 import {
   sampleExperienceReviewed,
@@ -103,6 +104,30 @@ function assertCoursesData(): void {
   }
 }
 
+/** Verify the real My Impact data validates and is complete + correctly ordered (Task 5.1, §8.2). */
+function assertImpactData(): void {
+  // All nine specification cards (§8.2.1–§8.2.9) must be present.
+  if (impacts.length !== 9) {
+    throw new Error(
+      "Content validator self-check failed: expected 9 My Impact cards (spec §8.2).",
+    );
+  }
+  // No card may ship without a description or at least one impact bullet.
+  if (impacts.some((card) => card.impactBullets.length === 0)) {
+    throw new Error(
+      "Content validator self-check failed: every My Impact card must have at least one impact bullet.",
+    );
+  }
+  // displayOrder must be the unique sequence 1..9 (specification order preserved).
+  const orders = impacts.map((card) => card.displayOrder).sort((a, b) => a - b);
+  const expected = orders.every((order, index) => order === index + 1);
+  if (new Set(orders).size !== orders.length || !expected) {
+    throw new Error(
+      "Content validator self-check failed: My Impact displayOrder must be the unique sequence 1..9.",
+    );
+  }
+}
+
 if (!profile.name) {
   throw new Error("Content validator self-check failed: profile data failed to load.");
 }
@@ -113,3 +138,4 @@ assertConfidentialityFilter();
 assertExperienceConfidentialityGate();
 assertProjectConfidentialityGate();
 assertCoursesData();
+assertImpactData();

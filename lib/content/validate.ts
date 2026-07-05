@@ -14,6 +14,7 @@ import type {
   EducationCertificateRef,
   Experience,
   ExperienceEndDate,
+  Impact,
   LearningPath,
   Profile,
   Project,
@@ -545,6 +546,25 @@ function validateList<T>(
     throw new ContentValidationError(label, "expected an array");
   }
   return data.map((item, index) => validateItem(item, index));
+}
+
+/** §11.1A Impact list — validates every My Impact carousel card (§8.2). */
+export function validateImpactList(data: unknown): Impact[] {
+  return validateList(data, "Impact[]", (item, index) => {
+    const path = `Impact[${index}]`;
+    const raw = assertObject(item, path);
+    return omitUndefined({
+      title: assertRequiredString(raw.title, `${path}.title`),
+      description: assertRequiredString(raw.description, `${path}.description`),
+      impactBullets: assertRequiredStringArray(raw.impactBullets, `${path}.impactBullets`),
+      icon: assertOptionalString(raw.icon, `${path}.icon`),
+      displayOrder: assertRequiredNumber(raw.displayOrder, `${path}.displayOrder`),
+      confidentialityReviewed: assertRequiredBoolean(
+        raw.confidentialityReviewed,
+        `${path}.confidentialityReviewed`,
+      ),
+    });
+  });
 }
 
 export function validateExperienceList(data: unknown): Experience[] {

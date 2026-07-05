@@ -15,7 +15,7 @@ const SNIPPET_POOL = [
   `def first_impression() -> str:\n    return "Backend developer with cloud focus"`,
   `summary = (\n    "Cloud backend developer"\n    " with hands-on ownership"\n)`,
   `tagline = (\n    "Building scalable and reliable"\n    " backend systems"\n)`,
-  `portfolio_sections = [\n    "about",\n    "experience",\n    "projects",\n    "courses",\n    "skills",\n    "resume",\n    "contact"\n]`,
+  `portfolio_sections = [\n    "impact",\n    "experience",\n    "projects",\n    "courses",\n    "skills",\n    "resume",\n    "contact"\n]`,
   `courses_completed = 35\ntech_stack_count = "18+"`,
   `skills = [\n    "Python",\n    "AWS",\n    "Docker",\n    "CI/CD"\n]`,
   `main_fields = [\n    "Backend Development",\n    "Cloud / AWS",\n    "Docker",\n    "Python"\n]`,

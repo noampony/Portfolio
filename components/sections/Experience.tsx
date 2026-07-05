@@ -20,8 +20,8 @@ import type { Experience as ExperienceModel } from "@/lib/content/types";
  * The section exposes the `#experience` anchor (spec §5.3). Per spec §5.1 the
  * primary navbar carries only Home/Projects/Courses/Resume — homepage sections
  * are anchor targets, not navbar items — so `lib/navigation.ts` is intentionally
- * left unchanged here, consistent with how the About section (`#about`) was
- * wired in Task 5.2.
+ * left unchanged here, consistent with how the My Impact section (`#impact`) was
+ * wired in Phase 5.
  *
  * This stays a server component so the graph content is rendered into the initial
  * HTML (available without client JS, good for SEO/AT) and the ongoing role's

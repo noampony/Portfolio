@@ -75,6 +75,19 @@ export type AboutSectionData = {
   professionalFocus?: string;
 };
 
+/** §11.1A Impact Model — a single career impact card for the My Impact carousel (§8.2). */
+export type Impact = {
+  title: string;
+  description: string;
+  impactBullets: string[];
+  /** Optional decorative/meaningful icon (served from `/public`); omitted until owner-supplied (§11.1A TBD). */
+  icon?: AssetReference;
+  /** 1-based carousel ordering. */
+  displayOrder: number;
+  /** Whether content has been reviewed for public sharing (§15.4). */
+  confidentialityReviewed: boolean;
+};
+
 /** §11.2 Experience Model */
 export type Experience = {
   organization: string;
