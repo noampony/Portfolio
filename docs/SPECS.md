@@ -91,7 +91,7 @@ After the MVP Hero is complete, the remaining homepage sections should be implem
 The planned homepage sections are:
 
 1. Hero
-2. About Me
+2. My Impact
 3. Experience
 4. Projects Preview
 5. Courses Preview
@@ -107,7 +107,7 @@ The filled planning template marks the following as must-have:
 
 - Home page
 - Hero section
-- About section
+- My Impact section
 - Experience section
 - Projects preview
 - Courses preview
@@ -229,7 +229,7 @@ The Home page is the primary page. It should present the strongest professional 
 Main content:
 
 - Hero
-- About Me
+- My Impact
 - Experience
 - Projects Preview
 - Courses Preview
@@ -345,7 +345,7 @@ Recommended section anchors:
 | Section | Anchor |
 |---|---|
 | Hero | `#home` |
-| About Me | `#about` |
+| My Impact | `#impact` |
 | Experience | `#experience` |
 | Projects Preview | `#projects` |
 | Courses Preview | `#courses` |
@@ -736,93 +736,217 @@ Mobile:
 
 ---
 
-## 8.2 About Me Section
+## 8.2 My Impact Section
 
 ### Purpose
 
-The About Me section should explain who Noam is professionally and personally in a CV-style but more engaging format.
+The My Impact section should replace the previous About Me section and present selected career impacts in a concise, visual, carousel-based format.
+
+The section should communicate concrete value Noam created across backend engineering, security product work, operational excellence, AI-assisted engineering, system design, and volunteer leadership.
+
+### Section Name
+
+Required section heading:
+
+```text
+My Impact
+```
 
 ### Required Content
 
-The section must include:
+The section must include impact cards. Each card represents one impact Noam made in his career.
 
-- Professional summary paragraph
-- Years of experience
-- Number of projects
-- Number of technologies/frameworks
-- Number of completed courses/certificates
-- Main fields of development
-- Current professional focus
+Each impact card must include:
 
-### Paragraph Draft
+- Impact title
+- Short description
+- Impact bullet list
+- Optional icon or visual marker
 
-```text
-Experienced cloud backend software developer with a degree in Computer Science and X years of hands-on experience and 35 professional courses during my role as a software developer to continuously enhance my technical and soft skills.
-```
+### Impact Cards
 
-The value `X years` should be calculated dynamically from October 2022 if implemented as dynamic content.
+#### 8.2.1 Team Knowledge Base
 
-### Technical Stats
+| Field | Value |
+|---|---|
+| Title | Team Knowledge Base |
+| Description | Built a central hub for services, guides, templates, and engineering knowledge. |
 
-| Stat | Value | Label |
-|---|---:|---|
-| Years of experience | Since Oct 2022, calculate at build time | Years Experience |
-| Projects completed | **TBD** — real count not yet known; do **not** display `10+`. Show the actual public-safe number once confirmed, or omit this stat until then. | Projects |
-| Technologies / frameworks | 18+ | Technologies |
-| Courses completed | **35** | Courses |
-| Certificates | **TBD subset of 35** — not every course has a PDF certificate (some were completed without a certificate in hand). Show the count of courses that *do* have a certificate, or omit this stat until counted. | Certificates |
-| Main fields of experience | Python, AWS, Docker (rendered as badges, not a counter — see §21.1 A5) | Main Fields |
+Impact bullets:
 
-> **Stat accuracy rules (from C3 resolution):**
-> - **Courses ≠ certificates.** There are **35 courses completed**; certificates are a *subset* (only courses that have a PDF). Never present 35 courses as "35 certificates".
-> - Do not advertise a projects count larger than what the site can actually show. Until the real number is known, omit the projects stat or show the true count.
-> - The earlier "40 certificates" / "over 30 courses" figures are superseded by **35 courses** + a TBD certificate subset.
+- Faster knowledge sharing across the team
+- Easier onboarding and daily development
+- Less time searching for information
 
-### Main Fields
+#### 8.2.2 AI Agent Skills
 
-The section must include the following fields:
+| Field | Value |
+|---|---|
+| Title | AI Agent Skills |
+| Description | Created AI Agent plugins that simplify everyday engineering tasks, including PR creation, code reviews, and unit test improvements. |
 
-- Backend Development
-- Python
-- Cloud / AWS
-- Docker
-- CI/CD
-- Automation
-- Cybersecurity
-- DevOps
-- Testing
-- System Design
+Impact bullets:
 
-### Profile Image Behavior
+- Made AI tools easier to use across the team
+- Increased adoption of AI for daily engineering work
+- Reduced effort for repetitive development tasks
 
-The About Me section may use a profile image if provided.
+#### 8.2.3 Crisis Scenario Management
 
-Profile image source is **TBD**.
+| Field | Value |
+|---|---|
+| Title | Crisis Scenario Management |
+| Description | Designed and built the final safety layer that detects and reports critical production scenarios. |
 
-Expected behavior:
+Impact bullets:
 
-- Image should be optimized.
-- Image should include descriptive alt text.
-- Image should not dominate the section.
-- Image layout should be responsive.
+- Improved product reliability
+- Better visibility during incidents
+- Greater confidence in production deployments
+
+#### 8.2.4 Revealed Valuable Data Mine
+
+| Field | Value |
+|---|---|
+| Title | Revealed Valuable Data Mine |
+| Description | Exposed hundreds of Microsoft 365 event types through a single service, unlocking valuable security insights. |
+
+Impact bullets:
+
+- Powered multiple customer-facing features
+- Enabled detection of malicious email activity
+- Opened the door for many future product capabilities
+
+#### 8.2.5 Weekly Security Reports
+
+| Field | Value |
+|---|---|
+| Title | Weekly Security Reports |
+| Description | Redesigned the weekly customer report to provide clearer insights into customers' security incidents and activity. |
+
+Impact bullets:
+
+- Increased transparency for customers
+- Became valuable for technical leaders and managers
+- Helped sales teams demonstrate product value
+
+#### 8.2.6 Grafana Dashboards
+
+| Field | Value |
+|---|---|
+| Title | Grafana Dashboards |
+| Description | Created dozens of Grafana dashboards to monitor services, performance, and production health in real time. |
+
+Impact bullets:
+
+- Faster issue investigation
+- Better operational visibility
+- Became the team's Grafana expert
+
+#### 8.2.7 System Architecture
+
+| Field | Value |
+|---|---|
+| Title | System Architecture |
+| Description | Designed 10+ backend systems from the ground up, including architecture, documentation, planning, testing, and implementation strategy. |
+
+Impact bullets:
+
+- Reduced rework and design changes
+- Smoother development process
+- Higher-quality, more reliable systems
+
+#### 8.2.8 Legacy System Modernization
+
+| Field | Value |
+|---|---|
+| Title | Legacy System Modernization |
+| Description | Refactored three legacy systems to improve code quality, reliability, and maintainability. |
+
+Impact bullets:
+
+- Cleaner and easier-to-maintain code
+- Better monitoring and debugging
+- Improved scalability and production stability
+
+#### 8.2.9 Supporting At-Risk Teenagers
+
+| Field | Value |
+|---|---|
+| Title | Supporting At-Risk Teenagers |
+| Description | Enhanced the monitoring platform used by a non-profit organization supporting at-risk teenage girls. |
+
+Impact bullets:
+
+- 3× faster monitoring and case management
+- More reliable and accessible data
+- Helped teams respond sooner to girls at higher risk
+- Contributed to improving the safety and well-being of vulnerable teenagers
+
+### Carousel and Animation Requirements
+
+The My Impact cards must appear in a carousel using the Circular Gallery animation from React Bits animations.
+
+Implementation requirements:
+
+- Use a Circular Gallery / Circle Gallery style interaction from React Bits or an equivalent local implementation that matches React Bits' circular carousel behavior.
+- The carousel must visually match the existing website style: dark surfaces, subtle borders, accent highlights, polished card hover/focus states, and the palette defined in §6.3.
+- The carousel must auto-advance to the next card every 3 seconds.
+- Auto-advance must pause while the active card or carousel is hovered by the mouse.
+- Auto-advance should also pause while the carousel or a card has keyboard focus to avoid moving content while a keyboard user is interacting with it.
+- Users must be able to move to the previous or next card using visible buttons on both sides of the carousel.
+- Users must be able to move through cards by scrolling sideways.
+- Touch and trackpad horizontal gestures should work where supported.
+- Carousel controls must be keyboard accessible and have descriptive accessible labels.
+- The carousel must respect `prefers-reduced-motion`; under reduced motion, use no auto-advance or a non-motion card list/fade behavior.
 
 ### Layout Behavior
 
-Preferred layout:
+Desktop:
 
-- Professional paragraph on one side
-- Stats and main fields in cards, badges, or compact visual blocks
-- Responsive single-column layout on mobile
+- The carousel should be visually prominent without overwhelming the page.
+- The focused/active impact card should be readable and clearly emphasized.
+- Side navigation buttons should be visible and aligned with the carousel.
+- Cards should maintain consistent dimensions to prevent layout shift.
+
+Mobile:
+
+- The carousel must remain readable and touch-friendly.
+- Side buttons may remain visible or adapt to compact controls if space is limited.
+- Horizontal scrolling must not cause page-level horizontal overflow.
+- Long impact bullets should wrap cleanly.
+
+### Security and Confidentiality Rules
+
+The My Impact section must not expose:
+
+- Internal company project names unless approved for public use
+- Internal architecture details
+- Customer names or customer data
+- Internal repositories
+- IP addresses, domains, or hostnames
+- Logs or screenshots from work systems
+- Sensitive cybersecurity workflows
+- Proprietary implementation details
+
+Impact wording should remain outcome-focused and public-safe.
 
 ### Acceptance Criteria
 
-- Section communicates professional background clearly.
-- Stats follow the C3 accuracy rules: 35 courses; certificates shown as a subset (or omitted until counted); projects count omitted until the real number is known (never `10+`).
-- Years of experience are either dynamically calculated from Oct 2022 or explicitly generated during build.
-- Main fields are displayed visually and accessibly.
+- Section heading is `My Impact`.
+- The previous About Me content, stats, and paragraph are removed from this section.
+- All required impact cards are represented.
+- Each card includes title, description, and impact bullets.
+- Cards use styling consistent with the website's dark developer aesthetic.
+- Cards appear in a Circular Gallery carousel inspired by React Bits animations.
+- Carousel auto-advances every 3 seconds.
+- Auto-advance pauses on mouse hover and keyboard focus.
+- Users can navigate with left/right carousel buttons.
+- Users can navigate by sideways scrolling or horizontal gestures.
+- Carousel is responsive across desktop, tablet, and mobile.
+- Carousel controls are accessible by keyboard and screen readers.
+- Reduced-motion preferences are respected.
 - No confidential employer details are exposed.
-- Placeholder `X years` is not shipped to production.
-- All missing content is marked TBD until finalized.
 
 ---
 
@@ -1968,7 +2092,18 @@ The following models are implementation-neutral. They may later be represented a
 | `technologiesCountLabel` | String | Yes | Display count | `18+` |
 | `coursesCountLabel` | String | Yes | Display count of completed courses | `35` |
 | `certificatesCountLabel` | String | Optional | Display count of courses that have a certificate (subset of courses) — omit until counted | TBD |
-| `mainFields` | List of strings | Yes | Main professional fields | `Python`, `AWS`, `Docker` |
+| `mainFields` | List of strings | Optional | Main professional fields if reused outside the removed About Me section | `Python`, `AWS`, `Docker` |
+
+## 11.1A Impact Model
+
+| Field | Type | Required | Description | Example |
+|---|---|---:|---|---|
+| `title` | String | Yes | Impact card title | `Team Knowledge Base` |
+| `description` | String | Yes | Concise public-safe impact summary | `Built a central hub for services, guides, templates, and engineering knowledge.` |
+| `impactBullets` | List of strings | Yes | Concrete outcomes created by the work | `Faster knowledge sharing across the team` |
+| `icon` | Asset/Icon reference | Optional | Decorative or meaningful icon shown on the card | TBD |
+| `displayOrder` | Number | Yes | Carousel ordering | `1` |
+| `confidentialityReviewed` | Boolean | Yes | Whether content has been reviewed for public sharing | `false` initially |
 
 ## 11.2 Experience Model
 
@@ -2134,6 +2269,8 @@ Implementation should support reusable components for:
 - Section layout
 - CTA buttons
 - Cards
+- Impact cards
+- My Impact carousel
 - Timeline entries
 - Project cards
 - Course cards
@@ -2627,9 +2764,10 @@ The finished planned website is complete when:
 - Resume preview/download works.
 - Contact section includes direct contact methods.
 - Technical skills are grouped and scannable.
+- My Impact carousel clearly shows selected career impacts.
 - Experience timeline clearly shows professional and leadership experience.
 - Responsive design works across desktop, tablet, and mobile.
-- Basic animations are polished and non-disruptive.
+- Basic animations, including the My Impact carousel, are polished and non-disruptive.
 - Reduced-motion preferences are respected.
 - SEO metadata is implemented.
 - Sitemap and robots.txt exist.
@@ -2672,12 +2810,12 @@ The finished planned website is complete when:
 - What exact icon source/library should be used?
 - What should the Open Graph preview image look like?
 
-### 19.4 About Me TBDs
+### 19.4 My Impact TBDs
 
-- What is the final About Me paragraph?
-- Should years of experience be calculated at runtime or build time?
-- What is the exact current professional focus?
-- Should profile image appear in About Me in addition to Hero?
+- Are the impact card titles and descriptions final for publication?
+- Should the My Impact carousel use React Bits Pro Circle Gallery or an equivalent React Bits-compatible implementation?
+- Should card icons use emoji, a licensed icon library, or custom icons?
+- Should the auto-advance pause on keyboard focus as well as mouse hover?
 
 ### 19.5 Experience TBDs
 

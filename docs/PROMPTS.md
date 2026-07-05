@@ -222,58 +222,56 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/4.5-her
 
 ---
 
-# Phase 5 — About Me Section
-Phase file: [tasks/phase-05-about.md](../tasks/phase-05-about.md)
+# Phase 5 — My Impact Section
+Phase file: [tasks/phase-05-impact.md](../tasks/phase-05-impact.md)
 
-## ✅ Task 5.1 — Define About Section Data
-
-```text
-Implement ONLY Task 5.1 — "Define About Section Data" — for the Noam Pony portfolio. Depends on Tasks 4.5, 3.2.
-
-Read before coding: tasks/phase-05-about.md (the "Task 5.1" entry); tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2 (About content + C3 stat-accuracy rules), §19.4 (paragraph/focus TBD; years runtime-vs-build → default build-time from 2022-10).
-
-Task focus: encode stats per C3 rules — coursesCountLabel=35; certificates subset = OMIT until counted; projects = OMIT until known (never 10+); technologiesCountLabel=18+; main fields as badges. Resolve the `X years` token via build-time calc — the literal "X years" must never ship.
-
-Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.1-about-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
-```
-
-## ✅ Task 5.2 — Implement the About Layout and Stats/Fields Display
+## ⬜ Task 5.1 — Define Impact Cards Data
 
 ```text
-Implement ONLY Task 5.2 — "Implement the About Layout and Stats/Fields Display" — for the Noam Pony portfolio. Depends on Task 5.1.
+Implement ONLY Task 5.1 — "Define Impact Cards Data" — for the Noam Pony portfolio. Depends on Tasks 4.5, 3.2.
 
-Read before coding: tasks/phase-05-about.md (the "Task 5.2" entry); tasks/README.md (Dependency Rule 5 — no empty UI for TBD + Global Definition of Done); docs/SPECS.md §8.2 (layout), §5.3 (#about anchor), §6.4 (mono for stat numbers).
+Read before coding: tasks/phase-05-impact.md (the "Task 5.1" entry); tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2 (My Impact section), §11 (content model).
 
-Task focus: professional summary + only-known stats + main fields as accessible badges; years computed at build time from 2022-10; add id="about" and append #about to nav config; OMIT any TBD stat entirely (no empty artifact). Profile image optional/TBD → omit unless provided.
+Task focus: create the typed data source for the My Impact section. Encode every impact card from the specification with its title, optional icon, short description, and impact bullet list. Preserve the order defined in the specification, keep the data presentation-agnostic, and avoid embedding UI logic into the data model. No placeholder or missing content should remain.
 
-Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.2-about-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
+Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.1-impact-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ✅ Task 5.3 — Add Visual Styling and Responsive Behavior + Reveal Animation to About
+## ⬜ Task 5.2 — Implement the My Impact Section
 
 ```text
-Implement ONLY Task 5.3 — "Style and Add Responsive Behavior + Reveal Animation to About" — for the Noam Pony portfolio. Depends on Task 5.2.
+Implement ONLY Task 5.2 — "Implement the My Impact Section" — for the Noam Pony portfolio. Depends on Task 5.1.
 
-Read before coding: tasks/phase-05-about.md (the "Task 5.3" entry); tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2, §7.3/§7.5 (reveal + reduced motion), §16 (responsive), §6.6 (spacing).
+Read before coding: tasks/phase-05-impact.md (the "Task 5.2" entry); tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2 (My Impact layout), §5.3 (#impact anchor), §6.7 (card style), §7.1 (animations).
 
-Task focus: single-column mobile / card+badge larger screens, consistent padding; subtle scroll-reveal that never hides content without JS and is reduced-motion-safe (counters/reveals reduce to final/static values).
+Task focus: replace the About section with the new My Impact section. Add id="impact" and update the navigation to use #impact. Render every impact as an individual card inside the React Bits Circular Gallery component. Ensure the cards match the existing website design language (colors, typography, spacing, borders, hover effects) and remain fully readable during animations.
 
-Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.3-about-polish`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
+Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.2-impact-layout`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 5.4 — About Section Completion Review
+## ⬜ Task 5.3 — Implement Carousel Behavior
 
 ```text
-Implement ONLY Task 5.4 — "About Section Completion Review" — for the Noam Pony portfolio. Depends on Task 5.3.
+Implement ONLY Task 5.3 — "Implement Carousel Behavior" — for the Noam Pony portfolio. Depends on Task 5.2.
 
-Read before coding: tasks/phase-05-about.md (the "Task 5.4" entry); tasks/gates.md → "About Me Gate"; tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2.
+Read before coding: tasks/phase-05-impact.md (the "Task 5.3" entry); tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2 (carousel behavior), §7.3 (reduced motion), §16 (responsive behavior).
 
-Task focus: verify the About Gate fully passes (keyboard, responsive, reduced-motion, C3 data-accuracy, axe/Lighthouse). Fixes only. Confirm no `X years`, no `10+`, no empty TBD stats.
+Task focus: implement the full carousel interaction defined by the specification. Automatically advance to the next card every 3 seconds. Pause autoplay while the active card is hovered and resume afterward. Add previous/next navigation buttons on both sides, support horizontal mouse-wheel/trackpad scrolling, touch swipe gestures on mobile, and ensure the component is fully responsive. Respect prefers-reduced-motion by disabling autoplay and minimizing animations while keeping manual navigation fully functional.
 
-Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.4-about-review`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
+Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.3-impact-carousel`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
----
+## ⬜ Task 5.4 — My Impact Section Completion Review
+
+```text
+Implement ONLY Task 5.4 — "My Impact Section Completion Review" — for the Noam Pony portfolio. Depends on Task 5.3.
+
+Read before coding: tasks/phase-05-impact.md (the "Task 5.4" entry); tasks/gates.md → "My Impact Gate"; tasks/README.md (Global Definition of Done); docs/SPECS.md §8.2.
+
+Task focus: verify the My Impact Gate fully passes. Confirm all impact cards render correctly, the Circular Gallery behaves according to the specification, autoplay and hover pause work correctly, navigation buttons, horizontal scrolling, swipe gestures, responsive layouts, reduced-motion behavior, and accessibility all pass. Fixes only. Confirm no placeholder content remains.
+
+Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/5.4-impact-review`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
+```
 
 # Phase 6 — Experience Section
 Phase file: [tasks/phase-06-experience.md](../tasks/phase-06-experience.md)
