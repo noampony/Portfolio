@@ -13,6 +13,7 @@ import {
   validateCourseList,
   validateExperience,
   validateExperienceList,
+  validateImpactList,
   validateProfile,
   validateProject,
   validateProjectList,
@@ -33,6 +34,7 @@ export {
   validateCourseList,
   validateExperience,
   validateExperienceList,
+  validateImpactList,
   validateProfile,
   validateProject,
   validateProjectList,
@@ -59,6 +61,10 @@ export function loadExperience(data: unknown) {
 
 export function loadExperienceList(data: unknown) {
   return validateExperienceList(data);
+}
+
+export function loadImpactList(data: unknown) {
+  return validateImpactList(data);
 }
 
 export function loadProject(data: unknown) {
