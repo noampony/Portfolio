@@ -28,7 +28,7 @@ export type NavItem = {
   /** Visible label and accessible name. */
   label: string;
   /**
-   * Navigation target. A route (`/`) or in-page anchor (`#about`). `null` when
+   * Navigation target. A route (`/`) or in-page anchor (`#impact`). `null` when
    * the item has no destination yet (must also be `disabled`) so we never emit
    * a dead link.
    */
