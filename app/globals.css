@@ -2860,17 +2860,67 @@ main:focus-visible {
      mobile to desktop instead of bottoming out at a fixed min. */
   --impact-step: calc(var(--impact-card-w) * 0.72);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 3.5rem);
 }
 
 .impact-gallery-track {
   position: relative;
+  flex: 1 1 auto;
   height: calc(var(--impact-card-h) + 3rem);
   margin: 0;
   padding: 0;
   list-style: none;
   perspective: 1400px;
   transform-style: preserve-3d;
+  touch-action: pan-y;
+}
+
+/* Prev/Next controls flank the track on both sides (spec §8.2 side navigation). */
+.impact-gallery-arrow {
+  position: relative;
+  z-index: 5;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--bg-surface) 80%, transparent);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.impact-gallery-arrow svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.impact-gallery-arrow:hover {
+  border-color: color-mix(in srgb, var(--accent) 65%, var(--border));
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-surface));
+  color: var(--accent);
+}
+
+.impact-gallery-arrow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .impact-gallery-arrow {
+    width: 2rem;
+    height: 2rem;
+  }
 }
 
 .impact-slide {
