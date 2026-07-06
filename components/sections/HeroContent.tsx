@@ -41,7 +41,7 @@ const profileTags = [
     ariaLabel: `${yearsOfExperience}+ years of experience`,
     value: `${yearsOfExperience}+`,
     lines: ["Years of", "Experience"],
-    positionClasses: "top-2 -left-8 sm:top-0 sm:-left-9 md:top-4 md:-left-12",
+    positionClasses: "-top-1 -left-9 sm:-top-2 sm:-left-11 md:-top-3 md:-left-14",
     appearDelay: 3.15,
   },
   {
@@ -50,7 +50,7 @@ const profileTags = [
     value: `${totalCoursesCompleted}+`,
     lines: ["Courses", "Completed"],
     positionClasses:
-      "top-1/2 -translate-y-1/2 -left-10 sm:-left-12 md:-left-16",
+      "top-1/2 -translate-y-1/2 -left-12 sm:-left-14 md:-left-20",
     appearDelay: 2.15,
   },
   {
@@ -59,7 +59,7 @@ const profileTags = [
     value: "B.Sc",
     lines: ["Computer", "Science", "Degree"],
     positionClasses:
-      "bottom-2 -left-8 sm:bottom-0 sm:-left-9 md:bottom-4 md:-left-12",
+      "-bottom-1 -left-9 sm:-bottom-2 sm:-left-11 md:-bottom-3 md:-left-14",
     appearDelay: 1.15,
   },
 ] as const;
@@ -406,9 +406,9 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />
-            {/* Profile tags — pop in bottom-to-top after the image settles, then float.
-                Positioning lives on a plain wrapper so the middle tag's translate
-                centering isn't overwritten by Framer Motion's transform. */}
+            {/* Profile tags — pop in bottom-to-top after the image settles. Positioning
+                lives on a plain wrapper so the middle tag's translate centering isn't
+                overwritten by Framer Motion's transform. */}
             {profileTags.map((tag) => (
               <div
                 key={tag.key}
@@ -433,22 +433,15 @@ export function HeroContent({ initials }: HeroContentProps) {
                         }
                   }
                 >
-                  <motion.div
-                    animate={contentRevealed && !prefersReducedMotion ? { y: [0, -8, 0] } : {}}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 3,
-                      ease: "easeInOut",
-                      delay: tag.appearDelay + 0.75,
-                    }}
+                  <div
                     className={cn(
                       "flex flex-col items-center",
                       "rounded-full",
                       "border border-[rgba(45,212,191,0.62)]",
                       "backdrop-blur-2xl",
-                      "gap-1 px-3 py-4",
-                      "sm:gap-1.5 sm:px-3.5 sm:py-5",
-                      "md:gap-2 md:px-5 md:py-9"
+                      "gap-1 px-2.5 py-3",
+                      "sm:gap-1 sm:px-3 sm:py-3.5",
+                      "md:gap-1.5 md:px-4 md:py-6"
                     )}
                     style={{
                       background:
@@ -459,7 +452,7 @@ export function HeroContent({ initials }: HeroContentProps) {
                   >
                     <span
                       aria-hidden="true"
-                      className="font-bold leading-none text-white text-base sm:text-xl md:text-4xl"
+                      className="font-bold leading-none text-white text-sm sm:text-lg md:text-3xl"
                     >
                       {tag.value}
                     </span>
@@ -478,7 +471,7 @@ export function HeroContent({ initials }: HeroContentProps) {
                         </span>
                       ))}
                     </span>
-                  </motion.div>
+                  </div>
                 </motion.div>
               </div>
             ))}
