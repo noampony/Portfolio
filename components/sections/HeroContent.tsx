@@ -41,7 +41,7 @@ const profileTags = [
     ariaLabel: `${yearsOfExperience}+ years of experience`,
     value: `${yearsOfExperience}+`,
     lines: ["Years of", "Experience"],
-    positionClasses: "-top-1 -left-9 sm:-top-2 sm:-left-11 md:-top-3 md:-left-14",
+    positionClasses: "-top-1 -left-9 sm:-top-2 sm:-left-11 md:-top-3 md:-left-10",
     appearDelay: 3.15,
   },
   {
@@ -58,8 +58,13 @@ const profileTags = [
     ariaLabel: "B.Sc Computer Science Degree",
     value: "B.Sc",
     lines: ["Computer", "Science", "Degree"],
+    // Bottom offset is a touch larger than the top tag's (rather than the same
+    // -1/-2/-3 value) because this tag wraps onto 3 lines and is taller, so a
+    // matching edge offset would pull its center closer to the middle tag than
+    // the top tag's. The extra px exactly compensates for that height delta so
+    // the middle tag sits equidistant between the top and bottom tags.
     positionClasses:
-      "-bottom-1 -left-9 sm:-bottom-2 sm:-left-11 md:-bottom-3 md:-left-14",
+      "-bottom-[7.2px] -left-9 sm:-bottom-[12.8px] sm:-left-11 md:-bottom-[18.41px] md:-left-10",
     appearDelay: 1.15,
   },
 ] as const;
@@ -435,7 +440,12 @@ export function HeroContent({ initials }: HeroContentProps) {
                 >
                   <div
                     className={cn(
-                      "flex flex-col items-center",
+                      // Fixed footprint (matches the 3-line "Degree" tag's own
+                      // content box) so all three pills render at the exact same
+                      // size regardless of label line-count/font-size — the box
+                      // no longer shrinks to fit its own content.
+                      "flex flex-col items-center justify-center",
+                      "h-[72.8px] w-[51.4px] sm:h-[100.4px] sm:w-[64.4px] md:h-[140px] md:w-[97px]",
                       "rounded-full",
                       "border border-[rgba(45,212,191,0.62)]",
                       "backdrop-blur-2xl",
