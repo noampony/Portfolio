@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content/data/profile";
 import { resume } from "@/lib/content/data/resume";
-import { courses } from "@/lib/content/data/courses";
+import { learningPaths } from "@/lib/content/data/learning-paths";
 import { cn } from "@/lib/utils";
 import { ResumeViewer } from "@/components/sections/ResumeViewer";
 
@@ -30,6 +30,11 @@ const yearsOfExperience = yearsExperienceSince(profile.yearsExperienceStartDate)
  * spring + float treatment. The courses count is derived from the Courses
  * section data so it never drifts from what that section renders.
  */
+const totalCoursesCompleted = learningPaths.reduce(
+  (total, path) => total + path.courses.length,
+  0,
+);
+
 const profileTags = [
   {
     key: "experience",
@@ -41,8 +46,8 @@ const profileTags = [
   },
   {
     key: "courses",
-    ariaLabel: `${courses.length}+ courses completed`,
-    value: `${courses.length}+`,
+    ariaLabel: `${totalCoursesCompleted}+ courses completed`,
+    value: `${totalCoursesCompleted}+`,
     lines: ["Courses", "Completed"],
     positionClasses:
       "top-1/2 -translate-y-1/2 -left-10 sm:-left-12 md:-left-16",
@@ -50,9 +55,9 @@ const profileTags = [
   },
   {
     key: "degree",
-    ariaLabel: "B.Sc. degree in Computer Science",
-    value: "B.Sc.",
-    lines: ["Computer", "Science"],
+    ariaLabel: "B.Sc Computer Science Degree",
+    value: "B.Sc",
+    lines: ["Computer", "Science", "Degree"],
     positionClasses:
       "bottom-2 -left-8 sm:bottom-0 sm:-left-9 md:bottom-4 md:-left-12",
     appearDelay: 1.15,
@@ -458,10 +463,20 @@ export function HeroContent({ initials }: HeroContentProps) {
                     >
                       {tag.value}
                     </span>
-                    <span className="text-center font-medium leading-tight text-white/70 text-[7px] sm:text-[9px] md:text-[11px]">
-                      {tag.lines[0]}
-                      <br />
-                      {tag.lines[1]}
+                    <span
+                      className={cn(
+                        "text-center font-medium leading-tight text-white/70",
+                        tag.lines.length > 2
+                          ? "text-[6px] sm:text-[8px] md:text-[10px]"
+                          : "text-[7px] sm:text-[9px] md:text-[11px]",
+                      )}
+                    >
+                      {tag.lines.map((line, index) => (
+                        <span key={line}>
+                          {index > 0 && <br />}
+                          {line}
+                        </span>
+                      ))}
                     </span>
                   </motion.div>
                 </motion.div>
