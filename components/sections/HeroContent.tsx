@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content/data/profile";
 import { resume } from "@/lib/content/data/resume";
+import { courses } from "@/lib/content/data/courses";
 import { cn } from "@/lib/utils";
 import { ResumeViewer } from "@/components/sections/ResumeViewer";
 
@@ -22,6 +23,41 @@ function yearsExperienceSince(startDate: string): number {
 }
 
 const yearsOfExperience = yearsExperienceSince(profile.yearsExperienceStartDate);
+
+/**
+ * Floating tags pinned to the left edge of the profile-frame ellipse. They pop in
+ * bottom-to-top, one second apart, each reusing the original experience-tag
+ * spring + float treatment. The courses count is derived from the Courses
+ * section data so it never drifts from what that section renders.
+ */
+const profileTags = [
+  {
+    key: "experience",
+    ariaLabel: `${yearsOfExperience}+ years of experience`,
+    value: `${yearsOfExperience}+`,
+    lines: ["Years of", "Experience"],
+    positionClasses: "top-2 -left-8 sm:top-0 sm:-left-9 md:top-4 md:-left-12",
+    appearDelay: 3.15,
+  },
+  {
+    key: "courses",
+    ariaLabel: `${courses.length}+ courses completed`,
+    value: `${courses.length}+`,
+    lines: ["Courses", "Completed"],
+    positionClasses:
+      "top-1/2 -translate-y-1/2 -left-10 sm:-left-12 md:-left-16",
+    appearDelay: 2.15,
+  },
+  {
+    key: "degree",
+    ariaLabel: "B.Sc. degree in Computer Science",
+    value: "B.Sc.",
+    lines: ["Computer", "Science"],
+    positionClasses:
+      "bottom-2 -left-8 sm:bottom-0 sm:-left-9 md:bottom-4 md:-left-12",
+    appearDelay: 1.15,
+  },
+] as const;
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -365,59 +401,72 @@ export function HeroContent({ initials }: HeroContentProps) {
               className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />
-            {/* Experience tag — jumps in after the profile image settles, then floats */}
-            <motion.div
-              aria-label={`${yearsOfExperience}+ years of experience`}
-              initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
-              animate={
-                contentRevealed
-                  ? { scale: 1, opacity: 1 }
-                  : { scale: 0, opacity: 0 }
-              }
-              transition={
-                prefersReducedMotion
-                  ? { duration: 0 }
-                  : { type: "spring", stiffness: 400, damping: 12, delay: 1.15 }
-              }
-              className="absolute top-2 -left-8 z-20 sm:top-0 sm:-left-9 md:top-4 md:-left-12"
-            >
-              <motion.div
-                animate={contentRevealed && !prefersReducedMotion ? { y: [0, -8, 0] } : {}}
-                transition={{
-                  repeat: Infinity,
-                  duration: 3,
-                  ease: "easeInOut",
-                  delay: 1.9,
-                }}
-                className={cn(
-                  "flex flex-col items-center",
-                  "rounded-full",
-                  "border border-[rgba(45,212,191,0.62)]",
-                  "backdrop-blur-2xl",
-                  "gap-1 px-3 py-4",
-                  "sm:gap-1.5 sm:px-3.5 sm:py-5",
-                  "md:gap-2 md:px-5 md:py-9"
-                )}
-                style={{
-                  background:
-                    "linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--accent) 30%, transparent) 70%)",
-                  boxShadow:
-                    "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -8px 20px rgba(45,212,191,0.14), 0 0 34px rgba(45,212,191,0.22)",
-                }}
+            {/* Profile tags — pop in bottom-to-top after the image settles, then float.
+                Positioning lives on a plain wrapper so the middle tag's translate
+                centering isn't overwritten by Framer Motion's transform. */}
+            {profileTags.map((tag) => (
+              <div
+                key={tag.key}
+                aria-label={tag.ariaLabel}
+                className={cn("absolute z-20", tag.positionClasses)}
               >
-                <span
-                  aria-hidden="true"
-                  className="font-bold leading-none text-white text-base sm:text-xl md:text-4xl"
+                <motion.div
+                  initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
+                  animate={
+                    contentRevealed
+                      ? { scale: 1, opacity: 1 }
+                      : { scale: 0, opacity: 0 }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0 }
+                      : {
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 12,
+                          delay: tag.appearDelay,
+                        }
+                  }
                 >
-                  {yearsOfExperience}+
-                </span>
-                <span className="text-center font-medium leading-tight text-white/70 text-[7px] sm:text-[9px] md:text-[11px]">
-                  Years of
-                  <br />
-                  Experience
-                </span>
-              </motion.div>
-            </motion.div>
+                  <motion.div
+                    animate={contentRevealed && !prefersReducedMotion ? { y: [0, -8, 0] } : {}}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 3,
+                      ease: "easeInOut",
+                      delay: tag.appearDelay + 0.75,
+                    }}
+                    className={cn(
+                      "flex flex-col items-center",
+                      "rounded-full",
+                      "border border-[rgba(45,212,191,0.62)]",
+                      "backdrop-blur-2xl",
+                      "gap-1 px-3 py-4",
+                      "sm:gap-1.5 sm:px-3.5 sm:py-5",
+                      "md:gap-2 md:px-5 md:py-9"
+                    )}
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--accent) 30%, transparent) 70%)",
+                      boxShadow:
+                        "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -8px 20px rgba(45,212,191,0.14), 0 0 34px rgba(45,212,191,0.22)",
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="font-bold leading-none text-white text-base sm:text-xl md:text-4xl"
+                    >
+                      {tag.value}
+                    </span>
+                    <span className="text-center font-medium leading-tight text-white/70 text-[7px] sm:text-[9px] md:text-[11px]">
+                      {tag.lines[0]}
+                      <br />
+                      {tag.lines[1]}
+                    </span>
+                  </motion.div>
+                </motion.div>
+              </div>
+            ))}
           </div>
         ) : (
           <div
