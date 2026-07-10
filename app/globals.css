@@ -270,6 +270,49 @@ html {
   box-shadow: 0 8px 22px -10px color-mix(in srgb, var(--accent) 90%, transparent);
 }
 
+/* Mobile nav toggle (hamburger): quiet by default, lights up with an
+   accent-tinted outline and soft glow while hovered or while the menu is open,
+   matching the accent treatment of the other navbar affordances. Explicit
+   color-mix (not Tailwind `/opacity`) for the same reason as `.nav-resume-cta`. */
+.mobile-nav-toggle {
+  border: 1px solid transparent;
+}
+
+.mobile-nav-toggle:hover,
+.mobile-nav-toggle[aria-expanded="true"] {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  box-shadow: 0 0 16px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* Mobile nav dropdown panel: a glass surface (blur + translucent raised bg) with
+   an accent-tinted hairline border, a faint accent wash bleeding in from the
+   top-right corner (where the panel visually "emerges" from the toggle), and a
+   layered shadow — depth from the dark drop shadow, identity from the accent
+   glow. Matches the scroll-to-top button's glass treatment. */
+.mobile-nav-panel {
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  background:
+    radial-gradient(
+      120% 65% at 100% 0%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 55%
+    ),
+    color-mix(in srgb, var(--bg-surface-raised) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 16px 40px -16px rgb(0 0 0 / 0.65),
+    0 0 28px -14px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/* Hover wash for individual items in the mobile nav panel; the active item keeps
+   the stronger `.nav-spotlight` treatment instead. */
+.mobile-nav-item:hover {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
 /* Floating "back to top" button: a glass surface over the page (not the accent
    fill the Resume CTA uses, so it doesn't visually compete as another primary
    action) with a soft accent-tinted border and drop shadow to lift it off the
