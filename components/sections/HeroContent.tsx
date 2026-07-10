@@ -41,16 +41,17 @@ const profileTags = [
     ariaLabel: `${yearsOfExperience}+ years of experience`,
     value: `${yearsOfExperience}+`,
     lines: ["Years of", "Experience"],
-    positionClasses: "-top-1 -left-9 sm:-top-2 sm:-left-11 md:-top-3 md:-left-10",
+    positionClasses:
+      "-top-1 -left-6 sm:-top-[4.6px] sm:-left-[28px] min-[850px]:-top-3 min-[850px]:-left-10",
     appearDelay: 3.15,
   },
   {
     key: "courses",
-    ariaLabel: `${totalCoursesCompleted}+ courses completed`,
+    ariaLabel: `${totalCoursesCompleted}+ external courses completed`,
     value: `${totalCoursesCompleted}+`,
-    lines: ["Courses", "Completed"],
+    lines: ["External", "Courses", "Completed"],
     positionClasses:
-      "top-1/2 -translate-y-1/2 -left-12 sm:-left-14 md:-left-20",
+      "top-1/2 -translate-y-1/2 -left-12 sm:-left-[55px] min-[850px]:-left-20",
     appearDelay: 2.15,
   },
   {
@@ -64,7 +65,7 @@ const profileTags = [
     // the top tag's. The extra px exactly compensates for that height delta so
     // the middle tag sits equidistant between the top and bottom tags.
     positionClasses:
-      "-bottom-[7.2px] -left-9 sm:-bottom-[12.8px] sm:-left-11 md:-bottom-[18.41px] md:-left-10",
+      "-bottom-[7.2px] -left-[22px] sm:-bottom-[8.2px] sm:-left-[25px] min-[850px]:-bottom-[18.41px] min-[850px]:-left-10",
     appearDelay: 1.15,
   },
 ] as const;
@@ -221,15 +222,20 @@ export function HeroContent({ initials }: HeroContentProps) {
   const profileImageClasses = cn(
     "shrink-0 object-contain",
     "mx-auto h-52 w-auto sm:h-60",
-    "md:mx-0 md:h-auto md:max-h-[25rem] md:w-auto lg:max-h-[27rem]"
+    "min-[850px]:mx-0 min-[850px]:h-auto min-[850px]:max-h-[25rem] min-[850px]:w-auto lg:max-h-[27rem]"
   );
 
   // Framed-portrait sizing. The frame box is a touch wider than the portrait's own
   // aspect (1191×1852 ≈ 5/8) so the body sits inside the oval without being clipped.
+  // `min-[850px]:ml-20` reserves the widest tag overhang (the middle tag's
+  // `min-[850px]:-left-20`) as real layout space — the tags are absolutely
+  // positioned, so without it the flex row lets the text column run underneath
+  // them at narrow row-layout widths.
   const profileFrameClasses = cn(
     "relative isolate shrink-0",
-    "h-56 sm:h-64 md:h-[26rem] lg:h-[28rem]",
-    "aspect-[5/7]"
+    "h-56 sm:h-64 min-[850px]:h-[26rem] lg:h-[28rem]",
+    "aspect-[5/7]",
+    "min-[850px]:ml-20"
   );
 
   // Clip the portrait to the frame ellipse: the top half stays fully visible (head
@@ -251,10 +257,10 @@ export function HeroContent({ initials }: HeroContentProps) {
   } as const;
 
   return (
-    <div className="flex w-full flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:gap-10 lg:gap-12">
+    <div className="flex w-full flex-col gap-8 sm:gap-10 min-[850px]:flex-row min-[850px]:items-start min-[850px]:gap-10 lg:gap-12">
       {/* Left column on md+; `contents` on mobile lets the image slot between text and buttons. */}
-      <div className="contents md:flex md:min-w-0 md:flex-1 md:flex-col md:gap-8">
-        <div className="order-1 flex min-w-0 flex-col gap-0 md:order-none">
+      <div className="contents min-[850px]:flex min-[850px]:min-w-0 min-[850px]:flex-1 min-[850px]:flex-col min-[850px]:gap-8">
+        <div className="order-1 flex min-w-0 flex-col gap-0 min-[850px]:order-none">
           <h1
             id="hero-heading"
             aria-label={`Hello! I'm ${profile.name}`}
@@ -331,7 +337,7 @@ export function HeroContent({ initials }: HeroContentProps) {
         </div>
 
         <motion.div
-          className="order-3 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap md:order-none"
+          className="order-3 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap min-[850px]:order-none"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
           animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
           transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.72 }}
@@ -369,7 +375,7 @@ export function HeroContent({ initials }: HeroContentProps) {
       </div>
 
       <motion.div
-        className="order-2 flex shrink-0 items-start justify-center md:order-none md:justify-end"
+        className="order-2 flex shrink-0 items-start justify-center min-[850px]:order-none min-[850px]:justify-end"
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
         transition={{ duration: 0.83, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.24 }}
@@ -445,13 +451,16 @@ export function HeroContent({ initials }: HeroContentProps) {
                       // size regardless of label line-count/font-size — the box
                       // no longer shrinks to fit its own content.
                       "flex flex-col items-center justify-center",
-                      "h-[72.8px] w-[51.4px] sm:h-[100.4px] sm:w-[64.4px] md:h-[140px] md:w-[97px]",
+                      // The sm footprint is the base one scaled by the frame-height
+                      // ratio (256/224) so the tags keep the same proportion to the
+                      // ellipse at every breakpoint.
+                      "h-[72.8px] w-[51.4px] sm:h-[83.2px] sm:w-[58.7px] min-[850px]:h-[140px] min-[850px]:w-[97px]",
                       "rounded-full",
                       "border border-[rgba(45,212,191,0.62)]",
                       "backdrop-blur-2xl",
                       "gap-1 px-2.5 py-3",
                       "sm:gap-1 sm:px-3 sm:py-3.5",
-                      "md:gap-1.5 md:px-4 md:py-6"
+                      "min-[850px]:gap-1.5 min-[850px]:px-4 min-[850px]:py-6"
                     )}
                     style={{
                       background:
@@ -462,7 +471,7 @@ export function HeroContent({ initials }: HeroContentProps) {
                   >
                     <span
                       aria-hidden="true"
-                      className="font-bold leading-none text-white text-sm sm:text-lg md:text-3xl"
+                      className="font-bold leading-none text-white text-sm sm:text-base min-[850px]:text-3xl"
                     >
                       {tag.value}
                     </span>
@@ -470,8 +479,8 @@ export function HeroContent({ initials }: HeroContentProps) {
                       className={cn(
                         "text-center font-medium leading-tight text-white/70",
                         tag.lines.length > 2
-                          ? "text-[6px] sm:text-[8px] md:text-[10px]"
-                          : "text-[7px] sm:text-[9px] md:text-[11px]",
+                          ? "text-[6px] sm:text-[7px] min-[850px]:text-[10px]"
+                          : "text-[7px] sm:text-[8px] min-[850px]:text-[11px]",
                       )}
                     >
                       {tag.lines.map((line, index) => (
