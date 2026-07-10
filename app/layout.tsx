@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@/lib/content/loaders";
-import { geistSans, jetBrainsMono } from "./fonts";
+import { sansFont, monoFont } from "./fonts";
 import { SkipLink, MAIN_CONTENT_ID } from "@/components/layout/SkipLink";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${jetBrainsMono.variable}`}>
+    <html lang="en" className={`${sansFont.variable} ${monoFont.variable}`}>
       <body className="flex min-h-screen flex-col">
         {/* First focusable element: lets keyboard users bypass the header (spec §20.6). */}
         <SkipLink />

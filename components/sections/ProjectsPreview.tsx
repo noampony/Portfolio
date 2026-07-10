@@ -189,7 +189,7 @@ export function ProjectsPreview() {
                   >
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span className="sr-only"> — full Projects page coming soon</span>
+                  <span className="sr-only"> - full Projects page coming soon</span>
                 </button>
                 <p className="project-cta-caption">Full page coming soon</p>
               </div>

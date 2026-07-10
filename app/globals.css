@@ -41,8 +41,8 @@
   --destructive-foreground: var(--bg-base);
   --input: var(--border);
   --ring: var(--accent);
-  --font-sans-fallback: Inter, system-ui, -apple-system, sans-serif;
-  --font-mono-fallback: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans-fallback: Montserrat, system-ui, -apple-system, sans-serif;
+  --font-mono-fallback: Montserrat, system-ui, -apple-system, sans-serif;
   --type-display: 2.5rem;
   --leading-display: 1.1;
   --type-h1: 2rem;

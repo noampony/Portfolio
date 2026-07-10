@@ -69,7 +69,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
         className="project-flip-toggle"
       >
         <span className="sr-only">
-          {name} — {flipped ? "hide project details" : "show project details"}
+          {name} - {flipped ? "hide project details" : "show project details"}
         </span>
       </button>
 

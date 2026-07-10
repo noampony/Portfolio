@@ -394,7 +394,7 @@ function ExperienceExpandCard({
             onClick={handleClick}
           >
             <span className="sr-only">
-              {headingText} — {open ? "hide details" : "show details"}
+              {headingText} - {open ? "hide details" : "show details"}
             </span>
           </button>
 

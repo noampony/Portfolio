@@ -66,7 +66,7 @@ export function ExperienceIntro() {
           Where I&apos;ve Built and Led
         </h2>
         <p className="mt-4 max-w-measure text-body text-text-secondary">
-          Backend engineering and team leadership — most recent first.
+          Backend engineering and team leadership - most recent first.
         </p>
       </motion.div>
     </motion.div>

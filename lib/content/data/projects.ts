@@ -102,7 +102,7 @@ const projectData = [
     name: "Developer Portfolio Website",
     role: "Solo Developer",
     shortDescription:
-      "The very site you are viewing — a personal portfolio and online CV with a custom dark developer aesthetic, content-driven sections, and subtle scroll-driven animations.",
+      "The very site you are viewing - a personal portfolio and online CV with a custom dark developer aesthetic, content-driven sections, and subtle scroll-driven animations.",
     problemSolved:
       "Needed a single, technically-mature home for my CV, experience, projects, and courses that reflects real engineering craft rather than a generic template.",
     solution:
@@ -116,7 +116,7 @@ const projectData = [
       "Vercel",
     ],
     whyImportant:
-      "As a backend developer, designing and building the entire frontend end-to-end — design system, animations, accessibility, and performance — stretched me well beyond my comfort zone and demonstrates full-stack range.",
+      "As a backend developer, designing and building the entire frontend end-to-end - design system, animations, accessibility, and performance - stretched me well beyond my comfort zone and demonstrates full-stack range.",
     confidentialityReviewed: true,
   },
 ] as const;
