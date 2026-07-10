@@ -114,10 +114,13 @@ export function Experience() {
       aria-labelledby="experience-heading"
       className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
     >
-      {/* Decorative backdrop glow — tokens only, echoes the About/Hero atmosphere. */}
+      {/* Decorative backdrop glow — tokens only, echoes the About/Hero atmosphere. The
+         trailing linear layer warms the bottom of the section toward `--bg-surface`, so
+         it blends gradually into the My Impact section below (whose top starts on the
+         same tint) instead of meeting it with a hard colour seam (§6.3). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_46%_at_88%_-4%,color-mix(in_srgb,var(--gradient-to)_11%,transparent),transparent_34%),radial-gradient(46%_42%_at_6%_6%,color-mix(in_srgb,var(--accent)_8%,transparent),transparent_32%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_46%_at_88%_-4%,color-mix(in_srgb,var(--gradient-to)_11%,transparent),transparent_34%),radial-gradient(46%_42%_at_6%_6%,color-mix(in_srgb,var(--accent)_8%,transparent),transparent_32%),linear-gradient(180deg,transparent_62%,color-mix(in_srgb,var(--bg-surface)_55%,transparent)_100%)]"
       />
 
 <div className="site-shell relative z-10">

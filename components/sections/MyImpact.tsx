@@ -189,11 +189,15 @@ export function MyImpact() {
     <section
       id="impact"
       aria-labelledby="impact-heading"
-      className="impact-section relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
+      className="impact-section relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
+      {/* Top linear layer opens on the same `--bg-surface` tint the Experience section
+         above fades down to, then brightens and fades to base — so the two sections
+         merge through a shared glow band with no hard colour seam (the top border is
+         intentionally dropped here for that reason; §6.3). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_12%_12%,color-mix(in_srgb,var(--accent)_16%,transparent),transparent_28%),radial-gradient(circle_at_86%_20%,color-mix(in_srgb,var(--gradient-to)_14%,transparent),transparent_30%),linear-gradient(180deg,color-mix(in_srgb,var(--bg-surface)_72%,transparent),transparent_48%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_12%_18%,color-mix(in_srgb,var(--accent)_16%,transparent),transparent_28%),radial-gradient(circle_at_86%_22%,color-mix(in_srgb,var(--gradient-to)_14%,transparent),transparent_30%),linear-gradient(180deg,color-mix(in_srgb,var(--bg-surface)_55%,transparent)_0%,color-mix(in_srgb,var(--bg-surface)_72%,transparent)_16%,transparent_60%)]"
       />
       <div aria-hidden="true" className="impact-grid-wash" />
 

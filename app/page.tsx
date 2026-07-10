@@ -10,8 +10,8 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <MyImpact />
       <Experience />
+      <MyImpact />
       <ProjectsPreview />
       <CoursesRoadmap />
       <Skills />
