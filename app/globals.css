@@ -2053,14 +2053,16 @@ html {
   position: relative;
 }
 
-/* Winding "road" overlay drawn through the nodes (desktop only — see RoadmapRoad). Hidden
-   below the desktop breakpoint, where the straight CSS spine (::before) is used instead. */
+/* Winding "road" overlay drawn through the nodes at every width (see RoadmapRoad). On narrow
+   screens it runs down the left gutter, thinner and with gentler bulges. The SVG viewport is
+   bled leftwards (inline `left` offset from the component) so bulges that overhang the list's
+   left edge stay inside the box — the fade mask below clips anything outside it, so drawing
+   must never overflow. */
 .roadmap-road {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
-  display: none;
   pointer-events: none;
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 16%, transparent));
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
@@ -2102,6 +2104,23 @@ html {
   stroke: var(--roadmap-fill-green);
 }
 
+/* Narrow screens: the road runs in the left gutter, so slim it down to fit beside the
+   content column (the gentler curve geometry comes from RoadmapRoad's narrow bulge). */
+@media (max-width: 1023.98px) {
+  .roadmap-road-edge {
+    stroke-width: 30;
+  }
+
+  .roadmap-road-surface {
+    stroke-width: 24;
+  }
+
+  .roadmap-road-lane {
+    stroke-width: 2.5;
+    stroke-dasharray: 10 12;
+  }
+}
+
 /* Vertical stack of paths; hosts the spine. The spine x sits at the node centre so the
    line threads through every node. */
 .roadmap-paths {
@@ -2115,7 +2134,9 @@ html {
 
 /* The spine: an accent line filled top→down over a dimmer track. `--roadmap-fill` is the
    drawn fraction (default 100% = fully drawn); a scroll-driven animation sketches it in where
-   supported (see below). Painted in ::before so the opaque nodes sit on top and "cut" it. */
+   supported (see below). Painted in ::before so the opaque nodes sit on top and "cut" it.
+   Now a no-JS fallback only — once the measured road SVG renders it takes over at every
+   width, so the spine is hidden (see the :has() rule below). */
 @property --roadmap-fill {
   syntax: "<percentage>";
   inherits: false;
@@ -2139,6 +2160,12 @@ html {
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 1.5rem, #000 calc(100% - 1.5rem), transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0, #000 1.5rem, #000 calc(100% - 1.5rem), transparent 100%);
   pointer-events: none;
+}
+
+/* The winding road replaces the straight spine wherever it has rendered (it weaves around
+   the spine's x, so both showing at once would read as a stray line through the curves). */
+.roadmap-paths-wrap:has(.roadmap-road) .roadmap-paths::before {
+  display: none;
 }
 
 @keyframes roadmap-spine-fill {
@@ -2224,9 +2251,9 @@ html {
   initial-value: 0;
 }
 
-/* Gradual emerald fill of the node ring + connector, driven by `--road-fill` (desktop only, where
-   the winding road runs; gated on reduced motion so the fill never appears when it can't animate). */
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+/* Gradual emerald fill of the node ring + connector, driven by `--road-fill` at every width the
+   winding road runs (gated on reduced motion so the fill never appears when it can't animate). */
+@media (prefers-reduced-motion: no-preference) {
   /* Ring via the gradient-border trick: a dark centre (padding-box) keeps cutting the road, while
      the border-box gradient hard-stops at `--road-fill` so emerald wipes top→down as the front
      crosses the node — at the same speed as the road itself. */
@@ -2405,11 +2432,12 @@ html {
   color: var(--text-primary);
 }
 
-/* Tighter spine gutter / node on small screens. */
+/* Tighter node on small screens; the gutter keeps just enough room for the road's outward
+   bulge (node centre + narrow bulge + road half-width) so curves never touch the content. */
 @media (max-width: 640px) {
   .roadmap-paths {
     --roadmap-node-size: 1.7rem;
-    --roadmap-gutter: 2.5rem;
+    --roadmap-gutter: 2.75rem;
   }
 }
 
@@ -2433,11 +2461,8 @@ html {
     margin-top: 0;
   }
 
-  /* The curvy road overlay replaces the straight centre line on desktop. */
-  .roadmap-road {
-    display: block;
-  }
-
+  /* No straight-spine fallback on desktop even without JS — the nodes move to the centre
+     column here, so the left-pinned spine would read as a stray line. */
   .roadmap-paths::before {
     display: none;
   }

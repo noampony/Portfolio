@@ -12,19 +12,23 @@ import {
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 /**
- * Decorative winding "road" drawn down the centre of the roadmap (desktop only), replacing the
- * straight spine. An SVG path is generated to pass through every node centre and bulge
- * alternately between them, so the road weaves while each numbered node still sits on it.
+ * Decorative winding "road" drawn through the roadmap's numbered nodes, replacing the straight
+ * spine. An SVG path is generated to pass through every node centre and bulge alternately
+ * between them, so the road weaves while each numbered node still sits on it. On desktop the
+ * nodes are centred so the road winds down the middle; below the desktop breakpoint they sit
+ * in the left gutter, so the road becomes a thinner left-hand weave with gentler (more obtuse)
+ * curves — see the narrow-width overrides in globals.css.
  *
  * Node positions are read from layout via the offset chain (transform-independent, so the
  * reveal animation doesn't skew the curve) and recomputed on resize. Purely decorative
- * (aria-hidden); renders nothing until measured and is hidden below the desktop breakpoint.
+ * (aria-hidden); renders nothing until measured (the straight CSS spine remains as the no-JS
+ * fallback).
  *
  * As the user scrolls, an emerald copy of the road's borders + dashed lane "fills in" from the
  * top, clipped by a horizontal line pinned to the viewport's vertical centre (so the fill front
- * always sits mid-screen and reverses on scroll up). When the front passes a node, that node is
- * marked `data-road-reached` so CSS can recolour its ring/number to match. The fill is a
- * desktop-only progressive enhancement and is skipped entirely under reduced motion.
+ * always sits mid-screen and reverses on scroll up). As the front crosses a node, its
+ * `--road-fill` fraction recolours the ring/number to match. The fill is a progressive
+ * enhancement and is skipped entirely under reduced motion.
  */
 
 type RoadmapRoadProps = {
@@ -47,8 +51,19 @@ function offsetWithin(el: HTMLElement, container: HTMLElement) {
   return { x, y };
 }
 
-/** Horizontal bulge of the road between consecutive nodes (px); alternates side each segment. */
+/** Horizontal bulge of the road between consecutive nodes (px); alternates side each segment.
+ *  Narrow screens use a smaller bulge so the left-gutter road curves stay gentle (more obtuse)
+ *  and the weave fits beside the content column. */
 const BULGE = 70;
+const BULGE_NARROW = 22;
+
+/** Horizontal bleed (px) the SVG viewport extends past the container's left edge, so the road's
+ *  bulges that overhang the list's left edge on narrow screens render uncut. The CSS fade
+ *  mask on the SVG clips anything outside its box, so the box itself must contain the whole
+ *  road — overflowing it doesn't work. Left-only: the right side never overhangs (content
+ *  gutter on narrow screens, wide centre column on desktop), and bleeding right would widen
+ *  the page and cause horizontal scroll on mobile. */
+const LEFT_BLEED = 60;
 
 /** Soft feather (px) on the fill's leading edge so it pours in rather than ending in a hard
  *  horizontal line (which reads as a green "bridge" wherever the road bends near-horizontal). */
@@ -64,7 +79,7 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
 
   const reduceMotion = useReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const fillEnabled = isDesktop && !reduceMotion;
+  const fillEnabled = !reduceMotion;
 
   const uid = useId().replace(/:/g, "");
   const maskId = `roadmap-fill-mask-${uid}`;
@@ -99,8 +114,8 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
     syncNodes(value);
   });
 
-  // When the fill is disabled (reduced motion / below desktop), reset every node to empty so none
-  // is left stuck emerald; when (re)enabled, sync once so the initial scroll position shows.
+  // When the fill is disabled (reduced motion), reset every node to empty so none is left
+  // stuck emerald; when (re)enabled, sync once so the initial scroll position shows.
   useEffect(() => {
     if (!fillEnabled) {
       // A front above every node sets all fractions to 0; under reduced motion the fill CSS is
@@ -155,7 +170,7 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
         // Scale the bulge to the segment height so short anchor segments (top-edge → first
         // node, last node → bottom-edge) curve gently rather than kinking sideways.
         const segH = Math.abs(p1.y - p0.y);
-        const bulge = Math.min(BULGE, segH / 2);
+        const bulge = Math.min(isDesktop ? BULGE : BULGE_NARROW, segH / 2);
         const cx = (p0.x + p1.x) / 2 + bulge * dir;
         const cy = (p0.y + p1.y) / 2;
         d += ` Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
@@ -194,19 +209,20 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
       if (raf) cancelAnimationFrame(raf);
       if (observer) observer.disconnect();
     };
-  }, [containerRef, pathCount]);
+  }, [containerRef, pathCount, isDesktop]);
 
   if (!geom) return null;
 
   return (
     <svg
       className="roadmap-road"
-      width={geom.w}
+      width={geom.w + LEFT_BLEED}
       height={geom.h}
-      viewBox={`0 0 ${geom.w} ${geom.h}`}
+      viewBox={`${-LEFT_BLEED} 0 ${geom.w + LEFT_BLEED} ${geom.h}`}
       preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"
+      style={{ left: -LEFT_BLEED }}
     >
       {fillEnabled ? (
         <defs>
@@ -215,10 +231,11 @@ export function RoadmapRoad({ containerRef, pathCount }: RoadmapRoadProps) {
             <stop offset="0" stopColor="#fff" />
             <stop offset="1" stopColor="#000" />
           </linearGradient>
-          {/* Reveal mask: opaque up to the feather band, then the ramp fades green out at `fillY`. */}
-          <mask id={maskId} maskUnits="userSpaceOnUse" x={0} y={0} width={geom.w} height={geom.h}>
-            <motion.rect x={0} y={0} width={geom.w} height={solidHeight} fill="#fff" />
-            <motion.rect x={0} y={featherY} width={geom.w} height={featherHeight} fill={`url(#${gradId})`} />
+          {/* Reveal mask: opaque up to the feather band, then the ramp fades green out at `fillY`.
+              Spans the full (left-bled) viewport so overhanging bulges stay inside the fill. */}
+          <mask id={maskId} maskUnits="userSpaceOnUse" x={-LEFT_BLEED} y={0} width={geom.w + LEFT_BLEED} height={geom.h}>
+            <motion.rect x={-LEFT_BLEED} y={0} width={geom.w + LEFT_BLEED} height={solidHeight} fill="#fff" />
+            <motion.rect x={-LEFT_BLEED} y={featherY} width={geom.w + LEFT_BLEED} height={featherHeight} fill={`url(#${gradId})`} />
           </mask>
         </defs>
       ) : null}
