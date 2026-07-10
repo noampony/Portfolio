@@ -192,7 +192,7 @@ function QuoteCardContent({ quote }: QuoteCardContentProps) {
       <span aria-hidden="true" className="experience-quote-mark experience-quote-mark--close">
         ❞
       </span>
-      <p className="experience-quote-author">— {quote.author}</p>
+      <p className="experience-quote-author">- {quote.author}</p>
     </>
   );
 }

@@ -217,7 +217,7 @@ export function MyImpact() {
             My Impact
           </h2>
           <p className="mt-4 text-body text-text-secondary sm:text-[1.0625rem]">
-            A selection of impact I made during my career — and the outcomes each one
+            A selection of impact I made during my career - and the outcomes each one
             drove.
           </p>
         </motion.div>

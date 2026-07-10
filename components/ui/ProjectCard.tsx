@@ -30,6 +30,8 @@ type ProjectCardProps = {
   headingId: string;
   /** Optional decorative background image (served from `/public`), shown at low opacity. */
   backgroundImage?: string;
+  /** Optional override for the background image opacity (front + back), for this card only. */
+  backgroundOpacity?: number;
 };
 
 /** Decorative flip glyph (two curved arrows) reinforcing the "flip me" affordance. */
@@ -43,7 +45,7 @@ function FlipGlyph() {
   );
 }
 
-export function ProjectCard({ project, headingId, backgroundImage }: ProjectCardProps) {
+export function ProjectCard({ project, headingId, backgroundImage, backgroundOpacity }: ProjectCardProps) {
   const { name, role, workplace, shortDescription, problemSolved, backendFocus, techStack } = project;
   const [flipped, setFlipped] = useState(false);
   const backId = useId();
@@ -56,7 +58,10 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
 
   // Decorative photo behind the card content, wired through the CSS `--card-bg` var.
   const style = backgroundImage
-    ? ({ "--card-bg": `url(${backgroundImage})` } as CSSProperties)
+    ? ({
+        "--card-bg": `url(${backgroundImage})`,
+        ...(backgroundOpacity !== undefined ? { "--card-bg-opacity": backgroundOpacity } : {}),
+      } as CSSProperties)
     : undefined;
 
   return (
@@ -69,7 +74,7 @@ export function ProjectCard({ project, headingId, backgroundImage }: ProjectCard
         className="project-flip-toggle"
       >
         <span className="sr-only">
-          {name} — {flipped ? "hide project details" : "show project details"}
+          {name} - {flipped ? "hide project details" : "show project details"}
         </span>
       </button>
 

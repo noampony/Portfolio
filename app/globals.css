@@ -41,8 +41,8 @@
   --destructive-foreground: var(--bg-base);
   --input: var(--border);
   --ring: var(--accent);
-  --font-sans-fallback: Inter, system-ui, -apple-system, sans-serif;
-  --font-mono-fallback: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans-fallback: Montserrat, system-ui, -apple-system, sans-serif;
+  --font-mono-fallback: Montserrat, system-ui, -apple-system, sans-serif;
   --type-display: 2.5rem;
   --leading-display: 1.1;
   --type-h1: 2rem;
@@ -534,7 +534,7 @@ html {
   line-height: var(--leading-small);
 }
 
-/* Same gentle "Education" tag look as the honour badge, but bold + underlined with an "open"
+/* Same gentle "Education" tag look as the honour badge, but bold with an "open"
    glyph so it reads as a clickable control that opens the certificate. */
 .about-cert-trigger {
   display: inline-flex;
@@ -558,9 +558,6 @@ html {
 
 .about-cert-trigger-label {
   white-space: nowrap;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: from-font;
 }
 
 .about-cert-trigger-icon {
@@ -1054,22 +1051,39 @@ html {
 }
 
 /* ===== Experience git tree (spec §8.3) =============================================
-   A git commit graph reading bottom → top: a main branch (left lane) running straight
-   up, a side branch that forks right at "Malware Analyst" and merges back into the
-   current role at the top. The glass card mirrors the About card system so the section
-   reads as part of the same site. Each row is a 2-column grid — a fixed-width graph
-   gutter (lane lines + fork/merge elbows + commit dot) on the left and the card on the
-   right — so the lanes stay aligned regardless of card height, with no JS measurement
-   and no layout shift. The per-row reveal is a reduced-motion-safe Framer Motion fade-
-   up in ExperienceGitNode.tsx; the decorative card hover/shimmer and current-dot pulse
-   below are gated behind `prefers-reduced-motion: no-preference` and use only
-   transform/opacity (§7.3/§14.8). */
+   A git commit graph reading bottom → top, mirroring the large-screen tree's shape: a
+   single centred stem starts just below the degree root's connector, rises through
+   the branch-point role ("Malware Analyst"), then forks sharply into two lanes — the
+   left lane carries the current role, the right lane the side roles — and both lane
+   tips rise past the last card's top edge, fading out over the same range (still
+   live). The glass card mirrors the About card system so the section reads as part of
+   the same site. Each row is a 2-column grid — a fixed-width graph gutter (lane lines
+   + fork elbows) on the left and the card on the right — so the lanes stay aligned
+   regardless of card height, with no JS measurement and no layout shift. The per-row
+   reveal is a reduced-motion-safe fade in ExperienceGitGraph.tsx; the decorative card
+   hover/shimmer below is gated behind `prefers-reduced-motion: no-preference` and uses
+   only transform/opacity (§7.3/§14.8). */
 
 .git-graph {
   --git-gutter: 2.5rem;
   --git-lane-main: 0.75rem;
   --git-lane-side: 1.85rem;
-  --git-branch-dx: calc(var(--git-lane-side) - var(--git-lane-main));
+  /* The single pre-fork stem is centred between the two lanes. */
+  --git-lane-stem: calc((var(--git-lane-main) + var(--git-lane-side)) / 2);
+  --git-fork-dx: calc(var(--git-lane-side) - var(--git-lane-stem));
+  /* Height of the fork zone (the mirrored elbows) above the branch-point dot. */
+  --git-fork-h: 1.25rem;
+  /* Corner radius of the fork elbows — small, so the split reads sharp. */
+  --git-fork-r: 0.25rem;
+  /* Height of the branch-tip fade-out above the last card (fits inside the wrapper's
+     2.5rem top margin, so the fading tips never touch the section intro above). */
+  --git-fade-h: 2.25rem;
+  /* Depth of the root line's fade-in below the root card, reaching exactly to the
+     section's true bottom edge. Mirrors Experience.tsx's `py-16` bottom padding on
+     the <section> — the tree wrapper and card add no padding/margin of their own
+     below the last row, so this is the whole remaining gap. Keep in sync if that
+     class changes. */
+  --git-section-pb: 4rem;
   --git-dot-top: 2.1rem;
   --git-line-w: 2px;
   --git-col-gap: 0.75rem;
@@ -1087,6 +1101,7 @@ html {
     --git-gutter: 3rem;
     --git-lane-main: 0.95rem;
     --git-lane-side: 2.35rem;
+    --git-fork-h: 1.4rem;
     --git-dot-top: 2.4rem;
     --git-col-gap: 1rem;
   }
@@ -1129,6 +1144,11 @@ html {
 
 .git-graph-row--side {
   --git-connector-start: var(--git-lane-side);
+}
+
+/* Pre-fork rows (root + branch point) — the connector leaves the centred stem. */
+.git-graph-row--stem {
+  --git-connector-start: var(--git-lane-stem);
 }
 
 .git-graph-cell {
@@ -1181,6 +1201,10 @@ html {
   left: calc(var(--git-lane-side) - var(--git-line-w) / 2);
 }
 
+.git-line--stem {
+  left: calc(var(--git-lane-stem) - var(--git-line-w) / 2);
+}
+
 .git-line--top {
   top: 0;
   height: var(--git-dot-top);
@@ -1189,6 +1213,26 @@ html {
 .git-line--bottom {
   top: var(--git-dot-top);
   bottom: 0;
+}
+
+/* Fork tail — the short straight stem segment between the branch-point dot and the
+   fork elbows above it ("the line goes up a bit, then splits"). */
+.git-line--fork-tail {
+  top: var(--git-fork-h);
+  height: calc(var(--git-dot-top) - var(--git-fork-h));
+}
+
+/* Root fade — the stem's visible start, bleeding past the root (degree) card's own
+   bottom edge through the section's entire bottom padding, so the line reads as
+   originating from the true bottom edge of the section rather than from partway down
+   the card. `top: 100%` anchors it to the row's bottom edge (paired with
+   `.git-line--bottom` above, which fills the card-height portion solid); the gradient
+   mirrors the top's fade-out, reversed, stretched over `--git-section-pb` so it just
+   reaches transparent exactly at the section's edge. */
+.git-line--root-fade {
+  top: 100%;
+  height: var(--git-section-pb);
+  background: linear-gradient(to bottom, var(--git-line), transparent);
 }
 
 /* Continuation line — drawn above the topmost (current) node to signal that the
@@ -1201,38 +1245,54 @@ html {
   background: linear-gradient(to bottom, transparent 0%, var(--git-line) 100%);
 }
 
-/* Fork / merge elbows — one bordered box per corner draws the quarter-curve between
-   the main lane and the side lane, so the two legs join by construction. The box's
-   right border is the side-lane riser and stays collinear with the straight
-   `.git-line--side` segments (both centred on `--git-lane-side`). */
+/* Solid full-row lane segment — the right lane running alongside the last card. */
+.git-line--full {
+  top: 0;
+  bottom: 0;
+}
+
+/* Fade heads — both branch tips rise past the last card's top edge (the row's top)
+   together and fade out over the exact same range, so the two lines start fading and
+   disappear at the same heights. Bleeds into the wrapper's top margin (no clipping —
+   the graph has no overflow constraint). */
+.git-line--fade-head {
+  top: calc(-1 * var(--git-fade-h));
+  height: var(--git-fade-h);
+  background: linear-gradient(to top, var(--git-line), transparent);
+}
+
+/* Fork elbows — mirrored bordered corners (small radius, so the split reads sharp)
+   in the branch-point row, sitting on top of the fork tail: the centred stem splits
+   left and right into the two lanes, echoing the large-screen tree's fork. Each box's
+   outer vertical border is collinear with its lane's straight `.git-line` segments,
+   and its inner edge sits on the stem, so the three legs join by construction. */
 .git-elbow {
   position: absolute;
-  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
-  width: calc(var(--git-branch-dx) + var(--git-line-w));
+  top: 0;
+  height: var(--git-fork-h);
+  width: calc(var(--git-fork-dx) + var(--git-line-w));
   /* A border can't be stroke-drawn without SVG, so the corner sketches in by fading from
-     transparent→bright over its sub-range (`--fill`, set by ExperienceGitNode). Default 1. */
+     transparent→bright over its sub-range (`--fill`). Default 1 = fully drawn. */
   --fill: 1;
   border: 0 solid
     color-mix(in srgb, var(--git-line) calc(var(--fill) * 100%), var(--git-line-dim));
   pointer-events: none;
 }
 
-/* Split — forks up-and-right out of the branch-point dot into the side lane above. */
-.git-elbow--split {
-  top: 0;
-  height: var(--git-dot-top);
-  border-right-width: var(--git-line-w);
+/* Left arm — runs from the stem, turning sharply up into the main lane. */
+.git-elbow--fork-left {
+  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
+  border-left-width: var(--git-line-w);
   border-bottom-width: var(--git-line-w);
-  border-bottom-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
+  border-bottom-left-radius: var(--git-fork-r);
 }
 
-/* Merge — the side lane curves down-and-left into the merge-point (current) dot. */
-.git-elbow--merge {
-  top: var(--git-dot-top);
-  bottom: 0;
+/* Right arm — runs from the stem, turning sharply up into the side lane. */
+.git-elbow--fork-right {
+  left: calc(var(--git-lane-stem) - var(--git-line-w) / 2);
   border-right-width: var(--git-line-w);
-  border-top-width: var(--git-line-w);
-  border-top-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
+  border-bottom-width: var(--git-line-w);
+  border-bottom-right-radius: var(--git-fork-r);
 }
 
 /* Commit dots were removed — the lane lines and fork/merge elbows meet the card edges
@@ -1575,58 +1635,11 @@ html {
   backdrop-filter: blur(2px);
 }
 
-/* Dean's List badge joined to its certificate trigger as one segmented pill, so it is
-   obvious which "Preview certificate" button belongs to the honour (vs the degree). */
+/* The Dean's-List honour: a single pill that is both the honour badge and its certificate
+   trigger (star + label + "open" glyph), kept distinct from the degree's own trigger. */
 .experience-honor-group {
   display: inline-flex;
   align-items: stretch;
-}
-
-.experience-honor-group .about-cert-trigger {
-  border-radius: 9999px; /* match the badge so the joined pill's corners agree */
-}
-
-/* Corner-zeroing comes after the radius normalisation above (equal specificity). */
-.experience-honor-group > :not(:first-child) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left-width: 0;
-}
-
-.experience-honor-group > :not(:last-child) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-/* Keep the joined trigger flush on hover (the lift would split the pill). */
-@media (prefers-reduced-motion: no-preference) {
-  .experience-honor-group .about-cert-trigger:hover {
-    transform: none;
-  }
-}
-
-/* Narrow screens: the side-by-side pill (~390px) no longer fits the card, so stack the
-   badge on top of its trigger — still one joined pill, now segmented vertically. */
-@media (max-width: 639px) {
-  .experience-honor-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .experience-honor-group > :not(:first-child) {
-    border-radius: 0 0 9999px 9999px;
-    border-left-width: 1px;
-    border-top-width: 0;
-  }
-
-  .experience-honor-group > :not(:last-child) {
-    border-radius: 9999px 9999px 0 0;
-  }
-
-  .experience-honor-group .about-education-honor-badge,
-  .experience-honor-group .about-cert-trigger {
-    justify-content: center;
-  }
 }
 
 /* Hover (desktop): brighten the compact card before the overlay grows in. */
@@ -1782,8 +1795,14 @@ html {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  opacity: 0.14;
+  opacity: var(--card-bg-opacity, 0.14);
   pointer-events: none;
+}
+
+/* Front face shows its photo more prominently than the back. `--card-bg-opacity` lets an
+   individual card (via inline style) override both faces' opacity at once. */
+.project-flip-front .project-card-bg {
+  opacity: var(--card-bg-opacity, 0.32);
 }
 
 .project-flip-front {
@@ -1986,98 +2005,6 @@ html {
 
 }
 
-/* "View All Projects" card — a blurred teaser of the (future) full Projects page. That page
-   does not exist yet (Phase 15 / Task 15.3), so the control is a non-navigating, accessibly
-   labelled placeholder — never a dead link (§8.4, AGENTS "no broken links"). */
-.project-cta-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  min-height: 11rem;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, white 14%, var(--accent) 16%);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.08), transparent 32%),
-    linear-gradient(145deg, rgb(255 255 255 / 0.06), rgb(45 212 191 / 0.028) 46%, rgb(59 130 246 / 0.024)),
-    rgb(11 15 20 / 0.14);
-  box-shadow:
-    0 1.25rem 3.5rem rgb(0 0 0 / 0.2),
-    inset 0 1px 0 rgb(255 255 255 / 0.14);
-  backdrop-filter: blur(22px) saturate(170%);
-  text-align: center;
-}
-
-/* Decorative blurred "stack of more projects" behind the CTA — purely atmospheric. */
-.project-cta-blur {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  padding: 1.25rem;
-  filter: blur(5px);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.project-cta-blur span {
-  display: block;
-  height: 0.7rem;
-  border-radius: 0.4rem;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--accent) 30%, var(--bg-surface-raised)),
-    var(--bg-surface-raised)
-  );
-}
-
-.project-cta-blur span:nth-child(odd) {
-  width: 78%;
-}
-
-.project-cta-blur span:nth-child(even) {
-  width: 52%;
-}
-
-.project-cta-overlay {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-}
-
-.project-cta-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
-  background: color-mix(in srgb, var(--accent) 18%, var(--bg-surface));
-  padding: 0.6rem 1.1rem;
-  font-size: var(--type-body);
-  font-weight: 600;
-  color: var(--text-primary);
-  cursor: not-allowed;
-}
-
-.project-cta-button svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-.project-cta-caption {
-  margin: 0;
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: var(--type-small);
-  color: var(--text-muted);
-}
-
 /* ===== Courses — learning roadmap (spec §8.5) ========================================
    A vertical "journey": a glowing accent spine links the ordered paths top-to-bottom,
    each path marked by a numbered node, then its header + a scroll-snap carousel of compact
@@ -2103,14 +2030,16 @@ html {
   position: relative;
 }
 
-/* Winding "road" overlay drawn through the nodes (desktop only — see RoadmapRoad). Hidden
-   below the desktop breakpoint, where the straight CSS spine (::before) is used instead. */
+/* Winding "road" overlay drawn through the nodes at every width (see RoadmapRoad). On narrow
+   screens it runs down the left gutter, thinner and with gentler bulges. The SVG viewport is
+   bled leftwards (inline `left` offset from the component) so bulges that overhang the list's
+   left edge stay inside the box — the fade mask below clips anything outside it, so drawing
+   must never overflow. */
 .roadmap-road {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
-  display: none;
   pointer-events: none;
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 16%, transparent));
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
@@ -2152,6 +2081,23 @@ html {
   stroke: var(--roadmap-fill-green);
 }
 
+/* Narrow screens: the road runs in the left gutter, so slim it down to fit beside the
+   content column (the gentler curve geometry comes from RoadmapRoad's narrow bulge). */
+@media (max-width: 1023.98px) {
+  .roadmap-road-edge {
+    stroke-width: 30;
+  }
+
+  .roadmap-road-surface {
+    stroke-width: 24;
+  }
+
+  .roadmap-road-lane {
+    stroke-width: 2.5;
+    stroke-dasharray: 10 12;
+  }
+}
+
 /* Vertical stack of paths; hosts the spine. The spine x sits at the node centre so the
    line threads through every node. */
 .roadmap-paths {
@@ -2165,7 +2111,9 @@ html {
 
 /* The spine: an accent line filled top→down over a dimmer track. `--roadmap-fill` is the
    drawn fraction (default 100% = fully drawn); a scroll-driven animation sketches it in where
-   supported (see below). Painted in ::before so the opaque nodes sit on top and "cut" it. */
+   supported (see below). Painted in ::before so the opaque nodes sit on top and "cut" it.
+   Now a no-JS fallback only — once the measured road SVG renders it takes over at every
+   width, so the spine is hidden (see the :has() rule below). */
 @property --roadmap-fill {
   syntax: "<percentage>";
   inherits: false;
@@ -2189,6 +2137,12 @@ html {
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 1.5rem, #000 calc(100% - 1.5rem), transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0, #000 1.5rem, #000 calc(100% - 1.5rem), transparent 100%);
   pointer-events: none;
+}
+
+/* The winding road replaces the straight spine wherever it has rendered (it weaves around
+   the spine's x, so both showing at once would read as a stray line through the curves). */
+.roadmap-paths-wrap:has(.roadmap-road) .roadmap-paths::before {
+  display: none;
 }
 
 @keyframes roadmap-spine-fill {
@@ -2274,9 +2228,9 @@ html {
   initial-value: 0;
 }
 
-/* Gradual emerald fill of the node ring + connector, driven by `--road-fill` (desktop only, where
-   the winding road runs; gated on reduced motion so the fill never appears when it can't animate). */
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+/* Gradual emerald fill of the node ring + connector, driven by `--road-fill` at every width the
+   winding road runs (gated on reduced motion so the fill never appears when it can't animate). */
+@media (prefers-reduced-motion: no-preference) {
   /* Ring via the gradient-border trick: a dark centre (padding-box) keeps cutting the road, while
      the border-box gradient hard-stops at `--road-fill` so emerald wipes top→down as the front
      crosses the node — at the same speed as the road itself. */
@@ -2455,11 +2409,12 @@ html {
   color: var(--text-primary);
 }
 
-/* Tighter spine gutter / node on small screens. */
+/* Tighter node on small screens; the gutter keeps just enough room for the road's outward
+   bulge (node centre + narrow bulge + road half-width) so curves never touch the content. */
 @media (max-width: 640px) {
   .roadmap-paths {
     --roadmap-node-size: 1.7rem;
-    --roadmap-gutter: 2.5rem;
+    --roadmap-gutter: 2.75rem;
   }
 }
 
@@ -2483,11 +2438,8 @@ html {
     margin-top: 0;
   }
 
-  /* The curvy road overlay replaces the straight centre line on desktop. */
-  .roadmap-road {
-    display: block;
-  }
-
+  /* No straight-spine fallback on desktop even without JS — the nodes move to the centre
+     column here, so the left-pinned spine would read as a stray line. */
   .roadmap-paths::before {
     display: none;
   }

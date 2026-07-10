@@ -155,6 +155,7 @@ export function ExperienceGitGraph({ graph }: { graph: ExperienceGraph }) {
               node={node}
               index={index}
               total={total}
+              branched={graph.branched}
               expansion={expansion}
               onOpenCertificate={setActiveCertificate}
             />

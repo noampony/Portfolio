@@ -1,6 +1,6 @@
 import { FloatingCode } from "@/components/sections/FloatingCode";
 import { HeroContent } from "@/components/sections/HeroContent";
-import { dmSans } from "@/app/fonts";
+import { heroFont } from "@/app/fonts";
 import { profile } from "@/lib/content/data/profile";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ export function Hero() {
     <section
       id="home"
       aria-labelledby="hero-heading"
-      className={cn("relative isolate w-full overflow-x-hidden font-hero", dmSans.variable)}
+      className={cn("relative isolate w-full overflow-x-hidden font-hero", heroFont.variable)}
     >
       {/* Atmospheric backdrop — tokens only (§6.3) + decorative floating code (§8.1). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">

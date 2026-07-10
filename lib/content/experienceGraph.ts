@@ -2,16 +2,17 @@
  * Experience git-tree model (spec §8.3).
  *
  * Shapes the Experience section as a git commit graph that reads bottom → top:
- * a main branch (left lane) running straight up, a side branch that forks right at
- * the "Malware Analyst" role and merges back into the current role. The root of the
- * tree is the B.Sc. degree, sourced from the public About section (`about.education`),
- * not from the experience data.
+ * a stem rising from the root that forks at the "Malware Analyst" role into two
+ * parallel branches — the current role on one branch, the side roles on the other
+ * (the small and large layouts both draw this same shape). The root of the tree is
+ * the B.Sc. degree, sourced from the public About section (`about.education`), not
+ * from the experience data.
  *
  * Deliberate chronology note: the structure is owner-specified, not a literal
  * timeline. The current role (Backend Software Developer – Cloud) began 2022-10, yet
- * the side-branch roles (Private Tutor 2022, Team Leader 2024–25) merge into it at the
- * top — the merge is a visual statement about the career path, not a timestamp. Do not
- * "fix" this into strict date order.
+ * the side-branch roles (Private Tutor 2022, Team Leader 2024–25) sit before it in
+ * the top-down node order — the branch layout is a visual statement about the career
+ * path, not a timestamp. Do not "fix" this into strict date order.
  *
  * This module is pure and server-safe (no React, no `Date`). The server component
  * (Experience.tsx) does confidentiality filtering and build-time duration resolution
@@ -42,17 +43,15 @@ export type GraphNode = {
   lane: GraphLane;
   isRoot: boolean;
   isCurrent: boolean;
-  /** The dot where the side branch forks off (drawn above this node). */
+  /** The dot above which the stem forks into the two branches. */
   branchPoint: boolean;
-  /** The dot where the side branch merges back (drawn below this node). */
-  mergePoint: boolean;
   card: GraphCard;
 };
 
 export type ExperienceGraph = {
   /** Ordered top → bottom (DOM + visual + reading order). */
   nodes: GraphNode[];
-  /** False when the expected fork/merge couldn't be formed → linear fallback. */
+  /** False when the expected fork couldn't be formed → linear fallback. */
   branched: boolean;
 };
 
@@ -69,7 +68,7 @@ function isOngoing(experience: Experience): boolean {
   return experience.endDate === "Present";
 }
 
-type NodeOverrides = Partial<Pick<GraphNode, "branchPoint" | "mergePoint">>;
+type NodeOverrides = Partial<Pick<GraphNode, "branchPoint">>;
 
 function experienceNode(
   resolved: ResolvedExperience,
@@ -82,7 +81,6 @@ function experienceNode(
     isRoot: false,
     isCurrent: isOngoing(resolved.experience),
     branchPoint: overrides.branchPoint ?? false,
-    mergePoint: overrides.mergePoint ?? false,
     card: { kind: "experience", experience: resolved.experience, duration: resolved.duration },
   };
 }
@@ -94,7 +92,6 @@ function rootNode(education: AboutEducation): GraphNode {
     isRoot: true,
     isCurrent: false,
     branchPoint: false,
-    mergePoint: false,
     card: { kind: "education", education },
   };
 }
@@ -106,7 +103,7 @@ function rootNode(education: AboutEducation): GraphNode {
  * Roles are matched by predicate, never by array index, so the graph is robust to
  * the input order. If confidentiality filtering removes the branch point, the current
  * role, or every side-branch member, the graph degrades gracefully to a single
- * straight main lane (root at the bottom) — no dangling fork or merge.
+ * straight main lane (root at the bottom) — no dangling fork.
  */
 export function buildExperienceGraph(
   resolved: ResolvedExperience[],
@@ -116,7 +113,7 @@ export function buildExperienceGraph(
   const branchPoint = resolved.find((entry) => entry.experience.role === BRANCH_POINT_ROLE);
   const sideMembers = resolved.filter((entry) => entry !== current && entry !== branchPoint);
 
-  // Fallback: can't form the fork/merge → straight spine in the given order
+  // Fallback: can't form the fork → straight spine in the given order
   // (the server passes most-recent-first), with the degree as the root.
   if (!current || !branchPoint || sideMembers.length === 0) {
     const spine = resolved.map((entry) => experienceNode(entry, "main"));
@@ -129,7 +126,7 @@ export function buildExperienceGraph(
   );
 
   const nodes: GraphNode[] = [
-    experienceNode(current, "main", { mergePoint: true }),
+    experienceNode(current, "main"),
     ...sideTopDown.map((entry) => experienceNode(entry, "side")),
     experienceNode(branchPoint, "main", { branchPoint: true }),
     rootNode(education),

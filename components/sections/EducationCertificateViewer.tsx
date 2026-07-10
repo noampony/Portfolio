@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type MouseEvent } from "react";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 
 import type { EducationCertificateRef } from "@/lib/content/types";
 
@@ -73,11 +73,17 @@ function CertificateOpenIcon() {
 type EducationCertificateTriggerProps = {
   certificate: EducationCertificateRef;
   onOpen: (certificate: EducationCertificateRef) => void;
+  /** Visible label; defaults to "Preview certificate". */
+  label?: ReactNode;
+  /** Leading glyph; defaults to the certificate document icon. */
+  leadingIcon?: ReactNode;
 };
 
 export function EducationCertificateTrigger({
   certificate,
   onOpen,
+  label = "Preview certificate",
+  leadingIcon,
 }: EducationCertificateTriggerProps) {
   const handleClick = () => {
     // On narrow mobile screens, open the PDF directly — iframes can't render PDFs inline.
@@ -96,8 +102,8 @@ export function EducationCertificateTrigger({
       title={certificate.viewLabel}
       onClick={handleClick}
     >
-      <CertificateDocumentIcon />
-      <span className="about-cert-trigger-label">Preview certificate</span>
+      {leadingIcon ?? <CertificateDocumentIcon />}
+      <span className="about-cert-trigger-label">{label}</span>
       <CertificateOpenIcon />
     </button>
   );

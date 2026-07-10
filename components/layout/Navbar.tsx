@@ -124,7 +124,7 @@ export function Navbar() {
         <Link
           href="/#home"
           onClick={(event) => handleSectionClick(event, "home", selectSection)}
-          aria-label="Noam Pony — home"
+          aria-label="Noam Pony - home"
           className="inline-flex rounded-sm text-text-primary outline-none transition-colors hover:text-accent focus-visible:ring-2 focus-visible:ring-accent"
         >
           <Logo />

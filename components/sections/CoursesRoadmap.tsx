@@ -103,7 +103,7 @@ export function CoursesRoadmap() {
             Learning Roadmap
           </h2>
           <p className="mt-4 max-w-measure text-body text-text-secondary">
-            A deliberate progression — grouped into focused paths, from language depth and
+            A deliberate progression - grouped into focused paths, from language depth and
             backend systems to architecture, security, and AI-augmented development.
           </p>
         </motion.div>

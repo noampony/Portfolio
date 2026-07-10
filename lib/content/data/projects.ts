@@ -23,7 +23,7 @@ import { validateProjectList } from "../validate";
 const projectData = [
   {
     // §8.4 Project 1 — owner-approved; scale stated generically (not "2 Billion Events").
-    name: "Microsoft & Google Events",
+    name: "Microsoft & Google Events Streaming",
     role: "Project Leader",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
@@ -83,7 +83,19 @@ const projectData = [
     confidentialityReviewed: true,
   },
   {
-    // §8.4 Project 4 — volunteer; owner-approved content from planning doc.
+    // §8.4 Project 4 — owner-approved; Check Point IAM migration, public-safe wording.
+    name: "OpenSearch Fine-Grained Access Control Migration",
+    role: "Project Leader (Developer)",
+    workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
+    shortDescription:
+      "Led the IAM remediation and request-signing rollout for migrating a shared internal search platform to AWS Fine-Grained Access Control, with zero downtime to live services.",
+    problemSolved:
+      "A shared search cluster needed to move from open access to strict, identity-based access control without disrupting production traffic.",
+    techStack: ["AWS IAM", "AWS OpenSearch", "Python", "AWS Firehose"],
+    confidentialityReviewed: true,
+  },
+  {
+    // §8.4 Project 5 — volunteer; owner-approved content from planning doc.
     // `backendFocus` omitted (not applicable for this project).
     name: "At-Risk Teenagers Monitoring System",
     role: "Team Leader",
@@ -98,11 +110,11 @@ const projectData = [
     confidentialityReviewed: true,
   },
   {
-    // §8.4 Project 5 — personal; this very website. No workplace, fully public content.
+    // §8.4 Project 6 — personal; this very website. No workplace, fully public content.
     name: "Developer Portfolio Website",
     role: "Solo Developer",
     shortDescription:
-      "The very site you are viewing — a personal portfolio and online CV with a custom dark developer aesthetic, content-driven sections, and subtle scroll-driven animations.",
+      "The very site you are viewing - a personal portfolio and online CV with a custom dark developer aesthetic, content-driven sections, and subtle scroll-driven animations.",
     problemSolved:
       "Needed a single, technically-mature home for my CV, experience, projects, and courses that reflects real engineering craft rather than a generic template.",
     solution:
@@ -116,7 +128,7 @@ const projectData = [
       "Vercel",
     ],
     whyImportant:
-      "As a backend developer, designing and building the entire frontend end-to-end — design system, animations, accessibility, and performance — stretched me well beyond my comfort zone and demonstrates full-stack range.",
+      "As a backend developer, designing and building the entire frontend end-to-end - design system, animations, accessibility, and performance - stretched me well beyond my comfort zone and demonstrates full-stack range.",
     confidentialityReviewed: true,
   },
 ] as const;
