@@ -1,44 +1,46 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
-import { NAV_ITEMS, type NavItem } from "@/lib/navigation";
+import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
+import { SECTION_NAV_ITEMS, RESUME_NAV_LABEL } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 /**
  * Accessible mobile navigation menu (spec §5.5, §20.2–§20.3).
  *
- * Rendered only below the `md` breakpoint (the desktop navbar keeps its inline
- * list above it). Driven by the same {@link NAV_ITEMS} config as the desktop
- * navbar — the single source of truth lives in lib/navigation.ts, so disabled
- * items (e.g. Resume, §5.7) and "targets must exist" stay consistent across both.
- *
- * Visual style is **TBD** (§5.5); this uses a conventional, non-branded
- * slide-down panel anchored under the header rather than inventing flourishes.
+ * Rendered only below the `lg` breakpoint (the desktop navbar keeps its inline
+ * list above it). Driven by the same {@link SECTION_NAV_ITEMS} config as the
+ * desktop navbar, and shares its scroll-spy active state and resume-modal trigger
+ * (passed down from {@link Navbar}) so both stay in lockstep.
  *
  * Behaviour (spec §5.5 + §20.2–§20.3):
  *  - Toggles open/closed via pointer and keyboard.
- *  - Closes when a nav item is selected, on outside click, and on Escape.
+ *  - Closes when an item is selected, on outside click, and on Escape.
  *  - Moves focus into the panel on open and back to the toggle on Escape; focus
  *    is **not** trapped, so Tab can still leave the menu (§20.2).
  *  - The panel is only in the DOM while open, so it never permanently blocks
  *    primary content.
  */
 
-/**
- * Route-based active match (mirrors the desktop navbar). Only real routes can be
- * "active"; in-page anchors would need scroll-spy, which is out of scope here.
- */
-function isActive(item: NavItem, pathname: string): boolean {
-  if (item.disabled || item.href === null || item.href.startsWith("#")) {
-    return false;
-  }
-  return item.href === pathname;
-}
+type MobileNavProps = {
+  className?: string;
+  /** Section id currently in view (scroll-spy), or `null`. */
+  activeId: string | null;
+  /** Called when a section link is chosen (updates scroll-spy immediately). */
+  onSelectSection: (id: string) => void;
+  /** Opens the shared resume preview modal. */
+  onOpenResume: () => void;
+  /** Whether the resume modal is open (drives the Resume item's `aria-expanded`). */
+  resumeOpen: boolean;
+};
 
-export function MobileNav({ className }: { className?: string }) {
-  const pathname = usePathname();
+export function MobileNav({
+  className,
+  activeId,
+  onSelectSection,
+  onOpenResume,
+  resumeOpen,
+}: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -105,55 +107,83 @@ export function MobileNav({ className }: { className?: string }) {
           className="absolute right-0 top-full z-50 mt-2 w-56 rounded-md border border-border bg-bg-surface-raised p-2 shadow-lg outline-none"
         >
           <ul className="flex flex-col">
-            {NAV_ITEMS.map((item) => {
-              if (item.disabled || item.href === null) {
-                // TBD target (e.g. Resume, §5.7): present per §5.1 but never a
-                // dead link — non-interactive, muted, with an SR-only status.
-                return (
-                  <li key={item.id}>
-                    <span
-                      aria-disabled="true"
-                      title={
-                        item.disabledReason
-                          ? `${item.label} — ${item.disabledReason}`
-                          : undefined
-                      }
-                      className="block cursor-not-allowed rounded-sm px-3 py-2 text-body text-text-muted"
-                    >
-                      {item.label}
-                      {item.disabledReason ? (
-                        <span className="sr-only"> ({item.disabledReason})</span>
-                      ) : null}
-                    </span>
-                  </li>
-                );
-              }
-
-              const active = isActive(item, pathname);
-
+            {SECTION_NAV_ITEMS.map((item) => {
+              const active = item.id === activeId;
               return (
                 <li key={item.id}>
                   <Link
                     href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    onClick={close}
+                    aria-current={active ? "true" : undefined}
+                    onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+                      // Scroll imperatively (see useActiveSection's doc comment)
+                      // instead of relying on the link's native hash navigation,
+                      // which no-ops when the hash is already the clicked target.
+                      // Modified clicks (open in new tab, etc.) pass through untouched.
+                      if (
+                        event.defaultPrevented ||
+                        event.metaKey ||
+                        event.ctrlKey ||
+                        event.shiftKey ||
+                        event.altKey
+                      ) {
+                        return;
+                      }
+                      event.preventDefault();
+                      onSelectSection(item.id);
+                      close();
+                    }}
                     className={cn(
                       "block rounded-md px-3 py-2 text-body text-text-secondary outline-none transition-colors hover:text-accent focus-visible:ring-2 focus-visible:ring-accent",
                       active && "nav-spotlight font-medium text-accent",
                     )}
-                    {...(item.external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
                   >
                     {item.label}
                   </Link>
                 </li>
               );
             })}
+            <li className="mt-1 border-t border-border pt-2">
+              <button
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded={resumeOpen}
+                onClick={() => {
+                  onOpenResume();
+                  close();
+                }}
+                className="nav-resume-cta flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-body font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {RESUME_NAV_LABEL}
+                <ResumeIcon />
+              </button>
+            </li>
           </ul>
         </div>
       ) : null}
     </div>
+  );
+}
+
+/** Decorative résumé glyph; the button label carries the accessible name. */
+function ResumeIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6" />
+      <line x1="8" y1="13" x2="16" y2="13" />
+      <line x1="8" y1="17" x2="13" y2="17" />
+    </svg>
   );
 }
 

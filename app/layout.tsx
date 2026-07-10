@@ -4,6 +4,8 @@ import { geistSans, jetBrainsMono } from "./fonts";
 import { SkipLink, MAIN_CONTENT_ID } from "@/components/layout/SkipLink";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ScrollToTopButton } from "@/components/layout/ScrollToTopButton";
+import { ResumeViewerProvider } from "@/components/providers/ResumeViewerProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,11 +20,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="flex min-h-screen flex-col">
         {/* First focusable element: lets keyboard users bypass the header (spec §20.6). */}
         <SkipLink />
-        <Navbar />
-        <main id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 outline-none">
-          {children}
-        </main>
-        <Footer />
+        <ResumeViewerProvider>
+          <Navbar />
+          <main id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 outline-none">
+            {children}
+          </main>
+          <Footer />
+          <ScrollToTopButton />
+        </ResumeViewerProvider>
       </body>
     </html>
   );

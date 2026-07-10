@@ -21,8 +21,8 @@ import { learningPaths } from "@/lib/content/data/learning-paths";
  * safe via `useReducedMotion()` (content renders in place). The `<noscript>` block restores
  * reveal opacity so the section is fully readable with JS disabled.
  *
- * The section keeps the `#courses` anchor (spec §5.3). Per §5.1 the navbar's Courses item
- * targets the future `/courses` page, so `lib/navigation.ts` is intentionally unchanged.
+ * The section keeps the `#courses` anchor (spec §5.3), which the primary navbar links to
+ * and highlights via scroll-spy (see `lib/navigation.ts`).
  */
 
 const easeOut = [0.22, 1, 0.36, 1] as const;

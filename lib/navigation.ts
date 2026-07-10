@@ -1,71 +1,45 @@
 /**
- * Single source of truth for the site's primary navigation (spec §5.1–§5.4, §5.7).
+ * Single source of truth for the site's primary navigation (spec §5.1–§5.4).
  *
- * The navbar is fully data-driven from {@link NAV_ITEMS}. The navbar links to the
- * site's top-level destinations (dedicated pages), not to homepage sections —
- * keeping the nav unambiguous once the Projects and Courses pages exist. To honor
- * the "no broken links" rule (tasks/README Dependency Rule + Global Definition of
- * Done), items whose target pages don't exist yet ship as `disabled` placeholders
- * (non-interactive, accessibly labelled) rather than dead/`#` links — and are
- * enabled by later tasks as their targets ship:
+ * The navbar is a single-page section nav: each item is an in-page anchor to a
+ * homepage section, and clicking it smooth-scrolls there. The item matching the
+ * section currently in view is highlighted via scroll-spy (see
+ * `lib/hooks/useActiveSection.ts`). `id` mirrors the section wrapper's DOM `id`
+ * (e.g. `#experience`), so the nav config and the scroll-spy targets can never
+ * drift apart.
  *
- *   - `Home`      → `/` (the homepage). A real route so it highlights as the active
- *                   page and lets users return home from the Projects/Courses pages.
- *   - `Projects`  → dedicated `/projects` page (Phase 15). Disabled placeholder until then.
- *   - `Courses`   → dedicated `/courses` page (Phase 16). Disabled placeholder until then.
- *   - `Resume`    → behavior is **TBD** (§5.7); wired in Task 10.2. §5.1 requires the item
- *                   in the navbar, so it ships now as a `disabled` placeholder with an
- *                   accessible label — never as a dead/`#` target. Task 10.2 flips
- *                   `disabled` off and sets the resolved `href`.
+ * There is intentionally no "Home" item: the logo already scrolls to the top on
+ * click, and the floating {@link ScrollToTopButton} (mounted in the root layout)
+ * covers the "jump back up" case from anywhere on the page — a dedicated nav
+ * item would just duplicate both.
  *
- * Active-state highlighting (§5.4) is route-based only here. Scroll-spy section
- * highlighting is explicitly out of scope for this task (a later task may add it).
+ * The "Resume" item is intentionally NOT in this list: it is an action (it opens
+ * the resume preview modal), not a navigation target, so both navbars render it
+ * separately and wire it to {@link RESUME_NAV_LABEL} + the resume-viewer context.
  */
 
-export type NavItem = {
-  /** Stable React key / identifier. */
+export type SectionNavItem = {
+  /** Matches the target section's DOM `id`; also used as the React key. */
   id: string;
   /** Visible label and accessible name. */
   label: string;
-  /**
-   * Navigation target. A route (`/`) or in-page anchor (`#impact`). `null` when
-   * the item has no destination yet (must also be `disabled`) so we never emit
-   * a dead link.
-   */
-  href: string | null;
-  /**
-   * When `true`, the item renders as a non-interactive, accessibly-labelled
-   * placeholder instead of a link — used for items whose behavior is still TBD
-   * (currently only Resume, §5.7). Never combine an enabled item with `href: null`.
-   */
-  disabled?: boolean;
-  /** Short status note announced for disabled items (e.g. "coming soon"). */
-  disabledReason?: string;
-  /** External destination → opens in a new tab with `rel="noopener noreferrer"`. */
-  external?: boolean;
+  /** In-page anchor (`#${id}`). */
+  href: string;
 };
 
-export const NAV_ITEMS: NavItem[] = [
-  { id: "home", label: "Home", href: "/" },
-  {
-    id: "projects",
-    label: "Projects",
-    href: null,
-    disabled: true,
-    disabledReason: "coming soon",
-  },
-  {
-    id: "courses",
-    label: "Courses",
-    href: null,
-    disabled: true,
-    disabledReason: "coming soon",
-  },
-  {
-    id: "resume",
-    label: "Resume",
-    href: null,
-    disabled: true,
-    disabledReason: "coming soon",
-  },
+export const SECTION_NAV_ITEMS: SectionNavItem[] = [
+  { id: "experience", label: "Experience", href: "#experience" },
+  { id: "impact", label: "Impact", href: "#impact" },
+  { id: "projects", label: "Projects", href: "#projects" },
+  { id: "courses", label: "Courses", href: "#courses" },
+  { id: "skills", label: "Skills", href: "#skills" },
+  { id: "contact", label: "Contact", href: "#contact" },
 ];
+
+/** Ordered section ids for scroll-spy (stable reference for the hook's deps). */
+export const SECTION_IDS: readonly string[] = SECTION_NAV_ITEMS.map(
+  (item) => item.id,
+);
+
+/** Label for the Resume action item (opens the resume preview modal). */
+export const RESUME_NAV_LABEL = "Resume";

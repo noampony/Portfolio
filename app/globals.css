@@ -74,9 +74,11 @@ html {
   min-height: 100%;
   background: var(--bg-base);
   font-family: var(--font-sans), var(--font-sans-fallback);
-  /* Offset in-page anchor jumps so the sticky navbar never covers a section
-     heading (spec §5.2). Section anchors are added by later tasks. */
-  scroll-padding-top: 4rem;
+  /* Offset in-page anchor jumps so a scrolled-to section's top lands flush
+     against the sticky navbar's bottom edge (spec §5.2). `--navbar-height` is
+     the header's real measured height (Navbar.tsx); the 4.5rem fallback only
+     applies before that first measurement (or if JS is disabled). */
+  scroll-padding-top: var(--navbar-height, 4.5rem);
 }
 
 /* Smooth in-page anchor scrolling, disabled under reduced-motion (spec §7.3). */
@@ -231,14 +233,76 @@ html {
   opacity: 1;
 }
 
-/* Active-page "spotlight" for the navbar (spec §5.4): a soft accent-tinted pill
-   with an inner hairline and an outer glow, so the current page reads as lit up
-   against the dark surface. Pairs with `text-accent` set on the active link. */
+/* Active-section spotlight for the mobile nav dropdown (spec §5.4): a soft
+   accent-tinted pill with an inner hairline and an outer glow, so the current
+   section reads as lit up. Pairs with `text-accent` on the active item. */
 .nav-spotlight {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--accent) 32%, transparent),
     0 0 20px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* Active-section underline for the desktop navbar (spec §5.4): a slim accent bar
+   with a soft glow that slides between items as scroll-spy changes the active
+   section (the slide is a Framer Motion shared-layout animation on the element). */
+.nav-underline {
+  background: var(--accent);
+  box-shadow: 0 0 12px -2px color-mix(in srgb, var(--accent) 75%, transparent);
+}
+
+/* Navbar "Resume" action — set apart from the plain section links by accent
+   colour: an accent-tinted outline button that fills to solid accent on hover
+   and focus. Explicit color-mix values (not Tailwind `/opacity`) so the alpha
+   actually applies to the CSS-variable accent colour, matching how the rest of
+   the site tints the accent. */
+.nav-resume-cta {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  box-shadow: 0 0 18px -8px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+
+.nav-resume-cta:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 8px 22px -10px color-mix(in srgb, var(--accent) 90%, transparent);
+}
+
+/* Floating "back to top" button: a glass surface over the page (not the accent
+   fill the Resume CTA uses, so it doesn't visually compete as another primary
+   action) with a soft accent-tinted border and drop shadow to lift it off the
+   content behind it. Explicit color-mix (not Tailwind `/opacity`) for the same
+   reason as `.nav-resume-cta` above. */
+.scroll-to-top-button {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: color-mix(in srgb, var(--bg-surface-raised) 88%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 12px 28px -12px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+}
+
+.scroll-to-top-button:hover {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+}
+
+/* Logo emblem: a subtle accent glow that lifts slightly when the brand link is
+   hovered. Gated behind `no-preference` so reduced-motion users get no movement. */
+.site-logo-emblem {
+  display: inline-flex;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 22%, transparent));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .site-logo-emblem {
+    transition: transform 200ms ease;
+  }
+
+  .group\/logo:hover .site-logo-emblem {
+    transform: translateY(-1px) scale(1.04);
+  }
 }
 
 .about-graphs-layer {

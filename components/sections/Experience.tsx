@@ -17,11 +17,9 @@ import type { Experience as ExperienceModel } from "@/lib/content/types";
  * unreviewed work entry can never reach the DOM regardless of ordering. The graph
  * builder degrades gracefully to a straight main lane if a branch node is gated out.
  *
- * The section exposes the `#experience` anchor (spec §5.3). Per spec §5.1 the
- * primary navbar carries only Home/Projects/Courses/Resume — homepage sections
- * are anchor targets, not navbar items — so `lib/navigation.ts` is intentionally
- * left unchanged here, consistent with how the My Impact section (`#impact`) was
- * wired in Phase 5.
+ * The section exposes the `#experience` anchor (spec §5.3), which the primary
+ * navbar links to and highlights via scroll-spy (see `lib/navigation.ts` and
+ * `lib/hooks/useActiveSection.ts`).
  *
  * This stays a server component so the graph content is rendered into the initial
  * HTML (available without client JS, good for SEO/AT) and the ongoing role's
