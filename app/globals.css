@@ -534,7 +534,7 @@ html {
   line-height: var(--leading-small);
 }
 
-/* Same gentle "Education" tag look as the honour badge, but bold + underlined with an "open"
+/* Same gentle "Education" tag look as the honour badge, but bold with an "open"
    glyph so it reads as a clickable control that opens the certificate. */
 .about-cert-trigger {
   display: inline-flex;
@@ -558,9 +558,6 @@ html {
 
 .about-cert-trigger-label {
   white-space: nowrap;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: from-font;
 }
 
 .about-cert-trigger-icon {
@@ -1575,58 +1572,11 @@ html {
   backdrop-filter: blur(2px);
 }
 
-/* Dean's List badge joined to its certificate trigger as one segmented pill, so it is
-   obvious which "Preview certificate" button belongs to the honour (vs the degree). */
+/* The Dean's-List honour: a single pill that is both the honour badge and its certificate
+   trigger (star + label + "open" glyph), kept distinct from the degree's own trigger. */
 .experience-honor-group {
   display: inline-flex;
   align-items: stretch;
-}
-
-.experience-honor-group .about-cert-trigger {
-  border-radius: 9999px; /* match the badge so the joined pill's corners agree */
-}
-
-/* Corner-zeroing comes after the radius normalisation above (equal specificity). */
-.experience-honor-group > :not(:first-child) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left-width: 0;
-}
-
-.experience-honor-group > :not(:last-child) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-/* Keep the joined trigger flush on hover (the lift would split the pill). */
-@media (prefers-reduced-motion: no-preference) {
-  .experience-honor-group .about-cert-trigger:hover {
-    transform: none;
-  }
-}
-
-/* Narrow screens: the side-by-side pill (~390px) no longer fits the card, so stack the
-   badge on top of its trigger — still one joined pill, now segmented vertically. */
-@media (max-width: 639px) {
-  .experience-honor-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .experience-honor-group > :not(:first-child) {
-    border-radius: 0 0 9999px 9999px;
-    border-left-width: 1px;
-    border-top-width: 0;
-  }
-
-  .experience-honor-group > :not(:last-child) {
-    border-radius: 9999px 9999px 0 0;
-  }
-
-  .experience-honor-group .about-education-honor-badge,
-  .experience-honor-group .about-cert-trigger {
-    justify-content: center;
-  }
 }
 
 /* Hover (desktop): brighten the compact card before the overlay grows in. */

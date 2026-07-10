@@ -595,7 +595,7 @@ export function ExperienceCardBody({
 
       <div className="experience-panel-header">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-          <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">{role}</p>
+          <p className="m-0 text-body font-semibold leading-snug text-text-primary">{role}</p>
           {employmentType ? (
             <span className="inline-flex items-center rounded-full border border-border bg-white/[0.08] px-2 py-0.5 text-small text-text-secondary">
               {employmentType}
@@ -613,7 +613,7 @@ export function ExperienceCardBody({
         ) : null}
       </div>
 
-      <p className="mt-1.5 text-body text-text-secondary">
+      <p className="mt-1.5 text-small text-text-secondary">
         <span className="font-medium">{organization}</span>
         {organizationType ? <span className="text-text-muted"> · {organizationType}</span> : null}
       </p>
@@ -625,7 +625,7 @@ export function ExperienceCardBody({
 
       {isCurrent ? <div className="mt-3">{currentBadge}</div> : null}
 
-      <p className="mt-3 text-body text-text-secondary">{description}</p>
+      <p className="mt-3 text-small text-text-secondary">{description}</p>
 
       {teamSize ? (
         <p className="mt-3 text-small text-text-secondary">
@@ -685,32 +685,39 @@ type EducationRootCardProps = {
 
 /** The root node — the B.Sc. degree — as an expand card with the same in-page certificate
  *  viewer as the About section (degree + Dean's List). Content is pulled from
- *  `about.education`. Each certificate trigger is paired with its context so the two
- *  "Preview certificate" buttons stay unambiguous: the standalone trigger is the degree's
- *  (the card itself), and the Dean's List trigger is joined to the honour badge. */
+ *  `about.education`. The two certificate triggers stay unambiguous: the degree's trigger is
+ *  labelled "Preview certificate", while the Dean's List one is a single pill labelled with
+ *  the honour itself (star glyph + honour text + "open" glyph). */
 export function EducationRootCard({
   education,
   headingId,
   onOpenCertificate,
   expansion,
 }: EducationRootCardProps) {
-  const honorGroup =
-    education.honor || education.honorCertificate ? (
+  let honorGroup: ReactNode = null;
+  if (education.honorCertificate) {
+    // Merge the honour and its certificate into one control: the Dean's-List star on the left,
+    // the honour text as the label, and the "open" glyph on the right — clicking opens the cert.
+    honorGroup = (
       <span className="experience-honor-group">
-        {education.honor ? (
-          <span className="about-education-honor-badge">
-            <DeanListIcon />
-            {education.honor}
-          </span>
-        ) : null}
-        {education.honorCertificate ? (
-          <EducationCertificateTrigger
-            certificate={education.honorCertificate}
-            onOpen={onOpenCertificate}
-          />
-        ) : null}
+        <EducationCertificateTrigger
+          certificate={education.honorCertificate}
+          onOpen={onOpenCertificate}
+          label={education.honor ?? "Preview certificate"}
+          leadingIcon={<DeanListIcon />}
+        />
       </span>
-    ) : null;
+    );
+  } else if (education.honor) {
+    honorGroup = (
+      <span className="experience-honor-group">
+        <span className="about-education-honor-badge">
+          <DeanListIcon />
+          {education.honor}
+        </span>
+      </span>
+    );
+  }
 
   const compact = (
     <>
@@ -751,7 +758,7 @@ export function EducationRootCard({
       </div>
 
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        <p className="m-0 text-h2 font-semibold leading-snug text-text-primary">
+        <p className="m-0 text-body font-semibold leading-snug text-text-primary">
           <span className="block">{education.degree}</span>
           <span className="mt-0.5 block text-small font-normal text-text-secondary">
             {education.institution}
@@ -764,7 +771,7 @@ export function EducationRootCard({
 
       <p className="mt-1 font-mono text-small text-text-muted">{education.dateRange}</p>
 
-      <p className="mt-3 text-body text-text-secondary">{education.summary}</p>
+      <p className="mt-3 text-small text-text-secondary">{education.summary}</p>
 
       {honorGroup ? (
         <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5">{honorGroup}</div>
