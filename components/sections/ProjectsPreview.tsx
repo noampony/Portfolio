@@ -45,8 +45,8 @@ const PROJECT_BACKGROUNDS: Record<string, string> = {
  * block restores the reveal opacity and unfolds the flip cards (front + back stacked) so the
  * section is fully readable when JS is disabled.
  *
- * The section exposes the `#projects` anchor (spec §5.3); per §5.1 the navbar carries only
- * Home/Projects/Courses/Resume, so `lib/navigation.ts` is intentionally left unchanged.
+ * The section exposes the `#projects` anchor (spec §5.3), which the primary navbar links to
+ * and highlights via scroll-spy (see `lib/navigation.ts`).
  */
 
 const easeOut = [0.22, 1, 0.36, 1] as const;

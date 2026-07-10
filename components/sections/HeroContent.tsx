@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content/data/profile";
-import { resume } from "@/lib/content/data/resume";
 import { learningPaths } from "@/lib/content/data/learning-paths";
 import { cn } from "@/lib/utils";
-import { ResumeViewer } from "@/components/sections/ResumeViewer";
+import { useResumeViewer } from "@/components/providers/ResumeViewerProvider";
 
 const PRIMARY_CTA_LABEL = "Resume";
 const SECONDARY_CTA_LABEL = "Contact";
@@ -196,18 +195,9 @@ type HeroContentProps = {
 export function HeroContent({ initials }: HeroContentProps) {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const [greetingReady, setGreetingReady] = useState(prefersReducedMotion);
-  const [resumeOpen, setResumeOpen] = useState(false);
-
-  // Open the resume preview modal. On narrow mobile, embedded PDF iframes don't
-  // render, so open the PDF directly in a new tab instead (same fallback the
-  // certificate viewer uses).
-  const openResume = () => {
-    if (typeof window !== "undefined" && window.innerWidth <= 420) {
-      window.open(resume.publicUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
-    setResumeOpen(true);
-  };
+  // The resume preview modal is shared app-wide (Hero CTA + navbar open the same
+  // dialog); its state and narrow-mobile fallback live in the resume-viewer context.
+  const { open: resumeOpen, openResume } = useResumeViewer();
 
   const { displayed: displayedName, complete: nameComplete } = useTypewriter(
     profile.name,
@@ -508,8 +498,6 @@ export function HeroContent({ initials }: HeroContentProps) {
           </div>
         )}
       </motion.div>
-
-      <ResumeViewer open={resumeOpen} onClose={() => setResumeOpen(false)} />
     </div>
   );
 }
