@@ -1051,22 +1051,39 @@ html {
 }
 
 /* ===== Experience git tree (spec §8.3) =============================================
-   A git commit graph reading bottom → top: a main branch (left lane) running straight
-   up, a side branch that forks right at "Malware Analyst" and merges back into the
-   current role at the top. The glass card mirrors the About card system so the section
-   reads as part of the same site. Each row is a 2-column grid — a fixed-width graph
-   gutter (lane lines + fork/merge elbows + commit dot) on the left and the card on the
-   right — so the lanes stay aligned regardless of card height, with no JS measurement
-   and no layout shift. The per-row reveal is a reduced-motion-safe Framer Motion fade-
-   up in ExperienceGitNode.tsx; the decorative card hover/shimmer and current-dot pulse
-   below are gated behind `prefers-reduced-motion: no-preference` and use only
-   transform/opacity (§7.3/§14.8). */
+   A git commit graph reading bottom → top, mirroring the large-screen tree's shape: a
+   single centred stem starts just below the degree root's connector, rises through
+   the branch-point role ("Malware Analyst"), then forks sharply into two lanes — the
+   left lane carries the current role, the right lane the side roles — and both lane
+   tips rise past the last card's top edge, fading out over the same range (still
+   live). The glass card mirrors the About card system so the section reads as part of
+   the same site. Each row is a 2-column grid — a fixed-width graph gutter (lane lines
+   + fork elbows) on the left and the card on the right — so the lanes stay aligned
+   regardless of card height, with no JS measurement and no layout shift. The per-row
+   reveal is a reduced-motion-safe fade in ExperienceGitGraph.tsx; the decorative card
+   hover/shimmer below is gated behind `prefers-reduced-motion: no-preference` and uses
+   only transform/opacity (§7.3/§14.8). */
 
 .git-graph {
   --git-gutter: 2.5rem;
   --git-lane-main: 0.75rem;
   --git-lane-side: 1.85rem;
-  --git-branch-dx: calc(var(--git-lane-side) - var(--git-lane-main));
+  /* The single pre-fork stem is centred between the two lanes. */
+  --git-lane-stem: calc((var(--git-lane-main) + var(--git-lane-side)) / 2);
+  --git-fork-dx: calc(var(--git-lane-side) - var(--git-lane-stem));
+  /* Height of the fork zone (the mirrored elbows) above the branch-point dot. */
+  --git-fork-h: 1.25rem;
+  /* Corner radius of the fork elbows — small, so the split reads sharp. */
+  --git-fork-r: 0.25rem;
+  /* Height of the branch-tip fade-out above the last card (fits inside the wrapper's
+     2.5rem top margin, so the fading tips never touch the section intro above). */
+  --git-fade-h: 2.25rem;
+  /* Depth of the root line's fade-in below the root card, reaching exactly to the
+     section's true bottom edge. Mirrors Experience.tsx's `py-16` bottom padding on
+     the <section> — the tree wrapper and card add no padding/margin of their own
+     below the last row, so this is the whole remaining gap. Keep in sync if that
+     class changes. */
+  --git-section-pb: 4rem;
   --git-dot-top: 2.1rem;
   --git-line-w: 2px;
   --git-col-gap: 0.75rem;
@@ -1084,6 +1101,7 @@ html {
     --git-gutter: 3rem;
     --git-lane-main: 0.95rem;
     --git-lane-side: 2.35rem;
+    --git-fork-h: 1.4rem;
     --git-dot-top: 2.4rem;
     --git-col-gap: 1rem;
   }
@@ -1126,6 +1144,11 @@ html {
 
 .git-graph-row--side {
   --git-connector-start: var(--git-lane-side);
+}
+
+/* Pre-fork rows (root + branch point) — the connector leaves the centred stem. */
+.git-graph-row--stem {
+  --git-connector-start: var(--git-lane-stem);
 }
 
 .git-graph-cell {
@@ -1178,6 +1201,10 @@ html {
   left: calc(var(--git-lane-side) - var(--git-line-w) / 2);
 }
 
+.git-line--stem {
+  left: calc(var(--git-lane-stem) - var(--git-line-w) / 2);
+}
+
 .git-line--top {
   top: 0;
   height: var(--git-dot-top);
@@ -1186,6 +1213,26 @@ html {
 .git-line--bottom {
   top: var(--git-dot-top);
   bottom: 0;
+}
+
+/* Fork tail — the short straight stem segment between the branch-point dot and the
+   fork elbows above it ("the line goes up a bit, then splits"). */
+.git-line--fork-tail {
+  top: var(--git-fork-h);
+  height: calc(var(--git-dot-top) - var(--git-fork-h));
+}
+
+/* Root fade — the stem's visible start, bleeding past the root (degree) card's own
+   bottom edge through the section's entire bottom padding, so the line reads as
+   originating from the true bottom edge of the section rather than from partway down
+   the card. `top: 100%` anchors it to the row's bottom edge (paired with
+   `.git-line--bottom` above, which fills the card-height portion solid); the gradient
+   mirrors the top's fade-out, reversed, stretched over `--git-section-pb` so it just
+   reaches transparent exactly at the section's edge. */
+.git-line--root-fade {
+  top: 100%;
+  height: var(--git-section-pb);
+  background: linear-gradient(to bottom, var(--git-line), transparent);
 }
 
 /* Continuation line — drawn above the topmost (current) node to signal that the
@@ -1198,38 +1245,54 @@ html {
   background: linear-gradient(to bottom, transparent 0%, var(--git-line) 100%);
 }
 
-/* Fork / merge elbows — one bordered box per corner draws the quarter-curve between
-   the main lane and the side lane, so the two legs join by construction. The box's
-   right border is the side-lane riser and stays collinear with the straight
-   `.git-line--side` segments (both centred on `--git-lane-side`). */
+/* Solid full-row lane segment — the right lane running alongside the last card. */
+.git-line--full {
+  top: 0;
+  bottom: 0;
+}
+
+/* Fade heads — both branch tips rise past the last card's top edge (the row's top)
+   together and fade out over the exact same range, so the two lines start fading and
+   disappear at the same heights. Bleeds into the wrapper's top margin (no clipping —
+   the graph has no overflow constraint). */
+.git-line--fade-head {
+  top: calc(-1 * var(--git-fade-h));
+  height: var(--git-fade-h);
+  background: linear-gradient(to top, var(--git-line), transparent);
+}
+
+/* Fork elbows — mirrored bordered corners (small radius, so the split reads sharp)
+   in the branch-point row, sitting on top of the fork tail: the centred stem splits
+   left and right into the two lanes, echoing the large-screen tree's fork. Each box's
+   outer vertical border is collinear with its lane's straight `.git-line` segments,
+   and its inner edge sits on the stem, so the three legs join by construction. */
 .git-elbow {
   position: absolute;
-  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
-  width: calc(var(--git-branch-dx) + var(--git-line-w));
+  top: 0;
+  height: var(--git-fork-h);
+  width: calc(var(--git-fork-dx) + var(--git-line-w));
   /* A border can't be stroke-drawn without SVG, so the corner sketches in by fading from
-     transparent→bright over its sub-range (`--fill`, set by ExperienceGitNode). Default 1. */
+     transparent→bright over its sub-range (`--fill`). Default 1 = fully drawn. */
   --fill: 1;
   border: 0 solid
     color-mix(in srgb, var(--git-line) calc(var(--fill) * 100%), var(--git-line-dim));
   pointer-events: none;
 }
 
-/* Split — forks up-and-right out of the branch-point dot into the side lane above. */
-.git-elbow--split {
-  top: 0;
-  height: var(--git-dot-top);
-  border-right-width: var(--git-line-w);
+/* Left arm — runs from the stem, turning sharply up into the main lane. */
+.git-elbow--fork-left {
+  left: calc(var(--git-lane-main) - var(--git-line-w) / 2);
+  border-left-width: var(--git-line-w);
   border-bottom-width: var(--git-line-w);
-  border-bottom-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
+  border-bottom-left-radius: var(--git-fork-r);
 }
 
-/* Merge — the side lane curves down-and-left into the merge-point (current) dot. */
-.git-elbow--merge {
-  top: var(--git-dot-top);
-  bottom: 0;
+/* Right arm — runs from the stem, turning sharply up into the side lane. */
+.git-elbow--fork-right {
+  left: calc(var(--git-lane-stem) - var(--git-line-w) / 2);
   border-right-width: var(--git-line-w);
-  border-top-width: var(--git-line-w);
-  border-top-right-radius: calc(var(--git-branch-dx) + var(--git-line-w));
+  border-bottom-width: var(--git-line-w);
+  border-bottom-right-radius: var(--git-fork-r);
 }
 
 /* Commit dots were removed — the lane lines and fork/merge elbows meet the card edges
