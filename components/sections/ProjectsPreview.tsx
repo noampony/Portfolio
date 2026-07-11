@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 import { SectionBackground } from "@/components/layout/SectionBackground";
-import { CursorGlow } from "@/components/ui/CursorGlow";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { projects } from "@/lib/content/data/projects";
@@ -80,8 +79,7 @@ export function ProjectsPreview() {
       aria-labelledby="projects-heading"
       className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      <SectionBackground glow="right" seamTop="line" seamBottom />
-      <CursorGlow />
+      <SectionBackground />
 
       <noscript>
         <style>{NO_JS_FALLBACK}</style>

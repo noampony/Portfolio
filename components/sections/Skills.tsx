@@ -9,7 +9,6 @@ import {
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { SectionBackground } from "@/components/layout/SectionBackground";
-import { CursorGlow } from "@/components/ui/CursorGlow";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SkillBadge } from "@/components/ui/SkillBadge";
 import { skills } from "@/lib/content/data/skills";
@@ -342,8 +341,7 @@ export function Skills() {
       aria-labelledby="skills-heading"
       className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      <SectionBackground glow="split" seamTop="line" seamBottom />
-      <CursorGlow />
+      <SectionBackground />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}

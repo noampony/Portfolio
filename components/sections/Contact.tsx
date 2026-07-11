@@ -412,7 +412,7 @@ export function Contact() {
       aria-labelledby="contact-heading"
       className="relative isolate overflow-hidden bg-bg-base py-6 lg:py-10"
     >
-      <SectionBackground glow="split" seamTop="line" seamBottom />
+      <SectionBackground />
 
       <motion.div
         className="site-shell"

@@ -187,7 +187,7 @@ export function MyImpact() {
       aria-labelledby="impact-heading"
       className="impact-section relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      <SectionBackground glow="split" grid seamTop="line" seamBottom />
+      <SectionBackground />
 
       <div className="site-shell relative z-10">
         <motion.div

@@ -113,7 +113,7 @@ export function Experience() {
       aria-labelledby="experience-heading"
       className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      <SectionBackground glow="split" seamTop="line" seamBottom />
+      <SectionBackground />
 
 <div className="site-shell relative z-10">
         <ExperienceIntro />

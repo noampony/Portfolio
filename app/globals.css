@@ -2966,6 +2966,11 @@ main:focus-visible {
     transition: none;
     animation: none;
   }
+
+  .section-glow,
+  .section-aurora {
+    animation: none;
+  }
 }
 
 /* ===== Shared section background system ============================================
@@ -3030,6 +3035,28 @@ main:focus-visible {
       color-mix(in srgb, var(--gradient-to) 10%, transparent),
       transparent 30%
     );
+}
+
+/* Abstract "aurora" sheen — two faint offset tints that slowly orbit the section
+   centre, giving the ambient background a subtle sense of life behind the static
+   corner glows. Sits behind the grid/grain. Inset negative + a covering scale so
+   the rotation never reveals a hard edge inside the clipped section. The motion
+   itself is transform-only and lives in the reduced-motion media query below. */
+.section-aurora {
+  position: absolute;
+  inset: -35%;
+  background:
+    radial-gradient(
+      38% 38% at 32% 30%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      42% 42% at 70% 66%,
+      color-mix(in srgb, var(--gradient-to) 10%, transparent),
+      transparent 70%
+    );
+  opacity: 0.6;
 }
 
 /* Static film grain — an SVG feTurbulence tile repeated at compositor cost. Never animated. */
@@ -3128,6 +3155,42 @@ main:focus-visible {
 
 .section-cursor-glow[data-active="true"] {
   opacity: 1;
+}
+
+/* Subtle, abstract ambient motion for the unified section background (spec §7.1
+   "animated gradient background", §7.2/§14.8: subtle, transform/opacity only, no
+   layout shift). The corner glows breathe/drift while the aurora slowly orbits;
+   both are GPU-composited transform animations, long and low-amplitude, and only
+   run when the user has not asked for reduced motion. Because every section uses
+   the same `glow="split"` treatment, the motion is identical across the page. */
+@keyframes section-glow-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(2%, 1.5%, 0) scale(1.05);
+  }
+}
+
+@keyframes section-aurora-spin {
+  from {
+    transform: rotate(0deg) scale(1.05);
+  }
+  to {
+    transform: rotate(360deg) scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .section-glow {
+    will-change: transform;
+    animation: section-glow-drift 30s cubic-bezier(0.22, 1, 0.36, 1) infinite alternate;
+  }
+
+  .section-aurora {
+    will-change: transform;
+    animation: section-aurora-spin 80s linear infinite;
+  }
 }
 
 /* Thin gradient scroll-progress bar sitting on the header's bottom border.

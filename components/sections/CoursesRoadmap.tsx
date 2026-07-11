@@ -47,7 +47,7 @@ export function CoursesRoadmap() {
       aria-labelledby="courses-heading"
       className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      <SectionBackground glow="left" grid seamTop="line" seamBottom />
+      <SectionBackground />
 
       <noscript>
         <style>{NO_JS_FALLBACK}</style>
