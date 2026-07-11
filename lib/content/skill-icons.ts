@@ -60,7 +60,7 @@ const MICROSERVICES =
 const MESSAGE =
   "M 3.136 2.864 L 12.864 2.864 A 2 2 0 0 1 14.864 4.864 L 14.864 13.864 A 2 2 0 0 1 12.864 15.864 L 3.136 15.864 A 2 2 0 0 1 1.136 13.864 L 1.136 4.864 A 2 2 0 0 1 3.136 2.864 Z M 3.818 4 A 1.545 1.545 0 0 0 2.273 5.545 L 2.273 13.182 A 1.545 1.545 0 0 0 3.818 14.727 L 12.182 14.727 A 1.545 1.545 0 0 0 13.727 13.182 L 13.727 5.545 A 1.545 1.545 0 0 0 12.182 4 Z M 3.5 5.682 L 9.955 5.682 A 0.455 0.455 0 0 1 9.955 6.591 L 3.5 6.591 A 0.455 0.455 0 0 1 3.5 5.682 Z M 3.5 7.955 L 9.955 7.955 A 0.455 0.455 0 0 1 9.955 8.864 L 3.5 8.864 A 0.455 0.455 0 0 1 3.5 7.955 Z M 3.5 10.227 L 9.955 10.227 A 0.455 0.455 0 0 1 9.955 11.136 L 3.5 11.136 A 0.455 0.455 0 0 1 3.5 10.227 Z M 8.955 19.136 A 6.636 6.182 0 0 1 22.227 19.136 L 21.091 19.136 A 5.5 5.045 0 0 0 10.091 19.136 Z M 8.318 19.205 L 22.864 19.205 A 0.568 0.568 0 0 1 22.864 20.341 L 8.318 20.341 A 0.568 0.568 0 0 1 8.318 19.205 Z M 8.818 19.773 L 9.273 19.773 A 0.5 0.5 0 0 1 9.773 20.273 L 9.773 20.636 A 0.5 0.5 0 0 1 9.273 21.136 L 8.818 21.136 A 0.5 0.5 0 0 1 8.318 20.636 L 8.318 20.273 A 0.5 0.5 0 0 1 8.818 19.773 Z M 21.909 19.773 L 22.364 19.773 A 0.5 0.5 0 0 1 22.864 20.273 L 22.864 20.636 A 0.5 0.5 0 0 1 22.364 21.136 L 21.909 21.136 A 0.5 0.5 0 0 1 21.409 20.636 L 21.409 20.273 A 0.5 0.5 0 0 1 21.909 19.773 Z M 15.227 11.318 L 15.955 11.318 A 1.182 1.182 0 0 1 17.136 12.5 L 17.136 17.045 A 1.182 1.182 0 0 1 15.955 18.227 L 15.227 18.227 A 1.182 1.182 0 0 1 14.045 17.045 L 14.045 12.5 A 1.182 1.182 0 0 1 15.227 11.318 Z M 15.455 12.182 A 0.545 0.545 0 0 0 14.909 12.727 L 14.909 17.682 A 0.545 0.545 0 0 0 15.455 18.227 L 15.727 18.227 A 0.545 0.545 0 0 0 16.273 17.682 L 16.273 12.727 A 0.545 0.545 0 0 0 15.727 12.182 Z";
 
-// Tokens Optimizations — a token/chip coin (the "token") paired with a bold
+// Token Optimization — a token/chip coin (the "token") paired with a bold
 // downward arrow signalling reduction/optimization. Built as one path; the
 // coin's $ glyph and rim notches are wound opposite the disc so they read as
 // holes under the badge's default nonzero rule. Renders accent-filled like the
@@ -68,7 +68,7 @@ const MESSAGE =
 const POKER_CHIP =
   "M 8 0.5 C 3.858 0.5 0.5 3.858 0.5 8 S 3.858 15.5 8 15.5 C 12.142 15.5 15.5 12.142 15.5 8 S 12.142 0.5 8 0.5 Z M 11.736 2.448 L 11.258 3.154 C 10.622 2.726 9.897 2.419 9.117 2.268 L 9.285 1.432 C 10.163 1.602 10.994 1.946 11.736 2.448 Z M 8.388 11.329 L 8.388 12.199 L 7.68 12.199 L 7.68 11.333 C 7.174 11.277 6.699 11.084 6.342 10.751 C 5.985 10.419 5.821 9.931 5.833 9.287 L 5.851 9.265 L 7.102 9.265 C 7.102 9.67 7.192 9.938 7.372 10.108 C 7.552 10.278 7.781 10.363 8.059 10.363 C 8.326 10.363 8.53 10.292 8.672 10.15 C 8.813 10.008 8.884 9.817 8.884 9.577 C 8.884 9.34 8.816 9.147 8.68 8.998 C 8.544 8.849 8.311 8.71 7.98 8.581 C 7.331 8.344 6.848 8.08 6.534 7.789 C 6.219 7.497 6.062 7.087 6.062 6.557 C 6.062 6.066 6.207 5.663 6.522 5.348 C 6.836 5.033 7.275 4.848 7.781 4.793 L 7.781 3.851 L 8.489 3.851 L 8.489 4.801 C 8.995 4.877 9.415 5.093 9.71 5.447 C 10.004 5.801 10.151 6.255 10.145 6.82 L 10.136 6.836 L 8.884 6.836 C 8.884 6.482 8.813 6.23 8.672 6.043 C 8.53 5.855 8.336 5.764 8.09 5.764 C 7.838 5.764 7.651 5.838 7.528 5.983 C 7.405 6.128 7.344 6.321 7.344 6.561 C 7.344 6.789 7.409 6.975 7.539 7.116 C 7.669 7.258 7.909 7.398 8.257 7.536 C 8.904 7.79 9.383 8.063 9.694 8.352 C 10.006 8.642 10.162 9.047 10.162 9.568 C 10.162 10.078 9.992 10.484 9.679 10.789 C 9.366 11.093 8.944 11.273 8.388 11.329 Z M 6.716 1.432 L 6.877 2.27 C 6.097 2.422 5.372 2.728 4.737 3.158 L 4.264 2.448 C 5.006 1.946 5.837 1.602 6.716 1.432 Z M 2.448 4.264 L 3.154 4.742 C 2.726 5.378 2.42 6.103 2.268 6.883 L 1.432 6.715 C 1.602 5.837 1.947 5.006 2.448 4.264 Z M 2.448 11.736 C 1.946 10.994 1.602 10.163 1.432 9.284 L 2.27 9.123 C 2.422 9.903 2.728 10.628 3.158 11.263 L 2.448 11.736 Z M 4.264 13.552 L 4.742 12.846 C 5.378 13.274 6.103 13.581 6.883 13.732 L 6.716 14.568 C 5.837 14.398 5.006 14.054 4.264 13.552 Z M 9.284 14.568 L 9.123 13.73 C 9.903 13.579 10.628 13.272 11.263 12.842 L 11.736 13.552 C 10.994 14.054 10.163 14.398 9.284 14.568 Z M 13.552 11.736 L 12.846 11.258 C 13.274 10.622 13.581 9.897 13.732 9.117 L 14.568 9.284 C 14.398 10.163 14.054 10.994 13.552 11.736 Z M 13.73 6.877 C 13.578 6.097 13.272 5.372 12.842 4.737 L 13.552 4.264 C 14.054 5.006 14.398 5.837 14.568 6.715 L 13.73 6.877 Z M 17.4 9.5 L 20 9.5 L 20 16.3 L 17.4 16.3 Z M 15.2 15.6 L 22.2 15.6 L 18.7 22.3 Z";
 
-// Agents Orchestration — a central orchestrator agent (with antenna) wired by
+// Agent Orchestration — a central orchestrator agent (with antenna) wired by
 // spokes to three coordinated agent nodes. Built as one path; each agent's eyes
 // are reverse-wound to read as holes under the badge's default nonzero rule.
 // Renders accent-filled like the other icons.
@@ -299,7 +299,7 @@ export const SKILL_ICONS: Record<string, string> = {
   Pytest: PYTEST,
   "Linting (Ruff)": RUFF,
 
-  // Tools & Infrastructures
+  // Tools & Infrastructure
   Docker: DOCKER,
   Linux: LINUX,
   Jenkins: JENKINS,
@@ -316,8 +316,8 @@ export const SKILL_ICONS: Record<string, string> = {
   PostgreSQL: POSTGRESQL,
   Redis: REDIS,
   "VectorDB (Vespa.ai)": VESPA,
-  "Elastic Search": ELASTICSEARCH,
-  "Parquet DB": PARQUET,
+  Elasticsearch: ELASTICSEARCH,
+  Parquet: PARQUET,
   "Apache Iceberg": ICEBERG,
 
   // Concepts & Methodologies
@@ -334,10 +334,10 @@ export const SKILL_ICONS: Record<string, string> = {
   "AWS EC2": AMAZONEC2,
   "AWS SQS": AMAZONSQS,
   "AWS DynamoDB": DYNAMODB,
-  "AWS ElasticCache": ELASTICACHE,
+  "AWS ElastiCache": ELASTICACHE,
   "AWS OpenSearch": OPENSEARCH,
   "AWS S3": AMAZONS3,
-  "AWS Cloud Formation": CLOUDFORMATION,
+  "AWS CloudFormation": CLOUDFORMATION,
   "AWS Kinesis Firehose": FIREHOSE,
   "AWS RDS": AMAZONRDS,
   "AWS Secrets Manager": SECRETS_MANAGER,
@@ -354,9 +354,9 @@ export const SKILL_ICONS: Record<string, string> = {
   Codex: OPENAI,
   "GitHub Copilot": COPILOT,
   Cursor: CURSOR,
-  "Tokens Optimizations": POKER_CHIP,
+  "Token Optimization": POKER_CHIP,
   "Prompt Engineering": MESSAGE,
-  "Agents Orchestration": ROBOT,
+  "Agent Orchestration": ROBOT,
 };
 
 export function getSkillIcon(skillName: string): string | null {

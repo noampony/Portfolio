@@ -8,10 +8,12 @@ import {
 } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { SectionBackground } from "@/components/layout/SectionBackground";
+import { CursorGlow } from "@/components/ui/CursorGlow";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SkillBadge } from "@/components/ui/SkillBadge";
 import { skills } from "@/lib/content/data/skills";
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
+import { easeOut } from "@/lib/motion";
 
 // Fallback collapsed height before DOM measurement fires.
 const COLLAPSED_HEIGHT_FALLBACK = 176;
@@ -22,24 +24,6 @@ const COLLAPSED_HEIGHT_FALLBACK = 176;
 // offset by an equal negative margin below, so the resting gap above the first
 // row is unchanged; the height target is bumped so exactly two rows still show.
 const LIFT_HEADROOM = 12;
-
-const revealVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 1.0, ease: easeOut },
-  },
-};
-
-const accentLineRevealVariants: Variants = {
-  hidden: { opacity: 0, x: -128 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 2.1, ease: easeOut },
-  },
-};
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -356,45 +340,25 @@ export function Skills() {
     <section
       id="skills"
       aria-labelledby="skills-heading"
-      className="relative isolate overflow-hidden border-t border-border bg-bg-base py-16 lg:py-24"
+      className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_88%_16%,color-mix(in_srgb,var(--accent)_10%,transparent),transparent_28%),radial-gradient(circle_at_10%_80%,color-mix(in_srgb,var(--gradient-to)_10%,transparent),transparent_30%)]"
-      />
+      <SectionBackground glow="split" seamTop="line" seamBottom />
+      <CursorGlow />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
           ref={headerRef}
-          initial="hidden"
+          initial={shouldReduceMotion ? false : "hidden"}
           animate={shouldReduceMotion ? "visible" : headerAnimateState}
-          variants={revealVariants}
-          className="relative mb-10 lg:mb-14"
+          className="mb-10 lg:mb-14"
         >
-          <motion.span
-            aria-hidden="true"
-            className="about-copy-accent-line"
-            variants={accentLineRevealVariants}
+          <SectionHeading
+            headingId="skills-heading"
+            eyebrow="SYS://SKILLS"
+            title="Technical Skills"
+            lead="The tools, languages, and platforms I work with."
           />
-          <p className="mb-2 font-mono text-small tracking-wider text-accent">
-            SYS://SKILLS
-          </p>
-          <div className="flex items-center gap-4">
-            <h2
-              id="skills-heading"
-              className="text-h2 font-semibold text-text-primary"
-            >
-              Technical Skills
-            </h2>
-            <div
-              aria-hidden="true"
-              className="h-px min-w-12 flex-1 bg-gradient-to-r from-border via-accent/35 to-transparent"
-            />
-          </div>
-          <p className="mt-3 max-w-measure text-body text-text-secondary">
-            A curated overview of the tools, languages, and platforms I work with.
-          </p>
         </motion.div>
 
         {/* Independent flex columns (masonry-style): each column is its own

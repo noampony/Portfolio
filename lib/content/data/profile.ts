@@ -11,9 +11,9 @@ import { validateProfile } from "../validate";
 const profileData = {
   name: "Noam Pony",
   title: "Backend Developer",
-  oneLineSummary: "A passionate experienced cloud backend developer",
+  oneLineSummary: "A passionate, experienced cloud backend developer",
   heroText:
-    "A passionate experienced cloud backend developer.\nBuilding scalable & reliable cloud backend systems.",
+    "A passionate, experienced cloud backend developer.\nBuilding scalable & reliable cloud backend systems.",
   location: "Israel",
   profileImage: "/profile.png",
   yearsExperienceStartDate: "2021-12",

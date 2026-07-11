@@ -39,6 +39,9 @@ export function Hero() {
         <div
           className="absolute -left-1/3 bottom-0 h-[min(50vh,20rem)] w-[min(70vw,24rem)] rounded-full bg-accent opacity-[0.04] blur-3xl"
         />
+        {/* Same film-grain tile the section backgrounds use, so the whole page reads
+           as one material (see SectionBackground / .section-grain). */}
+        <div className="section-grain" />
         <FloatingCode />
       </div>
 

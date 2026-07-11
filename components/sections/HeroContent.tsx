@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { CountUp } from "@/components/ui/CountUp";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { profile } from "@/lib/content/data/profile";
 import { learningPaths } from "@/lib/content/data/learning-paths";
 import { cn } from "@/lib/utils";
@@ -39,6 +41,7 @@ const profileTags = [
     key: "experience",
     ariaLabel: `${yearsOfExperience}+ years of experience`,
     value: `${yearsOfExperience}+`,
+    numericValue: yearsOfExperience,
     lines: ["Years of", "Experience"],
     positionClasses:
       "-top-1 -left-6 sm:-top-[4.6px] sm:-left-[28px] min-[850px]:-top-3 min-[850px]:-left-10",
@@ -48,6 +51,7 @@ const profileTags = [
     key: "courses",
     ariaLabel: `${totalCoursesCompleted}+ external courses completed`,
     value: `${totalCoursesCompleted}+`,
+    numericValue: totalCoursesCompleted,
     lines: ["External", "Courses", "Completed"],
     positionClasses:
       "top-1/2 -translate-y-1/2 -left-12 sm:-left-[55px] min-[850px]:-left-20",
@@ -332,35 +336,39 @@ export function HeroContent({ initials }: HeroContentProps) {
           animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
           transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.72 }}
         >
-          <button
-            type="button"
-            onClick={openResume}
-            aria-haspopup="dialog"
-            aria-expanded={resumeOpen}
-            className={cn(
-              ctaBaseClasses,
-              "w-full border border-white/10 bg-accent text-accent-contrast shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_0_0_rgba(45,212,191,0)] backdrop-blur hover:bg-accent-hover hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_12px_28px_rgba(45,212,191,0.22)] sm:w-auto"
-            )}
-          >
-            {PRIMARY_CTA_LABEL}
-            <ResumeIcon />
-          </button>
+          <Magnetic className="w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={openResume}
+              aria-haspopup="dialog"
+              aria-expanded={resumeOpen}
+              className={cn(
+                ctaBaseClasses,
+                "w-full border border-white/10 bg-accent text-accent-contrast shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_0_0_rgba(45,212,191,0)] backdrop-blur hover:bg-accent-hover hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_12px_28px_rgba(45,212,191,0.22)]"
+              )}
+            >
+              {PRIMARY_CTA_LABEL}
+              <ResumeIcon />
+            </button>
+          </Magnetic>
           {/*
            * Secondary CTA → Contact section (§8.1, §8.8 wiring note). A real
            * in-page anchor (not a no-op): keyboard-operable by default, and it
            * inherits the global smooth scroll + `scroll-padding-top` (and the
            * reduced-motion fallback to an instant jump) from globals.css.
            */}
-          <a
-            href="#contact"
-            className={cn(
-              ctaBaseClasses,
-              "w-full border border-border bg-bg-surface-raised/90 text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] backdrop-blur hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.9))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] supports-[backdrop-filter]:bg-bg-surface-raised/75 supports-[backdrop-filter]:hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.75))] sm:w-auto"
-            )}
-          >
-            {SECONDARY_CTA_LABEL}
-            <ContactIcon />
-          </a>
+          <Magnetic className="w-full sm:w-auto">
+            <a
+              href="#contact"
+              className={cn(
+                ctaBaseClasses,
+                "w-full border border-border bg-bg-surface-raised/90 text-text-primary shadow-[0_0_0_rgba(45,212,191,0)] backdrop-blur hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.9))] hover:text-accent hover:shadow-[0_12px_28px_rgba(45,212,191,0.14)] supports-[backdrop-filter]:bg-bg-surface-raised/75 supports-[backdrop-filter]:hover:bg-[color-mix(in_srgb,var(--accent)_10%,rgb(28_36_46_/_0.75))]"
+              )}
+            >
+              {SECONDARY_CTA_LABEL}
+              <ContactIcon />
+            </a>
+          </Magnetic>
         </motion.div>
       </div>
 
@@ -463,7 +471,16 @@ export function HeroContent({ initials }: HeroContentProps) {
                       aria-hidden="true"
                       className="font-bold leading-none text-white text-sm sm:text-base min-[850px]:text-3xl"
                     >
-                      {tag.value}
+                      {"numericValue" in tag ? (
+                        <CountUp
+                          value={tag.numericValue}
+                          suffix="+"
+                          start={contentRevealed}
+                          delay={tag.appearDelay + 0.1}
+                        />
+                      ) : (
+                        tag.value
+                      )}
                     </span>
                     <span
                       className={cn(

@@ -663,7 +663,7 @@ The MVP is the Hero section only, and it must be fully complete before other sec
 |---|---|
 | Name | Noam Pony |
 | Professional title | Backend Developer |
-| One-line summary | A passionate experienced cloud backend developer |
+| One-line summary | A passionate, experienced cloud backend developer |
 | Location | Israel |
 | Main CTA | Resume page or resume behavior |
 | Secondary CTA | Contact section or contact page behavior |
@@ -672,7 +672,7 @@ The MVP is the Hero section only, and it must be fully complete before other sec
 ### Required Hero Text
 
 ```text
-A passionate experienced cloud backend developer.
+A passionate, experienced cloud backend developer.
 Building scalable & reliable cloud backend systems.
 ```
 
@@ -765,33 +765,31 @@ Each impact card must include:
 
 ### Impact Cards
 
-#### 8.2.1 Crisis Scenario Management
+#### 8.2.1 Catching Production Failures
 
 | Field | Value |
 |---|---|
-| Title | Crisis Scenario Management |
-| Description | Designed and built the final safety layer that detects and reports critical production scenarios. |
+| Title | Catching Production Failures |
+| Description | Built the last line of defense that catches and reports critical failures in production. |
 
 Impact bullets:
 
-- Improved product reliability
-- Better visibility during incidents
-- Greater confidence in production deployments
-- Drove measurable improvements to incident response and product resilience
+- More reliable product
+- Clearer picture during incidents
+- Safer, more confident deployments
 
 #### 8.2.2 System Architecture
 
 | Field | Value |
 |---|---|
 | Title | System Architecture |
-| Description | Designed 10+ backend systems from the ground up, including architecture, documentation, planning, testing, and implementation strategy. |
+| Description | Designed 10+ backend systems from the ground up - architecture, documentation, planning, testing, and rollout. |
 
 Impact bullets:
 
-- Reduced rework and design changes
-- Smoother development process
+- Less rework and fewer late design changes
+- Smoother path from design to delivery
 - Higher-quality, more reliable systems
-- Contributed to the team's long-term technical growth and delivery success
 
 #### 8.2.3 Legacy System Modernization
 
@@ -802,10 +800,9 @@ Impact bullets:
 
 Impact bullets:
 
-- Cleaner and easier-to-maintain code
+- Cleaner, easier-to-maintain code
 - Better monitoring and debugging
-- Improved scalability and production stability
-- Turned aging systems into a stronger foundation for future growth
+- More stable and scalable in production
 
 #### 8.2.4 Supporting At-Risk Teenagers
 
@@ -817,23 +814,21 @@ Impact bullets:
 Impact bullets:
 
 - 3× faster monitoring and case management
-- More reliable and accessible data
-- Helped teams respond sooner to girls at higher risk
-- Contributed to improving the safety and well-being of vulnerable teenagers
+- More reliable, easier-to-access data
+- Helped staff reach the girls most at risk sooner
 
-#### 8.2.5 AI Agent Skills
+#### 8.2.5 AI Tooling for the Team
 
 | Field | Value |
 |---|---|
-| Title | AI Agent Skills |
-| Description | Created AI Agent plugins that simplify everyday engineering tasks, including PR creation, code reviews, and unit test improvements. |
+| Title | AI Tooling for the Team |
+| Description | Built plugins for AI coding agents that automate everyday engineering tasks - opening PRs, reviewing code, and improving unit tests. |
 
 Impact bullets:
 
-- Made AI tools easier to use across the team
-- Increased adoption of AI for daily engineering work
-- Reduced effort for repetitive development tasks
-- Helped drive the team's growth in AI-assisted engineering practices
+- Made AI tools easier for the whole team to use
+- More of the team using AI in daily work
+- Less time spent on repetitive development tasks
 
 #### 8.2.6 Grafana Dashboards
 
@@ -844,10 +839,9 @@ Impact bullets:
 
 Impact bullets:
 
-- Faster issue investigation
-- Better operational visibility
-- Became the team's Grafana expert
-- Strengthened the team's operational maturity and reliability
+- Faster investigation when something breaks
+- Clear view of production health at all times
+- Became the team's go-to for Grafana
 
 #### 8.2.7 Team Knowledge Base
 
@@ -860,36 +854,33 @@ Impact bullets:
 
 - Faster knowledge sharing across the team
 - Easier onboarding and daily development
-- Less time searching for information
-- Helped the team scale its knowledge and grow more efficiently
+- Less time hunting for information
 
 #### 8.2.8 Weekly Security Reports
 
 | Field | Value |
 |---|---|
 | Title | Weekly Security Reports |
-| Description | Redesigned the weekly customer report to provide clearer insights into customers' security incidents and activity. |
+| Description | Redesigned the weekly report customers receive, making their security incidents and activity easy to understand. |
 
 Impact bullets:
 
-- Increased transparency for customers
-- Became valuable for technical leaders and managers
+- Customers see clearly what the product does for them
+- Read by technical leaders and managers alike
 - Helped sales teams demonstrate product value
-- Contributed directly to customer retention and business success
 
-#### 8.2.9 Revealed Valuable Data Mine
+#### 8.2.9 Unlocking Microsoft 365 Data
 
 | Field | Value |
 |---|---|
-| Title | Revealed Valuable Data Mine |
-| Description | Exposed hundreds of Microsoft 365 event types through a single service, unlocking valuable security insights. |
+| Title | Unlocking Microsoft 365 Data |
+| Description | Made hundreds of Microsoft 365 event types available through a single service, turning raw data into security insight. |
 
 Impact bullets:
 
-- Powered multiple customer-facing features
-- Enabled detection of malicious email activity
-- Opened the door for many future product capabilities
-- Became a foundation for continued product growth and success
+- Powers multiple customer-facing features
+- Enables detection of malicious email activity
+- Opened the door to future product capabilities
 
 ### Carousel and Animation Requirements
 
@@ -994,15 +985,15 @@ Screenshots are optional and must comply with confidentiality constraints.
 Description:
 
 ```text
-Led a team of 3–5 volunteer developers creating a web application for a non-profit organization using Bubble.io.
+As a volunteer Team Lead at Max Impact, I led a team of junior developers in building a web platform that helps a non-profit organization provide better support for at-risk teenage girls. Beyond delivering the product, I mentored aspiring developers, helping them gain real industry experience and launch their careers, while combining technology with meaningful social impact.
 ```
 
-#### 8.3.2 Check Point Software Technologies — Backend Software Developer, Cloud
+#### 8.3.2 Check Point Software Technologies — Cloud Backend Software Developer
 
 | Field | Value |
 |---|---|
 | Company | Check Point Software Technologies |
-| Role | Backend Software Developer – Cloud |
+| Role | Cloud Backend Software Developer |
 | Dates | Oct 2022 – Present |
 | Duration | Calculate dynamically or mark current |
 | Public company wording | Company name explicitly |
@@ -1010,29 +1001,27 @@ Led a team of 3–5 volunteer developers creating a web application for a non-pr
 Description:
 
 ```text
-Developed and maintained cutting-edge email security solutions, protecting companies' communications across tools like Microsoft Outlook, Gmail, Teams, Slack, and more. Implemented and owned multiple services from scratch, handling billions of security events weekly in a fast-paced, agile cloud environment. Leveraged AWS services, including DynamoDB, SQS, ElasticSearch, ElasticCache, and more, to build and optimize large-scale, real-time, multi-tenant systems. Collaborated closely with cross-functional teams to design and deliver complex, high-performance microservices, ensuring seamless integration and robust data handling.
+I build and own cloud backend services for a large-scale email security product, and I designed several of its high-traffic systems from scratch using Python, Docker, and AWS. I work closely with developers, QA, and product teams to ship reliably at scale, and I led monitoring and operational improvements across the team. Along the way I went deep on AI-assisted development - coding agents are now a core part of how I build. Today I'm the team's go-to person for owning services, debugging production issues, and sharing knowledge.
 ```
 
 Confidentiality note:
 
 - This description must be reviewed before publication to ensure it does not expose internal company project names, sensitive internal architecture, customer data, or proprietary metrics beyond what is safe to publish.
 
-#### 8.3.3 Check Point Software Technologies — CVE / Protections Work
+#### 8.3.3 Check Point Software Technologies — Malware Analyst
 
 | Field | Value |
 |---|---|
 | Company | Check Point Software Technologies |
-| Role | TBD |
+| Role | Malware Analyst |
 | Dates | Dec 2021 – Oct 2022 |
 | Duration | 11 months |
 
 Description:
 
 ```text
-Researched and analyzed known vulnerabilities (CVEs) to reproduce attacks and develop protections for Check Point's customers. Developed Python scripts to enhance protection coverage, automate daily tasks, and streamline team workflows. Focused on network attacks, requiring deep knowledge of computer networking.
+Researched newly disclosed security vulnerabilities, reproduced the attacks they enable, and built the protections that block them for Check Point's customers. Wrote Python automation to cover more attacks and speed up the team's day-to-day work, focusing on network-level attacks.
 ```
-
-Role title is **TBD**.
 
 #### 8.3.4 Private Tutor
 
@@ -1047,7 +1036,7 @@ Role title is **TBD**.
 Description:
 
 ```text
-Provided private C# programming lessons for high school students.
+Taught private C# programming lessons to high school students.
 ```
 
 ### Confidentiality Rules
@@ -1086,7 +1075,7 @@ The Projects Preview section should show the top 3–5 projects on the homepage 
 
 The homepage should show 3–5 projects.
 
-The planning template provides 4 projects.
+The content data provides 6 projects.
 
 ### Layout Preference
 
@@ -1106,17 +1095,17 @@ Each project card should include:
 - Tech stack
 - Backend focus
 
-### Project 1: Microsoft Office Events
+### Project 1: Microsoft & Google Event Streaming
 
 | Field | Value |
 |---|---|
-| Name | Microsoft Office Events |
+| Name | Microsoft & Google Event Streaming |
 | Role | Project Leader |
-| Short description | Developed a service that subscribes to Microsoft and Google APIs, retrieves events via webhook, processes them, and writes billions of events weekly to a database. |
-| Problem solved | Fetching important information from Microsoft and Google, crucial for analytics and security insights |
+| Short description | Built a service that subscribes to Microsoft and Google activity APIs, receives events through webhooks, and processes and stores billions of them every week. |
+| Problem solved | The product needs to know what's happening inside customers' Microsoft and Google accounts. This service brings in that raw activity data reliably, at full scale. |
 | Tech stack | AWS, Python, Docker, Jenkins, System Design |
-| Backend focus | High-scale system, 2 billion events per week |
-| Why important | The events fetched were crucial for cybersecurity scanning processes, identifying malicious operations. |
+| Backend focus | A high-scale pipeline handling billions of events weekly |
+| Why important | These events feed the security scans that catch malicious activity. |
 
 Security note:
 
@@ -1128,48 +1117,74 @@ Security note:
 |---|---|
 | Name | Email Archiving Service |
 | Role | Developer in a team |
-| Short description | Implemented a long-term email archiving solution together with the team. |
-| Problem solved | Users can archive emails long-term, mainly for legal purposes, search across email information including body and attachments, import and export emails, and more. |
-| Tech stack | AWS, Python, Docker, Vector Database, AWS Iceberg, AWS Athena, System Design |
-| Backend focus | High scale, advanced search on huge data |
-| Why important | The service served a main role in the product and helped attract more customers. |
+| Short description | Implemented long-term email archiving together with my team - emails stored for years and searchable in full. |
+| Problem solved | Companies often must keep emails for years, mainly for legal reasons. The service stores them long-term and lets users search everything - bodies and attachments included - and import or export their archive. |
+| Tech stack | AWS, Python, Docker, Vector Database, Apache Iceberg, AWS Athena, System Design |
+| Backend focus | Fast search over a huge, always-growing dataset |
+| Why important | A major product capability that helped bring in new customers. |
 
 Security note:
 
 - Confirm whether product impact wording and architecture technologies are safe to publish.
 
-### Project 3: Final Failure-Watchdog
+### Project 3: Delivery Safety Net
 
 | Field | Value |
 |---|---|
-| Name | Final Failure-Watchdog |
+| Name | Delivery Safety Net |
 | Role | Project Leader |
-| Short description | A service acting as the final watchdog. It identifies stuck entities in the system and quickly releases them to the customer by bypassing the main entity-processing flow. |
-| Problem solved | Stuck entities are identified and released to the customer reliably. |
-| Tech stack | AWS, Python, Docker, Alerting System: Nagios, Monitoring System: Prometheus + Grafana |
-| Backend focus | Very high scale, high resilience, high availability, closely monitored system |
-| Why important | This system had high product focus because it helped ensure entities did not get stuck and not delivered to users. |
+| Short description | The system's last line of defense. When something gets stuck in the processing pipeline, this service catches it and delivers it to the customer anyway. |
+| Problem solved | Nothing gets lost silently - anything that fails normal processing is found and still reaches the customer. |
+| Tech stack | AWS, Python, Docker, Nagios, Prometheus, Grafana |
+| Backend focus | Very high scale and heavily monitored - the one component that must never fail. |
+| Why important | It backs the product's promise that everything customers expect actually arrives, even when something upstream breaks. |
 
 Security note:
 
 - Confirm project name and operational behavior are safe to publish.
 
-### Project 4: Students Tracking System
+### Project 4: Securing a Shared Search Platform
 
 | Field | Value |
 |---|---|
-| Name | Students Tracking System |
+| Name | Securing a Shared Search Platform |
+| Role | Project Leader (Developer) |
+| Short description | Led the migration of a shared internal search platform from open internal access to strict per-service permissions, where every request must prove who sent it - with zero downtime for the live services using it. |
+| Problem solved | The shared search cluster accepted requests from anything inside the network. Every service using it had to start proving its identity and be limited to exactly what it's allowed to do - without interrupting production traffic. |
+| Tech stack | AWS IAM, AWS OpenSearch, Python, AWS Firehose |
+
+Security note:
+
+- Confirm project name and operational behavior are safe to publish.
+
+### Project 5: At-Risk Teenagers Monitoring System
+
+| Field | Value |
+|---|---|
+| Name | At-Risk Teenagers Monitoring System |
 | Context | Volunteer, Team Leader |
 | Role | Team Leader |
-| Short description | A web app used for tracking and managing school activity for a non-profit organization. |
-| Problem solved | The organization helps at-risk teenagers and needed a more efficient way to track and evaluate student risk. |
+| Short description | A web app that helps a non-profit organization track and support at-risk teenage girls with eating disorders, built through volunteer work. |
+| Problem solved | The organization struggled to track each teenager's situation and risk level. The system made that work significantly faster and more reliable. |
 | Tech stack | Bubble.io, JavaScript, Figma |
 | Backend focus | TBD |
-| Why important | It was a 100% volunteering project that solved a real-life problem affecting hundreds of at-risk teenagers. |
+| Why important | A 100% volunteer project that solved a real-life problem for hundreds of at-risk teenagers, improving their lives in practice. |
 
 Privacy note:
 
 - Avoid sensitive personal details about teenagers or health/risk conditions beyond generalized language.
+
+### Project 6: Developer Portfolio Website
+
+| Field | Value |
+|---|---|
+| Name | Developer Portfolio Website |
+| Role | Solo Developer |
+| Short description | The site you're reading right now - my portfolio and online CV, with a custom dark developer look and subtle scroll animations. |
+| Problem solved | I wanted one home for my CV, experience, projects, and courses - built with real engineering care, not from a generic template. |
+| Solution | Built from scratch with Next.js. All content lives in typed, validated data files, the UI is a small reusable design system, and every animation respects reduced-motion preferences. |
+| Tech stack | Next.js, TypeScript, Tailwind CSS, Framer Motion, shadcn/ui, Vercel |
+| Why important | As a backend developer, building the entire frontend myself - design, animations, accessibility, performance - pushed me far outside my comfort zone and shows full-stack range. |
 
 ### Link to Full Projects Page
 
@@ -1377,70 +1392,90 @@ Default requirement:
 
 ### Skill Categories
 
-#### Programming Languages
+#### Programming
 
 | Skill | Notes |
 |---|---|
-| Python | TBD |
-| SQL | TBD |
-| Bash | TBD |
+| Python | — |
+| SQL | — |
+| Bash | — |
+| Flask | — |
+| Pytest | — |
+| Linting (Ruff) | — |
 
-#### Backend Frameworks
-
-| Skill | Notes |
-|---|---|
-| FastAPI | TBD |
-
-#### Cloud & Infrastructure
+#### Tools & Infrastructure
 
 | Skill | Notes |
 |---|---|
-| AWS | ECS, EC2, SQS, DynamoDB, ElasticCache, ElasticSearch, S3, Athena, Iceberg, and more |
-| Docker | TBD |
-| Linux | TBD |
-
-#### CI/CD & Automation
-
-| Skill | Notes |
-|---|---|
-| Jenkins | Including Jenkinsfile creation |
-| GitHub | TBD |
+| Docker | — |
+| Linux | — |
+| Jenkins | — |
+| GitHub | — |
+| Prometheus | — |
+| Nagios | — |
+| Grafana | — |
+| Vulnerability Scanning | — |
+| Vercel | — |
+| AWS LocalStack | — |
 
 #### Databases
 
 | Skill | Notes |
 |---|---|
-| PostgreSQL | TBD |
-| DynamoDB | TBD |
-| Redis | TBD |
-| Vector DB | TBD |
-| ElasticSearch | TBD |
-| Iceberg | Parquet datasets |
+| DynamoDB | — |
+| PostgreSQL | — |
+| Redis | — |
+| VectorDB (Vespa.ai) | — |
+| Elasticsearch | — |
+| Parquet | — |
+| Apache Iceberg | — |
 
-#### Testing & Quality
-
-| Skill | Notes |
-|---|---|
-| Pytest | TBD |
-| Unit testing | TBD |
-| Integration testing | TBD |
-| Linting / formatting | TBD |
-| AWS LocalStack | TBD |
-
-#### Monitoring & Alerting
+#### Concepts & Methodologies
 
 | Skill | Notes |
 |---|---|
-| Prometheus | TBD |
-| Nagios | TBD |
-| Grafana | TBD |
+| Computer Networking | — |
+| OSI Network Architecture | — |
+| REST API Design | — |
+| Multi-Threading | — |
+| Microservices | — |
+| OOP | — |
+| Clean Code | — |
 
-#### Security / Cybersecurity
+#### Cloud
 
 | Skill | Notes |
 |---|---|
-| Secure coding | TBD |
-| Vulnerability awareness | TBD |
+| AWS ECS | — |
+| AWS EC2 | — |
+| AWS SQS | — |
+| AWS DynamoDB | — |
+| AWS ElastiCache | — |
+| AWS OpenSearch | — |
+| AWS S3 | — |
+| AWS CloudFormation | — |
+| AWS Kinesis Firehose | — |
+| AWS RDS | — |
+| AWS Secrets Manager | — |
+| AWS API Gateway | — |
+| AWS Lambda | — |
+| AWS Glue | — |
+| AWS Athena | — |
+| AWS KMS | — |
+| AWS EventBridge | — |
+| AWS ECR | — |
+
+#### AI Development
+
+| Skill | Notes |
+|---|---|
+| Claude Code | — |
+| Codex | — |
+| GitHub Copilot | — |
+| Cursor | — |
+| Token Optimization | — |
+| Prompt Engineering | — |
+| Agent Orchestration | — |
 
 ### Icon / Badge Expectations
 
@@ -1466,7 +1501,7 @@ Mobile:
 
 - Categories stack vertically.
 - Badges wrap naturally.
-- Long AWS notes remain readable.
+- Long categories (e.g. Cloud) remain readable.
 
 ### Acceptance Criteria
 
@@ -2089,8 +2124,8 @@ The following models are implementation-neutral. They may later be represented a
 | `name` | String | Yes | Full display name | `Noam Pony` |
 | `title` | String | Yes | Professional title | `Backend Developer` |
 | `shortTagline` | String | Optional | Short tagline | TBD |
-| `oneLineSummary` | String | Yes | Short summary | `A passionate experienced cloud backend developer` |
-| `heroText` | String | Yes | Hero text block | `A passionate experienced cloud backend developer. Building scalable & reliable cloud backend systems.` |
+| `oneLineSummary` | String | Yes | Short summary | `A passionate, experienced cloud backend developer` |
+| `heroText` | String | Yes | Hero text block | `A passionate, experienced cloud backend developer. Building scalable & reliable cloud backend systems.` |
 | `location` | String | Yes | Public location (owner prefers `Israel` everywhere) | `Israel` |
 | `city` | String | Optional | More specific location — **not used**; owner prefers showing `Israel` only | unused |
 | `profileImage` | Asset reference | Optional | Profile image path/source | TBD |
@@ -2119,7 +2154,7 @@ The following models are implementation-neutral. They may later be represented a
 |---|---|---:|---|---|
 | `organization` | String | Yes | Company or organization name | `Check Point Software Technologies` |
 | `organizationType` | String | Optional | Company, non-profit, self-employed, etc. | `Non-Profit Association` |
-| `role` | String | Yes | Role title | `Backend Software Developer – Cloud` |
+| `role` | String | Yes | Role title | `Cloud Backend Software Developer` |
 | `employmentType` | String | Optional | Full-time, volunteer, self-employed | `Volunteer` |
 | `startDate` | Date | Yes | Start date | `2022-10` |
 | `endDate` | Date or `Present` | Optional | End date | `Present` |
@@ -2135,15 +2170,15 @@ The following models are implementation-neutral. They may later be represented a
 
 | Field | Type | Required | Description | Example |
 |---|---|---:|---|---|
-| `name` | String | Yes | Project name | `Microsoft Office Events` |
+| `name` | String | Yes | Project name | `Microsoft & Google Event Streaming` |
 | `role` | String | Yes | Noam’s role | `Project Leader` |
 | `year` | String or Number | Optional | Project year | TBD |
 | `category` | List of strings | Yes | Project categories | `Backend`, `Cloud` |
 | `shortDescription` | String | Yes | Concise project summary | See Projects section |
-| `problemSolved` | String | Yes | Problem solved | `Fetching important information from Microsoft and Google...` |
+| `problemSolved` | String | Yes | Problem solved | `The product needs to know what's happening inside customers' Microsoft and Google accounts...` |
 | `solution` | String | Optional | High-level solution | TBD |
 | `techStack` | List of strings | Yes | Public-safe technologies | `AWS`, `Python`, `Docker` |
-| `backendFocus` | String | Yes | Backend relevance | `High-scale system` |
+| `backendFocus` | String | Yes | Backend relevance | `A high-scale pipeline handling billions of events weekly` |
 | `whyImportant` | String | Optional | Business/product/user impact | See Projects section |
 | `architecture` | String | Optional | Public-safe architecture notes | TBD |
 | `database` | List of strings | Optional | Database/storage technologies | `DynamoDB`, `Athena` |
@@ -2180,7 +2215,7 @@ The following models are implementation-neutral. They may later be represented a
 | Field | Type | Required | Description | Example |
 |---|---|---:|---|---|
 | `name` | String | Yes | Skill name | `Python` |
-| `category` | String | Yes | Skill category | `Programming Languages` |
+| `category` | String | Yes | Skill category | `Programming` |
 | `notes` | String | Optional | Additional detail | `Including Jenkinsfile creation` |
 | `icon` | Asset/Icon reference | Optional | Skill icon | TBD |
 | `proficiency` | String | Optional | Proficiency level if later defined | TBD |
@@ -2721,7 +2756,7 @@ Mobile:
 | Content Area | Expected Source | Status |
 |---|---|---|
 | Resume | File uploaded by Noam | File expected at `/public/resume.pdf`; actual file TBD |
-| Projects | Noam-provided data | Initial 4 projects provided; full list TBD |
+| Projects | Noam-provided data | 6 projects provided; full list TBD |
 | Courses | Notion Courses Hub | Top 5 provided; full hub TBD |
 | Profile picture | File provided by Noam | TBD |
 | Certificates | Notion Courses Hub and files provided by Noam | Mostly TBD |
@@ -2844,7 +2879,7 @@ The finished planned website is complete when:
 - Are there GitHub links for any project?
 - Are there live demo links for any project?
 - Are screenshots/images available and safe?
-- What is the Backend focus for the Students Tracking System?
+- What is the Backend focus for the At-Risk Teenagers Monitoring System?
 - How many total projects will be available for the Projects page?
 
 ### 19.7 Courses TBDs
@@ -2937,3 +2972,11 @@ This is the **basic, must-have** accessibility set for every shipped page. It is
 10. **Links open safely** — external `target="_blank"` links use `rel="noopener noreferrer"` and have accessible names.
 
 Basic verification: keyboard-only pass over Hero + nav + any drawer/modal, plus an automated check (axe or Lighthouse accessibility ≥ 95). Deeper, optional a11y enhancements are listed in the review at §21.7.
+
+---
+
+## Content Revision Log
+
+| Date | Change |
+|---|---|
+| 2026-07-10 | Site-wide plain-language copy pass - meaning preserved; owner approved rewriting locked strings and re-baselining sections that had drifted from the shipped data (§8.1, §8.2, §8.3, §8.4, §8.6, §11). Renamed 2 project cards and 3 impact cards; impact bullets trimmed 4→3. |

@@ -348,157 +348,6 @@ html {
   }
 }
 
-.about-graphs-layer {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-}
-
-.about-graph-card {
-  position: absolute;
-  width: clamp(11.25rem, 15vw, 15rem);
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--accent) 13%, var(--bg-surface)), transparent 42%),
-    linear-gradient(145deg, color-mix(in srgb, var(--bg-surface) 88%, var(--accent)), var(--bg-surface-raised));
-  padding: 0.625rem;
-  color: color-mix(in srgb, var(--text-secondary) 80%, var(--accent));
-  opacity: 0.34;
-  box-shadow:
-    0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-  transform: translate3d(0, 0, 0);
-  backdrop-filter: blur(14px) saturate(130%);
-}
-
-.about-graph-title {
-  overflow: hidden;
-  margin-bottom: 0.25rem;
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: color-mix(in srgb, var(--accent-hover) 78%, var(--text-secondary));
-}
-
-.about-graph-svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.about-graph-grid,
-.about-graph-axis,
-.about-graph-line {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.about-graph-grid {
-  stroke: color-mix(in srgb, var(--text-muted) 26%, transparent);
-  stroke-width: 0.65;
-}
-
-.about-graph-axis {
-  stroke: color-mix(in srgb, var(--text-secondary) 58%, transparent);
-  stroke-width: 1.15;
-}
-
-.about-graph-bar {
-  fill: color-mix(in srgb, var(--gradient-to) 38%, transparent);
-}
-
-.about-graph-line {
-  stroke: color-mix(in srgb, var(--accent) 86%, white);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 0.25rem color-mix(in srgb, var(--accent) 46%, transparent));
-}
-
-.about-graph-dot {
-  fill: var(--accent-hover);
-}
-
-.about-graph-x-label,
-.about-graph-y-label {
-  fill: color-mix(in srgb, var(--text-muted) 82%, var(--accent));
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: 0.4375rem;
-  letter-spacing: 0;
-}
-
-/* Experience floating quote cards — mirrors the About graph-card glass system
-   (.about-graphs-layer / .about-graph-card) but larger and text-oriented, so
-   each inspirational quote reads with presence from the background (spec §8.3). */
-.experience-quotes-layer {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-}
-
-.experience-quote-card {
-  position: absolute;
-  width: clamp(19rem, 28vw, 28rem);
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--accent) 13%, var(--bg-surface)), transparent 42%),
-    linear-gradient(145deg, color-mix(in srgb, var(--bg-surface) 88%, var(--accent)), var(--bg-surface-raised));
-  padding: 1.25rem 1.4rem;
-  opacity: 0.44;
-  box-shadow:
-    0 1.25rem 3.5rem rgb(0 0 0 / 0.22),
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-  transform: translate3d(0, 0, 0);
-  backdrop-filter: blur(14px) saturate(130%);
-}
-
-.experience-quote-mark {
-  display: block;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 2.25rem;
-  line-height: 0.8;
-  color: color-mix(in srgb, var(--accent) 72%, var(--text-secondary));
-  text-shadow: 0 0 1.25rem color-mix(in srgb, var(--accent) 28%, transparent);
-}
-
-.experience-quote-mark--open {
-  margin-bottom: -0.25rem;
-}
-
-.experience-quote-mark--close {
-  margin-top: -0.15rem;
-  text-align: right;
-}
-
-.experience-quote-text {
-  margin: 0;
-  font-style: italic;
-  font-size: 1.15rem;
-  line-height: 1.5;
-  text-wrap: balance;
-  color: color-mix(in srgb, var(--text-secondary) 86%, var(--accent));
-}
-
-.experience-quote-author {
-  margin: 0.6rem 0 0;
-  font-family: var(--font-mono), var(--font-mono-fallback);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--accent-hover) 80%, var(--text-secondary));
-}
-
 .about-copy-accent-line {
   display: none;
 }
@@ -1037,16 +886,6 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   .contact-method-link:hover {
     transform: translateY(-0.25rem);
-  }
-}
-
-@media (max-width: 767px) {
-  .about-graphs-layer {
-    display: none;
-  }
-
-  .experience-quotes-layer {
-    display: none;
   }
 }
 
@@ -2011,21 +1850,6 @@ html {
    course cards. Reuses the experience-tree node/line motif (.tree-dot) and tokens. All
    motion is transform/opacity-only and reduced-motion-gated (spec §20). */
 
-/* Subtle dev-grid wash behind the section (mirrors .impact-grid-wash), masked + low-opacity. */
-.roadmap-grid-wash {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
-  background-size: 3.75rem 3.75rem;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 72%, transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 72%, transparent 100%);
-  opacity: 0.16;
-  pointer-events: none;
-}
-
 .roadmap-paths-wrap {
   position: relative;
 }
@@ -2896,18 +2720,6 @@ main:focus-visible {
    wash; the card glass matches the site card system (§6.7) but sits on a more
    opaque base so overlapping slides stay readable in the 3D arc. */
 
-.impact-grid-wash {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
-  background-size: 3.75rem 3.75rem;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 72%, transparent 100%);
-  opacity: 0.16;
-}
-
 .impact-header {
   position: relative;
 }
@@ -3154,4 +2966,179 @@ main:focus-visible {
     transition: none;
     animation: none;
   }
+}
+
+/* ===== Shared section background system ============================================
+   One ambient treatment for every non-hero section (see components/layout/
+   SectionBackground.tsx): static corner-glow tints (the compositions the sections
+   always had, now shared), a static film-grain tile, an optional dev-grid wash,
+   and glow seams that blend adjacent sections instead of a flat border. Everything
+   is static and paint-cheap — no blur filters, no animation, tiled backgrounds
+   rasterised once. */
+
+.section-bg {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+/* Static corner-glow tints, per placement variant. */
+.section-glow {
+  position: absolute;
+  inset: 0;
+}
+
+.section-glow--split {
+  background:
+    radial-gradient(
+      60% 46% at 88% -4%,
+      color-mix(in srgb, var(--gradient-to) 11%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      46% 42% at 6% 6%,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 32%
+    );
+}
+
+.section-glow--left {
+  background:
+    radial-gradient(
+      circle at 12% 18%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 8% 82%,
+      color-mix(in srgb, var(--gradient-to) 10%, transparent),
+      transparent 32%
+    );
+}
+
+.section-glow--right {
+  background:
+    radial-gradient(
+      circle at 88% 16%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      color-mix(in srgb, var(--gradient-to) 10%, transparent),
+      transparent 30%
+    );
+}
+
+/* Static film grain — an SVG feTurbulence tile repeated at compositor cost. Never animated. */
+.section-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+/* Subtle dev-grid wash (generalises the former .impact-grid-wash / .roadmap-grid-wash). */
+.section-grid-wash {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      color-mix(in srgb, var(--accent) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--accent) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 3.75rem 3.75rem;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 72%, transparent 100%);
+  opacity: 0.16;
+}
+
+/* Seams — a soft wash toward --bg-surface where two sections meet, so every
+   hand-off is tint-matched; the "line" variant adds a centred glowing hairline
+   in place of the old flat border-t. */
+.section-seam-top {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 6rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-surface) 55%, transparent),
+    transparent
+  );
+}
+
+.section-seam-top--line::before,
+.seam-hairline::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 26%, var(--border)) 50%,
+    transparent
+  );
+}
+
+/* Standalone glowing hairline for non-section boundaries (e.g. the footer),
+   replacing a flat `border-t border-border`. Host must be `position: relative`. */
+.seam-hairline {
+  position: relative;
+}
+
+.section-seam-bottom {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 8rem;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--bg-surface) 55%, transparent)
+  );
+}
+
+/* Cursor-reactive glow (see components/ui/CursorGlow.tsx) — sits above the
+   ambient .section-bg layers (later in DOM order, same negative z), behind the
+   section content. Position is driven by --spot-x/--spot-y custom props. */
+.section-cursor-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  background: radial-gradient(
+    30rem 30rem at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--accent) 7%, transparent),
+    transparent 65%
+  );
+}
+
+.section-cursor-glow[data-active="true"] {
+  opacity: 1;
+}
+
+/* Thin gradient scroll-progress bar sitting on the header's bottom border.
+   Absolutely positioned so it never affects the measured --navbar-height. */
+.navbar-scroll-progress {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 2px;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--gradient-from), var(--gradient-to));
+  box-shadow: 0 0 8px -2px color-mix(in srgb, var(--accent) 70%, transparent);
 }

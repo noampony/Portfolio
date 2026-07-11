@@ -1,11 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
+import { SectionBackground } from "@/components/layout/SectionBackground";
 import { RoadmapPath } from "@/components/ui/RoadmapPath";
 import { RoadmapRoad } from "@/components/ui/RoadmapRoad";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { learningPaths } from "@/lib/content/data/learning-paths";
+import { staggerContainerVariants } from "@/lib/motion";
 
 /**
  * Courses section (spec §8.5) — a compact learning *roadmap*: the ordered learning paths,
@@ -25,33 +28,6 @@ import { learningPaths } from "@/lib/content/data/learning-paths";
  * and highlights via scroll-spy (see `lib/navigation.ts`).
  */
 
-const easeOut = [0.22, 1, 0.36, 1] as const;
-
-const staggerContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-const revealItemVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: easeOut },
-  },
-};
-
-const accentLineRevealVariants: Variants = {
-  hidden: { opacity: 0, x: -128 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 2.1, ease: easeOut },
-  },
-};
-
 /** No-JS fallback: keep the reveal-animated content visible when scripting never runs. */
 const NO_JS_FALLBACK = `.courses-reveal{opacity:1!important;transform:none!important}`;
 
@@ -69,13 +45,13 @@ export function CoursesRoadmap() {
     <section
       id="courses"
       aria-labelledby="courses-heading"
-      className="relative isolate border-t border-border bg-bg-base py-16 lg:py-24"
+      className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
+      <SectionBackground glow="left" grid seamTop="line" seamBottom />
+
       <noscript>
         <style>{NO_JS_FALLBACK}</style>
       </noscript>
-
-      <div aria-hidden="true" className="roadmap-grid-wash" />
 
       <motion.div
         className="site-shell"
@@ -84,29 +60,13 @@ export function CoursesRoadmap() {
         viewport={{ once: true, margin: "-80px" }}
         variants={staggerContainerVariants}
       >
-        <motion.div
-          variants={revealItemVariants}
-          className="courses-reveal relative"
-        >
-          <motion.span
-            aria-hidden="true"
-            className="about-copy-accent-line"
-            variants={accentLineRevealVariants}
-          />
-          <p className="mb-3 font-mono text-small tracking-wider text-accent">
-            SYS://COURSES
-          </p>
-          <h2
-            id="courses-heading"
-            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-          >
-            Learning Roadmap
-          </h2>
-          <p className="mt-4 max-w-measure text-body text-text-secondary">
-            A deliberate progression - grouped into focused paths, from language depth and
-            backend systems to architecture, security, and AI-augmented development.
-          </p>
-        </motion.div>
+        <SectionHeading
+          className="courses-reveal"
+          headingId="courses-heading"
+          eyebrow="SYS://COURSES"
+          title="Learning Roadmap"
+          lead="A deliberate path - Python first, then backend systems, architecture, security, and AI-assisted development."
+        />
 
         <div className="roadmap-paths-wrap mt-10">
           <RoadmapRoad containerRef={pathsRef} pathCount={learningPaths.length} />

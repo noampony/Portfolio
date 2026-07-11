@@ -4,7 +4,10 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { impacts } from "@/lib/content/data/impact";
+import { SectionBackground } from "@/components/layout/SectionBackground";
 import { ImpactCard } from "@/components/ui/ImpactCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { easeOut, staggerContainerVariants } from "@/lib/motion";
 
 /**
  * My Impact section (spec §8.2) — replaces the former About section. Every career
@@ -47,13 +50,6 @@ const WHEEL_COOLDOWN_MS = 350;
 
 /** Minimum horizontal swipe distance (px) to count as a touch navigation gesture. */
 const SWIPE_THRESHOLD = 40;
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
-
-const headerVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: easeOut } },
-};
 
 const galleryVariants = {
   hidden: { opacity: 0, y: 32 },
@@ -191,15 +187,7 @@ export function MyImpact() {
       aria-labelledby="impact-heading"
       className="impact-section relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
-      {/* Top linear layer opens on the same `--bg-surface` tint the Experience section
-         above fades down to, then brightens and fades to base — so the two sections
-         merge through a shared glow band with no hard colour seam (the top border is
-         intentionally dropped here for that reason; §6.3). */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_12%_18%,color-mix(in_srgb,var(--accent)_16%,transparent),transparent_28%),radial-gradient(circle_at_86%_22%,color-mix(in_srgb,var(--gradient-to)_14%,transparent),transparent_30%),linear-gradient(180deg,color-mix(in_srgb,var(--bg-surface)_55%,transparent)_0%,color-mix(in_srgb,var(--bg-surface)_72%,transparent)_16%,transparent_60%)]"
-      />
-      <div aria-hidden="true" className="impact-grid-wash" />
+      <SectionBackground glow="split" grid seamTop="line" seamBottom />
 
       <div className="site-shell relative z-10">
         <motion.div
@@ -207,19 +195,16 @@ export function MyImpact() {
           initial={animate ? "hidden" : false}
           whileInView={animate ? "visible" : undefined}
           viewport={{ once: true, margin: "-80px" }}
-          variants={headerVariants}
+          variants={staggerContainerVariants}
         >
-          <p className="mb-3 font-mono text-small tracking-wider text-accent">SYS://IMPACT</p>
-          <h2
-            id="impact-heading"
-            className="m-0 text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-          >
-            My Impact
-          </h2>
-          <p className="mt-4 text-body text-text-secondary sm:text-[1.0625rem]">
-            A selection of impact I made during my career - and the outcomes each one
-            drove.
-          </p>
+          <SectionHeading
+            headingId="impact-heading"
+            eyebrow="SYS://IMPACT"
+            title="My Impact"
+            lead={
+              <>Work I&apos;m proud of from across my career - and what each piece changed.</>
+            }
+          />
         </motion.div>
 
         <motion.div

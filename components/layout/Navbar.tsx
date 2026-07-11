@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, type MouseEvent, type PointerEvent } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { SECTION_NAV_ITEMS, SECTION_IDS, RESUME_NAV_LABEL } from "@/lib/navigation";
 import { useActiveSection } from "@/lib/hooks/useActiveSection";
 import { useResumeViewer } from "@/components/providers/ResumeViewerProvider";
@@ -78,6 +78,17 @@ export function Navbar() {
   const { activeId, selectSection } = useActiveSection(SECTION_IDS);
   const { open: resumeOpen, openResume } = useResumeViewer();
   const headerRef = useRef<HTMLElement>(null);
+
+  // Page scroll progress for the thin gradient bar under the header. The spring
+  // gives the bar a slight glide; under reduced motion the raw progress value is
+  // bound directly (a scroll-position indicator is feedback, not decoration —
+  // only the springy overshoot is dropped).
+  const { scrollYProgress } = useScroll();
+  const smoothScrollProgress = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   // Keep `--navbar-height` in sync with the header's actual rendered height (it
   // differs slightly across breakpoints), so the `scroll-padding-top` anchor
@@ -185,6 +196,13 @@ export function Navbar() {
           resumeOpen={resumeOpen}
         />
       </nav>
+
+      {/* Absolute inside the header, so the measured `--navbar-height` is unaffected. */}
+      <motion.div
+        aria-hidden="true"
+        className="navbar-scroll-progress"
+        style={{ scaleX: prefersReducedMotion ? scrollYProgress : smoothScrollProgress }}
+      />
     </header>
   );
 }

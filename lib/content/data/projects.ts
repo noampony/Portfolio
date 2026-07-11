@@ -23,17 +23,17 @@ import { validateProjectList } from "../validate";
 const projectData = [
   {
     // §8.4 Project 1 — owner-approved; scale stated generically (not "2 Billion Events").
-    name: "Microsoft & Google Events Streaming",
+    name: "Microsoft & Google Event Streaming",
     role: "Project Leader",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
-      "Developed a service that subscribes to Microsoft and Google APIs, retrieves events via webhook, processes them, and writes billions of events weekly to a database.",
+      "Built a service that subscribes to Microsoft and Google activity APIs, receives events through webhooks, and processes and stores billions of them every week.",
     problemSolved:
-      "Fetching important information from Microsoft and Google, crucial for analytics and security insights.",
+      "The product needs to know what's happening inside customers' Microsoft and Google accounts. This service brings in that raw activity data reliably, at full scale.",
     techStack: ["AWS", "Python", "Docker", "Jenkins", "System Design"],
-    backendFocus: "High-scale system processing billions of events weekly",
+    backendFocus: "A high-scale pipeline handling billions of events weekly",
     whyImportant:
-      "The events fetched were crucial for cybersecurity scanning processes, identifying malicious operations.",
+      "These events feed the security scans that catch malicious activity.",
     confidentialityReviewed: true,
   },
   {
@@ -42,32 +42,32 @@ const projectData = [
     role: "Developer in a team",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
-      "Implemented a long-term email archiving solution together with my team.",
+      "Implemented long-term email archiving together with my team - emails stored for years and searchable in full.",
     problemSolved:
-      "Users can archive their emails long-term (mainly for legal purposes), search across all email content including body and attachments, import and export emails, and more.",
+      "Companies often must keep emails for years, mainly for legal reasons. The service stores them long-term and lets users search everything - bodies and attachments included - and import or export their archive.",
     techStack: [
       "AWS",
       "Python",
       "Docker",
       "Vector Database",
-      "AWS Iceberg",
+      "Apache Iceberg",
       "AWS Athena",
       "System Design",
     ],
-    backendFocus: "High scale, advanced search on huge data",
+    backendFocus: "Fast search over a huge, always-growing dataset",
     whyImportant:
-      "The service served a main role in the product, attracting more customers.",
+      "A major product capability that helped bring in new customers.",
     confidentialityReviewed: true,
   },
   {
     // §8.4 Project 3 — owner-approved; internal processing mechanics softened.
-    name: "Final-Failure Watchdog",
+    name: "Delivery Safety Net",
     role: "Project Leader",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
-      "A service acting as the final watchdog. It is responsible for identifying stuck entities in the system and quickly releasing them to the customer, bypassing normal processing flow.",
+      "The system's last line of defense. When something gets stuck in the processing pipeline, this service catches it and delivers it to the customer anyway.",
     problemSolved:
-      "All stuck entities are identified and released to the customer reliably.",
+      "Nothing gets lost silently - anything that fails normal processing is found and still reaches the customer.",
     techStack: [
       "AWS",
       "Python",
@@ -77,20 +77,20 @@ const projectData = [
       "Grafana",
     ],
     backendFocus:
-      "Very high scale, high resilience, high availability, and closely monitored system",
+      "Very high scale and heavily monitored - the one component that must never fail.",
     whyImportant:
-      "This system had high product focus, giving confidence that no entity gets stuck and everything is delivered to the user.",
+      "It backs the product's promise that everything customers expect actually arrives, even when something upstream breaks.",
     confidentialityReviewed: true,
   },
   {
     // §8.4 Project 4 — owner-approved; Check Point IAM migration, public-safe wording.
-    name: "OpenSearch Fine-Grained Access Control Migration",
+    name: "Securing a Shared Search Platform",
     role: "Project Leader (Developer)",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
-      "Led the IAM remediation and request-signing rollout for migrating a shared internal search platform to AWS Fine-Grained Access Control, with zero downtime to live services.",
+      "Led the migration of a shared internal search platform from open internal access to strict per-service permissions, where every request must prove who sent it - with zero downtime for the live services using it.",
     problemSolved:
-      "A shared search cluster needed to move from open access to strict, identity-based access control without disrupting production traffic.",
+      "The shared search cluster accepted requests from anything inside the network. Every service using it had to start proving its identity and be limited to exactly what it's allowed to do - without interrupting production traffic.",
     techStack: ["AWS IAM", "AWS OpenSearch", "Python", "AWS Firehose"],
     confidentialityReviewed: true,
   },
@@ -101,9 +101,9 @@ const projectData = [
     role: "Team Leader",
     workplace: { name: "Max Impact", logo: "/logos/max-impact.png", showName: true },
     shortDescription:
-      "A web application for tracking and monitoring at-risk teenagers with eating disorders, developed through volunteer work for a non-profit organization.",
+      "A web app that helps a non-profit organization track and support at-risk teenage girls with eating disorders, built through volunteer work.",
     problemSolved:
-      "The organization had difficulty tracking and evaluating the risk level of each teenager. The system made tracking and assessment significantly more efficient.",
+      "The organization struggled to track each teenager's situation and risk level. The system made that work significantly faster and more reliable.",
     techStack: ["Bubble.io", "JavaScript", "Figma"],
     whyImportant:
       "A 100% volunteer project that solved a real-life problem for hundreds of at-risk teenagers, improving their lives in practice.",
@@ -114,11 +114,11 @@ const projectData = [
     name: "Developer Portfolio Website",
     role: "Solo Developer",
     shortDescription:
-      "The very site you are viewing - a personal portfolio and online CV with a custom dark developer aesthetic, content-driven sections, and subtle scroll-driven animations.",
+      "The site you're reading right now - my portfolio and online CV, with a custom dark developer look and subtle scroll animations.",
     problemSolved:
-      "Needed a single, technically-mature home for my CV, experience, projects, and courses that reflects real engineering craft rather than a generic template.",
+      "I wanted one home for my CV, experience, projects, and courses - built with real engineering care, not from a generic template.",
     solution:
-      "Built from scratch on the Next.js App Router with a typed, validated content layer driving every section, a reusable design system, and accessible, reduced-motion-aware animations.",
+      "Built from scratch with Next.js. All content lives in typed, validated data files, the UI is a small reusable design system, and every animation respects reduced-motion preferences.",
     techStack: [
       "Next.js",
       "TypeScript",
@@ -128,7 +128,7 @@ const projectData = [
       "Vercel",
     ],
     whyImportant:
-      "As a backend developer, designing and building the entire frontend end-to-end - design system, animations, accessibility, and performance - stretched me well beyond my comfort zone and demonstrates full-stack range.",
+      "As a backend developer, building the entire frontend myself - design, animations, accessibility, performance - pushed me far outside my comfort zone and shows full-stack range.",
     confidentialityReviewed: true,
   },
 ] as const;

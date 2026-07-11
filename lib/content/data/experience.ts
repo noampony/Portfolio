@@ -26,7 +26,7 @@ const experienceData = [
     startDate: "2022-10",
     endDate: "Present",
     description:
-      "I've been developing and owning cloud-based backend services for a large-scale email security product, designing and building multiple high-traffic systems from the ground up using Python, Docker, AWS, and modern cloud technologies. I worked closely with developers, QA, and product teams to deliver reliable solutions at scale, while leading monitoring and operational improvements across the team. Along the way, I developed deep expertise in AI-assisted and agentic development workflows. I became a go-to person for service ownership, troubleshooting, and knowledge sharing across the team.",
+      "I build and own cloud backend services for a large-scale email security product, and I designed several of its high-traffic systems from scratch using Python, Docker, and AWS. I work closely with developers, QA, and product teams to ship reliably at scale, and I led monitoring and operational improvements across the team. Along the way I went deep on AI-assisted development - coding agents are now a core part of how I build. Today I'm the team's go-to person for owning services, debugging production issues, and sharing knowledge.",
     confidentialityReviewed: true,
   },
   {
@@ -73,7 +73,7 @@ const experienceData = [
     endDate: "2022-10",
     durationLabel: "11 months",
     description:
-      "Researched CVEs to reproduce attacks and build protections for Check Point's customers. Wrote Python automation to broaden protection coverage and streamline team workflows, with a focus on network attacks.",
+      "Researched newly disclosed security vulnerabilities, reproduced the attacks they enable, and built the protections that block them for Check Point's customers. Wrote Python automation to cover more attacks and speed up the team's day-to-day work, focusing on network-level attacks.",
     confidentialityReviewed: true,
   },
 ] as const;

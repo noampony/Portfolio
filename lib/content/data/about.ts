@@ -30,8 +30,8 @@ const yearsExperienceCountLabel = String(
 
 const aboutData = {
   professionalSummary:
-    "I'm a cloud backend engineer specializing in extreme-scale, real-time systems on AWS. " +
-    "At Check Point I've built microservices from the ground up that process billions of entities a week.\n\n" +
+    "I'm a cloud backend engineer building large-scale, real-time systems on AWS. " +
+    "At Check Point I've built microservices from the ground up that handle billions of events a week.\n\n" +
     "I'm driven by continuous learning - 35+ professional courses - and by mentoring others, " +
     "including a year leading a developers team as a volunteer.\n\n" +
     "I build systems that work: fast, reliable, and scalable.",

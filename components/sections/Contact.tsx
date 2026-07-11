@@ -1,10 +1,13 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
+import { SectionBackground } from "@/components/layout/SectionBackground";
 import { useGlareHandlers } from "@/components/ui/GlareHover";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { revealItemVariants, staggerContainerVariants } from "@/lib/motion";
 
 import { contact } from "@/lib/content/data/contact";
 
@@ -17,33 +20,6 @@ import { contact } from "@/lib/content/data/contact";
  *
  * No contact form. The "Preferred" metadata has been removed per the redesign.
  */
-
-const easeOut = [0.22, 1, 0.36, 1] as const;
-
-const staggerContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-const revealItemVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: easeOut },
-  },
-};
-
-const accentLineRevealVariants: Variants = {
-  hidden: { opacity: 0, x: -128 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 2.1, ease: easeOut },
-  },
-};
 
 /** Digits-only form for the `tel:` URI, preserving the leading "+". */
 const telHref = `tel:${contact.phone.replace(/(?!^\+)[^\d]/g, "")}`;
@@ -434,12 +410,9 @@ export function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="relative isolate overflow-hidden border-t border-border bg-bg-base py-6 lg:py-10"
+      className="relative isolate overflow-hidden bg-bg-base py-6 lg:py-10"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_14%_18%,color-mix(in_srgb,var(--accent)_12%,transparent),transparent_30%),radial-gradient(circle_at_86%_82%,color-mix(in_srgb,var(--gradient-to)_12%,transparent),transparent_32%)]"
-      />
+      <SectionBackground glow="split" seamTop="line" seamBottom />
 
       <motion.div
         className="site-shell"
@@ -451,26 +424,18 @@ export function Contact() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr] lg:gap-8 lg:items-center">
           {/* Left: heading + text + illustration widget */}
           <motion.div variants={revealItemVariants} className="flex flex-col gap-4">
-            <div className="relative">
-              <motion.span
-                aria-hidden="true"
-                className="about-copy-accent-line"
-                variants={accentLineRevealVariants}
-              />
-              <p className="mb-2 font-mono text-small tracking-wider text-accent">
-                SYS://CONTACT
-              </p>
-              <h2
-                id="contact-heading"
-                className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-              >
-                {contact.heading}
-              </h2>
-              <p className="mt-3 max-w-measure text-body text-text-secondary">
-                {contact.message.split("? ")[0]}?<br />
-                {contact.message.split("? ")[1]}
-              </p>
-            </div>
+            <SectionHeading
+              asItem={false}
+              headingId="contact-heading"
+              eyebrow="SYS://CONTACT"
+              title={contact.heading}
+              lead={
+                <>
+                  {contact.message.split("? ")[0]}?<br />
+                  {contact.message.split("? ")[1]}
+                </>
+              }
+            />
 
             <ContactIllustration animate={animate} />
           </motion.div>

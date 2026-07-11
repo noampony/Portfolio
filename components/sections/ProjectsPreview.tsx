@@ -1,10 +1,14 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
+import { SectionBackground } from "@/components/layout/SectionBackground";
+import { CursorGlow } from "@/components/ui/CursorGlow";
 import { ProjectCard } from "@/components/ui/ProjectCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { projects } from "@/lib/content/data/projects";
 import { filterConfidentialityReviewed } from "@/lib/content/loaders";
+import { revealItemVariants, staggerContainerVariants } from "@/lib/motion";
 
 /**
  * Decorative background photos behind the cards, shown at low opacity (served from `/public`).
@@ -16,12 +20,12 @@ import { filterConfidentialityReviewed } from "@/lib/content/loaders";
 const DEFAULT_CARD_BG = "/images/projects/card-bg.png";
 
 const PROJECT_BACKGROUNDS: Record<string, string> = {
-  "Microsoft & Google Events Streaming": "/images/projects/microsoft-office-events.png",
+  "Microsoft & Google Event Streaming": "/images/projects/microsoft-office-events.png",
   "Email Archiving Service": "/images/projects/email-archiving-service.png",
-  "Final-Failure Watchdog": "/images/projects/final-failure-watchdog.png",
+  "Delivery Safety Net": "/images/projects/final-failure-watchdog.png",
   "At-Risk Teenagers Monitoring System": "/images/projects/students-tracking-system.png",
   "Developer Portfolio Website": "/images/projects/portfolio-website.png",
-  "OpenSearch Fine-Grained Access Control Migration":
+  "Securing a Shared Search Platform":
     "/images/projects/opensearch-fine-grained-access-control.png",
 };
 
@@ -51,33 +55,6 @@ const PROJECT_BACKGROUND_OPACITY: Record<string, number> = {
  * and highlights via scroll-spy (see `lib/navigation.ts`).
  */
 
-const easeOut = [0.22, 1, 0.36, 1] as const;
-
-const staggerContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-const revealItemVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: easeOut },
-  },
-};
-
-const accentLineRevealVariants: Variants = {
-  hidden: { opacity: 0, x: -128 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 2.1, ease: easeOut },
-  },
-};
-
 /** No-JS fallback: keep the section visible and unfold the flip cards (front + back stacked). */
 const NO_JS_FALLBACK = `
 .projects-reveal{opacity:1!important;transform:none!important}
@@ -101,8 +78,11 @@ export function ProjectsPreview() {
     <section
       id="projects"
       aria-labelledby="projects-heading"
-      className="relative isolate border-t border-border bg-bg-base py-16 lg:py-24"
+      className="relative isolate overflow-hidden bg-bg-base py-16 lg:py-24"
     >
+      <SectionBackground glow="right" seamTop="line" seamBottom />
+      <CursorGlow />
+
       <noscript>
         <style>{NO_JS_FALLBACK}</style>
       </noscript>
@@ -114,30 +94,19 @@ export function ProjectsPreview() {
         viewport={{ once: true, margin: "-80px" }}
         variants={staggerContainerVariants}
       >
-        <motion.div
-          variants={revealItemVariants}
-          className="projects-reveal relative"
-        >
-          <motion.span
-            aria-hidden="true"
-            className="about-copy-accent-line"
-            variants={accentLineRevealVariants}
-          />
-          <p className="mb-3 font-mono text-small tracking-wider text-accent">
-            SYS://PROJECTS
-          </p>
-          <h2
-            id="projects-heading"
-            className="m-0 max-w-measure text-h2 font-semibold leading-snug text-text-primary sm:text-h1 sm:leading-tight"
-          >
-            Featured Projects
-          </h2>
-          <p className="mt-4 max-w-measure text-body text-text-secondary">
-            A few backend systems I&apos;ve built and led.
-            <br />
-            Tap a card to flip it over.
-          </p>
-        </motion.div>
+        <SectionHeading
+          className="projects-reveal"
+          headingId="projects-heading"
+          eyebrow="SYS://PROJECTS"
+          title="Featured Projects"
+          lead={
+            <>
+              A few backend systems I&apos;ve built and led.
+              <br />
+              Tap a card to flip it over.
+            </>
+          }
+        />
 
         <ul className="mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {reviewed.map((project, index) => (
