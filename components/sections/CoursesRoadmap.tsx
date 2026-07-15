@@ -65,7 +65,7 @@ export function CoursesRoadmap() {
           headingId="courses-heading"
           eyebrow="SYS://COURSES"
           title="Learning Roadmap"
-          lead="A deliberate path - Python first, then backend systems, architecture, security, and AI-assisted development."
+          lead="A step-by-step learning journey - starting with Python, then backend systems, architecture, security, and AI-assisted development."
         />
 
         <div className="roadmap-paths-wrap mt-10">

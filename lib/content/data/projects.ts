@@ -27,11 +27,11 @@ const projectData = [
     role: "Project Leader",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
-      "Built a service that subscribes to Microsoft and Google activity APIs, receives events through webhooks, and processes and stores billions of them every week.",
+      "Built an end-to-end service that subscribes to Microsoft and Google activity APIs, receives events through webhooks, and processes and stores billions of them every week.",
     problemSolved:
       "The product needs to know what's happening inside customers' Microsoft and Google accounts. This service brings in that raw activity data reliably, at full scale.",
-    techStack: ["AWS", "Python", "Docker", "Jenkins", "System Design"],
-    backendFocus: "A high-scale pipeline handling billions of events weekly",
+    techStack: ["AWS", "Python", "Docker", "Jenkins", "System Design", "Prometheus", "DevOps"],
+    backendFocus: "A high-scale pipeline processing billions of events weekly",
     whyImportant:
       "These events feed the security scans that catch malicious activity.",
     confidentialityReviewed: true,
@@ -44,11 +44,12 @@ const projectData = [
     shortDescription:
       "Implemented long-term email archiving together with my team - emails stored for years and searchable in full.",
     problemSolved:
-      "Companies often must keep emails for years, mainly for legal reasons. The service stores them long-term and lets users search everything - bodies and attachments included - and import or export their archive.",
+      "Companies often must keep emails for years, mainly for legal reasons. The service stores them long-term and lets users search everything - email bodies and attachments included - and import or export their archive.",
     techStack: [
       "AWS",
       "Python",
       "Docker",
+      "DevOps",
       "Vector Database",
       "Apache Iceberg",
       "AWS Athena",
@@ -65,7 +66,7 @@ const projectData = [
     role: "Project Leader",
     workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
     shortDescription:
-      "The system's last line of defense. When something gets stuck in the processing pipeline, this service catches it and delivers it to the customer anyway.",
+      "Implemented the system's end-to-end \"last line of defense\". When something gets stuck in the processing pipeline, this service catches it and delivers it to the customer anyway.",
     problemSolved:
       "Nothing gets lost silently - anything that fails normal processing is found and still reaches the customer.",
     techStack: [
@@ -74,7 +75,8 @@ const projectData = [
       "Docker",
       "Nagios",
       "Prometheus",
-      "Grafana",
+      "DevOps",
+      "System Design",
     ],
     backendFocus:
       "Very high scale and heavily monitored - the one component that must never fail.",
@@ -91,7 +93,7 @@ const projectData = [
       "Led the migration of a shared internal search platform from open internal access to strict per-service permissions, where every request must prove who sent it - with zero downtime for the live services using it.",
     problemSolved:
       "The shared search cluster accepted requests from anything inside the network. Every service using it had to start proving its identity and be limited to exactly what it's allowed to do - without interrupting production traffic.",
-    techStack: ["AWS IAM", "AWS OpenSearch", "Python", "AWS Firehose"],
+    techStack: ["AWS IAM", "AWS OpenSearch", "Python", "AWS Firehose", "DevOps"],
     confidentialityReviewed: true,
   },
   {
@@ -126,6 +128,7 @@ const projectData = [
       "Framer Motion",
       "shadcn/ui",
       "Vercel",
+      "AI Development",
     ],
     whyImportant:
       "As a backend developer, building the entire frontend myself - design, animations, accessibility, performance - pushed me far outside my comfort zone and shows full-stack range.",

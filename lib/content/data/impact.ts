@@ -23,7 +23,7 @@ const impactData = [
     // §8.2.1
     title: "Catching Production Failures",
     description:
-      "Built the last line of defense that catches and reports critical failures in production.",
+      "Built the \"last line of defense\" that catches and reports critical failures in production while significantly improving visibility during crisis scenarios.",
     impactBullets: [
       "More reliable product",
       "Clearer picture during incidents",
@@ -39,6 +39,7 @@ const impactData = [
       "Designed 10+ backend systems from the ground up - architecture, documentation, planning, testing, and rollout.",
     impactBullets: [
       "Less rework and fewer late design changes",
+      "Potential bugs found during planning, not in production",
       "Smoother path from design to delivery",
       "Higher-quality, more reliable systems",
     ],
@@ -54,6 +55,7 @@ const impactData = [
       "Cleaner, easier-to-maintain code",
       "Better monitoring and debugging",
       "More stable and scalable in production",
+      "Up to date frameworks, methodologies, and architecture",
     ],
     displayOrder: 3,
     confidentialityReviewed: true,
@@ -75,7 +77,7 @@ const impactData = [
     // §8.2.5
     title: "AI Tooling for the Team",
     description:
-      "Built plugins for AI coding agents that automate everyday engineering tasks - opening PRs, reviewing code, and improving unit tests.",
+      "Built plugins for AI coding agents that automate everyday engineering tasks - opening PRs, reviewing code, and resolving tickets.",
     impactBullets: [
       "Made AI tools easier for the whole team to use",
       "More of the team using AI in daily work",
@@ -101,11 +103,12 @@ const impactData = [
     // §8.2.7
     title: "Team Knowledge Base",
     description:
-      "Built a central hub for services, guides, templates, and engineering knowledge.",
+      "Built a central hub for services, guides, templates, incident resolution playbooks, and engineering knowledge.",
     impactBullets: [
       "Faster knowledge sharing across the team",
       "Easier onboarding and daily development",
       "Less time hunting for information",
+      "Faster production incident resolution using playbooks",
     ],
     displayOrder: 7,
     confidentialityReviewed: true,
@@ -117,7 +120,7 @@ const impactData = [
       "Redesigned the weekly report customers receive, making their security incidents and activity easy to understand.",
     impactBullets: [
       "Customers see clearly what the product does for them",
-      "Read by technical leaders and managers alike",
+      "Read by technical leaders and senior managers alike",
       "Helped sales teams demonstrate product value",
     ],
     displayOrder: 8,
@@ -125,12 +128,12 @@ const impactData = [
   },
   {
     // §8.2.9
-    title: "Unlocking Microsoft 365 Data",
+    title: "Unlocking Google & Microsoft Data",
     description:
-      "Made hundreds of Microsoft 365 event types available through a single service, turning raw data into security insight.",
+      "Made hundreds of Microsoft 365 and Google Workspace event types available through a single service, turning raw data into security insight.",
     impactBullets: [
       "Powers multiple customer-facing features",
-      "Enables detection of malicious email activity",
+      "Enables detection of malicious activity",
       "Opened the door to future product capabilities",
     ],
     displayOrder: 9,

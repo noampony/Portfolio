@@ -770,7 +770,7 @@ Each impact card must include:
 | Field | Value |
 |---|---|
 | Title | Catching Production Failures |
-| Description | Built the last line of defense that catches and reports critical failures in production. |
+| Description | Built the "last line of defense" that catches and reports critical failures in production while significantly improving visibility during crisis scenarios. |
 
 Impact bullets:
 
@@ -788,6 +788,7 @@ Impact bullets:
 Impact bullets:
 
 - Less rework and fewer late design changes
+- Potential bugs found during planning, not in production
 - Smoother path from design to delivery
 - Higher-quality, more reliable systems
 
@@ -803,6 +804,7 @@ Impact bullets:
 - Cleaner, easier-to-maintain code
 - Better monitoring and debugging
 - More stable and scalable in production
+- Up to date frameworks, methodologies, and architecture
 
 #### 8.2.4 Supporting At-Risk Teenagers
 
@@ -822,7 +824,7 @@ Impact bullets:
 | Field | Value |
 |---|---|
 | Title | AI Tooling for the Team |
-| Description | Built plugins for AI coding agents that automate everyday engineering tasks - opening PRs, reviewing code, and improving unit tests. |
+| Description | Built plugins for AI coding agents that automate everyday engineering tasks - opening PRs, reviewing code, and resolving tickets. |
 
 Impact bullets:
 
@@ -848,13 +850,14 @@ Impact bullets:
 | Field | Value |
 |---|---|
 | Title | Team Knowledge Base |
-| Description | Built a central hub for services, guides, templates, and engineering knowledge. |
+| Description | Built a central hub for services, guides, templates, incident resolution playbooks, and engineering knowledge. |
 
 Impact bullets:
 
 - Faster knowledge sharing across the team
 - Easier onboarding and daily development
 - Less time hunting for information
+- Faster production incident resolution using playbooks
 
 #### 8.2.8 Weekly Security Reports
 
@@ -866,20 +869,20 @@ Impact bullets:
 Impact bullets:
 
 - Customers see clearly what the product does for them
-- Read by technical leaders and managers alike
+- Read by technical leaders and senior managers alike
 - Helped sales teams demonstrate product value
 
-#### 8.2.9 Unlocking Microsoft 365 Data
+#### 8.2.9 Unlocking Google & Microsoft Data
 
 | Field | Value |
 |---|---|
-| Title | Unlocking Microsoft 365 Data |
-| Description | Made hundreds of Microsoft 365 event types available through a single service, turning raw data into security insight. |
+| Title | Unlocking Google & Microsoft Data |
+| Description | Made hundreds of Microsoft 365 and Google Workspace event types available through a single service, turning raw data into security insight. |
 
 Impact bullets:
 
 - Powers multiple customer-facing features
-- Enables detection of malicious email activity
+- Enables detection of malicious activity
 - Opened the door to future product capabilities
 
 ### Carousel and Animation Requirements
@@ -1001,7 +1004,7 @@ As a volunteer Team Lead at Max Impact, I led a team of junior developers in bui
 Description:
 
 ```text
-I build and own cloud backend services for a large-scale email security product, and I designed several of its high-traffic systems from scratch using Python, Docker, and AWS. I work closely with developers, QA, and product teams to ship reliably at scale, and I led monitoring and operational improvements across the team. Along the way I went deep on AI-assisted development - coding agents are now a core part of how I build. Today I'm the team's go-to person for owning services, debugging production issues, and sharing knowledge.
+I build and own cloud backend services for a large-scale email security product. I designed several of its high-traffic systems from scratch. Main framework used are Python, Docker, and AWS. I work closely with developers, QA, and product teams to ship reliably at scale, and I led monitoring and operational improvements across the team. Along the way I went deep on AI-assisted development - coding agents are now a core part of how I build. Today I'm the team's go-to person for owning services, debugging production issues, and sharing knowledge.
 ```
 
 Confidentiality note:
@@ -1020,7 +1023,7 @@ Confidentiality note:
 Description:
 
 ```text
-Researched newly disclosed security vulnerabilities, reproduced the attacks they enable, and built the protections that block them for Check Point's customers. Wrote Python automation to cover more attacks and speed up the team's day-to-day work, focusing on network-level attacks.
+Researched newly disclosed security vulnerabilities, reproduced the attacks they enable, and built the protections that block them for Check Point's customers. Wrote Python automations to cover more attacks and speed up the team's day-to-day work, focusing on network-level attacks.
 ```
 
 #### 8.3.4 Private Tutor
@@ -1101,10 +1104,10 @@ Each project card should include:
 |---|---|
 | Name | Microsoft & Google Event Streaming |
 | Role | Project Leader |
-| Short description | Built a service that subscribes to Microsoft and Google activity APIs, receives events through webhooks, and processes and stores billions of them every week. |
+| Short description | Built an end-to-end service that subscribes to Microsoft and Google activity APIs, receives events through webhooks, and processes and stores billions of them every week. |
 | Problem solved | The product needs to know what's happening inside customers' Microsoft and Google accounts. This service brings in that raw activity data reliably, at full scale. |
-| Tech stack | AWS, Python, Docker, Jenkins, System Design |
-| Backend focus | A high-scale pipeline handling billions of events weekly |
+| Tech stack | AWS, Python, Docker, Jenkins, System Design, Prometheus, DevOps |
+| Backend focus | A high-scale pipeline processing billions of events weekly |
 | Why important | These events feed the security scans that catch malicious activity. |
 
 Security note:
@@ -1118,8 +1121,8 @@ Security note:
 | Name | Email Archiving Service |
 | Role | Developer in a team |
 | Short description | Implemented long-term email archiving together with my team - emails stored for years and searchable in full. |
-| Problem solved | Companies often must keep emails for years, mainly for legal reasons. The service stores them long-term and lets users search everything - bodies and attachments included - and import or export their archive. |
-| Tech stack | AWS, Python, Docker, Vector Database, Apache Iceberg, AWS Athena, System Design |
+| Problem solved | Companies often must keep emails for years, mainly for legal reasons. The service stores them long-term and lets users search everything - email bodies and attachments included - and import or export their archive. |
+| Tech stack | AWS, Python, Docker, DevOps, Vector Database, Apache Iceberg, AWS Athena, System Design |
 | Backend focus | Fast search over a huge, always-growing dataset |
 | Why important | A major product capability that helped bring in new customers. |
 
@@ -1133,9 +1136,9 @@ Security note:
 |---|---|
 | Name | Delivery Safety Net |
 | Role | Project Leader |
-| Short description | The system's last line of defense. When something gets stuck in the processing pipeline, this service catches it and delivers it to the customer anyway. |
+| Short description | Implemented the system's end-to-end "last line of defense". When something gets stuck in the processing pipeline, this service catches it and delivers it to the customer anyway. |
 | Problem solved | Nothing gets lost silently - anything that fails normal processing is found and still reaches the customer. |
-| Tech stack | AWS, Python, Docker, Nagios, Prometheus, Grafana |
+| Tech stack | AWS, Python, Docker, Nagios, Prometheus, DevOps, System Design |
 | Backend focus | Very high scale and heavily monitored - the one component that must never fail. |
 | Why important | It backs the product's promise that everything customers expect actually arrives, even when something upstream breaks. |
 
@@ -1151,7 +1154,7 @@ Security note:
 | Role | Project Leader (Developer) |
 | Short description | Led the migration of a shared internal search platform from open internal access to strict per-service permissions, where every request must prove who sent it - with zero downtime for the live services using it. |
 | Problem solved | The shared search cluster accepted requests from anything inside the network. Every service using it had to start proving its identity and be limited to exactly what it's allowed to do - without interrupting production traffic. |
-| Tech stack | AWS IAM, AWS OpenSearch, Python, AWS Firehose |
+| Tech stack | AWS IAM, AWS OpenSearch, Python, AWS Firehose, DevOps |
 
 Security note:
 
@@ -1183,7 +1186,7 @@ Privacy note:
 | Short description | The site you're reading right now - my portfolio and online CV, with a custom dark developer look and subtle scroll animations. |
 | Problem solved | I wanted one home for my CV, experience, projects, and courses - built with real engineering care, not from a generic template. |
 | Solution | Built from scratch with Next.js. All content lives in typed, validated data files, the UI is a small reusable design system, and every animation respects reduced-motion preferences. |
-| Tech stack | Next.js, TypeScript, Tailwind CSS, Framer Motion, shadcn/ui, Vercel |
+| Tech stack | Next.js, TypeScript, Tailwind CSS, Framer Motion, shadcn/ui, Vercel, AI Development |
 | Why important | As a backend developer, building the entire frontend myself - design, animations, accessibility, performance - pushed me far outside my comfort zone and shows full-stack range. |
 
 ### Link to Full Projects Page
@@ -2980,3 +2983,4 @@ Basic verification: keyboard-only pass over Hero + nav + any drawer/modal, plus 
 | Date | Change |
 |---|---|
 | 2026-07-10 | Site-wide plain-language copy pass - meaning preserved; owner approved rewriting locked strings and re-baselining sections that had drifted from the shipped data (§8.1, §8.2, §8.3, §8.4, §8.6, §11). Renamed 2 project cards and 3 impact cards; impact bullets trimmed 4→3. |
+| 2026-07-15 | Copy refresh across Impact, Experience, and Projects Preview content (§8.2, §8.3, §8.4); re-baselined the spec to match. Renamed 1 impact card ("Unlocking Google & Microsoft Data"); added tech-stack entries (Prometheus, DevOps, System Design, AI Development) and impact bullets; corrected wording. |
