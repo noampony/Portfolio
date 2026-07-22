@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "@/lib/content/loaders";
 import { sansFont, monoFont } from "./fonts";
 import { SkipLink, MAIN_CONTENT_ID } from "@/components/layout/SkipLink";
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
           <ScrollToTopButton />
         </ResumeViewerProvider>
+        <Analytics />
       </body>
     </html>
   );
