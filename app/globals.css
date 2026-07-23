@@ -1173,13 +1173,6 @@ html {
   color: var(--accent);
 }
 
-.business-card-tagline {
-  margin: 0;
-  font-size: var(--type-small);
-  line-height: var(--leading-small);
-  color: var(--text-secondary);
-}
-
 .business-card-contact-list {
   display: flex;
   flex-direction: column;

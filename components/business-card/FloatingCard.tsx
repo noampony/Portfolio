@@ -98,7 +98,6 @@ export function FloatingCard() {
                 {businessCard.name}
               </h2>
               <p className="business-card-title">{businessCard.title}</p>
-              <p className="business-card-tagline">{businessCard.shortTagline}</p>
             </div>
 
             <ul className="business-card-contact-list">
