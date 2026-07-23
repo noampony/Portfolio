@@ -671,7 +671,7 @@ Task focus: cross-section QA — all sections render in order, anchors + nav wor
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/13.1-qa-sweep`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 13.2 — Production Build & Vercel Deployment Readiness
+## ✅  Task 13.2 — Production Build & Vercel Deployment Readiness
 
 ```text
 Implement ONLY Task 13.2 — "Production Build & Vercel Deployment Readiness" — for the Noam Pony portfolio. Depends on Task 13.1.
@@ -683,7 +683,7 @@ Task focus: clean `pnpm build`; static generation where possible; resume + image
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/13.2-vercel-readiness`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 13.3 — Final Release Checklist Sign-Off
+## ✅  Task 13.3 — Final Release Checklist Sign-Off
 
 ```text
 Implement ONLY Task 13.3 — "Final Release Checklist Sign-Off" — for the Noam Pony portfolio. Depends on Task 13.2.
