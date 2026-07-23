@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState, type CSSProperties } from "react";
+import Image from "next/image";
 
 import type { Project } from "@/lib/content/types";
 import { useGlareHandlers } from "@/components/ui/GlareHover";
@@ -56,13 +57,9 @@ export function ProjectCard({ project, headingId, backgroundImage, backgroundOpa
     onMouseLeave: () => { frontGlare.handlers.onMouseLeave(); backGlare.handlers.onMouseLeave(); },
   };
 
-  // Decorative photo behind the card content, wired through the CSS `--card-bg` var.
-  const style = backgroundImage
-    ? ({
-        "--card-bg": `url(${backgroundImage})`,
-        ...(backgroundOpacity !== undefined ? { "--card-bg-opacity": backgroundOpacity } : {}),
-      } as CSSProperties)
-    : undefined;
+  const style = backgroundOpacity === undefined
+    ? undefined
+    : ({ "--card-bg-opacity": backgroundOpacity } as CSSProperties);
 
   return (
     <article aria-labelledby={headingId} className="project-flip" data-flipped={flipped} style={style} {...glareContainerHandlers}>
@@ -81,7 +78,7 @@ export function ProjectCard({ project, headingId, backgroundImage, backgroundOpa
       <div className="project-flip-inner">
         {/* Front — title + affordance. */}
         <div className="project-flip-face project-flip-front" aria-hidden={flipped}>
-          <div aria-hidden="true" className="project-card-bg" />
+          <ProjectCardBackground src={backgroundImage} />
           {/* eslint-disable-next-line react-hooks/refs -- glare hook; ref.current not accessed during render */}
           <div ref={frontGlare.overlayRef} style={frontGlare.overlayStyle} aria-hidden="true" />
           <span aria-hidden="true" className="font-mono text-small tracking-wider text-accent">
@@ -125,7 +122,7 @@ export function ProjectCard({ project, headingId, backgroundImage, backgroundOpa
           className="project-flip-back project-flip-face"
           aria-hidden={!flipped}
         >
-          <div aria-hidden="true" className="project-card-bg" />
+          <ProjectCardBackground src={backgroundImage} />
           {/* eslint-disable-next-line react-hooks/refs -- glare hook; ref.current not accessed during render */}
           <div ref={backGlare.overlayRef} style={backGlare.overlayStyle} aria-hidden="true" />
           <div className="project-flip-back-header">
@@ -175,5 +172,21 @@ export function ProjectCard({ project, headingId, backgroundImage, backgroundOpa
         </div>
       </div>
     </article>
+  );
+}
+
+function ProjectCardBackground({ src }: { src?: string }) {
+  if (!src) return null;
+
+  return (
+    <div aria-hidden="true" className="project-card-bg">
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        className="object-cover"
+      />
+    </div>
   );
 }
