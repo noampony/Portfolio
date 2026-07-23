@@ -5,7 +5,7 @@
 
 export const sampleProfile = {
   name: "Sample Name",
-  title: "Backend Developer",
+  title: "Senior Backend Developer",
   oneLineSummary: "Sample summary for validator self-check.",
   heroText: "Sample hero line one.\nSample hero line two.",
   location: "Israel",
@@ -17,7 +17,7 @@ export const sampleProfile = {
 
 export const sampleExperienceReviewed = {
   organization: "Sample Org",
-  role: "Backend Developer",
+  role: "Senior Backend Developer",
   startDate: "2022-10",
   description: "Public-safe sample description for validator self-check.",
   confidentialityReviewed: true,
@@ -25,7 +25,7 @@ export const sampleExperienceReviewed = {
 
 export const sampleExperienceUnreviewed = {
   organization: "Pending Review Org",
-  role: "Backend Developer",
+  role: "Senior Backend Developer",
   startDate: "2023-01",
   description: "Unreviewed sample entry — must be excluded from published output.",
   confidentialityReviewed: false,

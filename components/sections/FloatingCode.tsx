@@ -9,11 +9,11 @@ import { motion, useAnimation, useReducedMotion } from "framer-motion";
  * placeholders only. Never use real or work-derived code (spec §15.2).
  */
 const SNIPPET_POOL = [
-  `name = "Noam Pony"\nrole = "Backend Developer"\nlocation = "Israel"`,
+  `name = "Noam Pony"\nrole = "Senior Backend Developer"\nlocation = "Israel"`,
   `def greet() -> str:\n    return "Hello, welcome!"`,
   `def greet_hebrew() -> str:\n    return "Shalom, nice to meet you!"`,
-  `def first_impression() -> str:\n    return "Backend developer with cloud focus"`,
-  `summary = (\n    "Cloud backend developer"\n    " with hands-on ownership"\n)`,
+  `def first_impression() -> str:\n    return "Senior Backend Developer with cloud focus"`,
+  `summary = (\n    "Senior Cloud backend developer"\n    " with hands-on ownership"\n)`,
   `tagline = (\n    "Building scalable and reliable"\n    " backend systems"\n)`,
   `portfolio_sections = [\n    "impact",\n    "experience",\n    "projects",\n    "courses",\n    "skills",\n    "resume",\n    "contact"\n]`,
   `courses_completed = 35\ntech_stack_count = "18+"`,
@@ -21,7 +21,7 @@ const SNIPPET_POOL = [
   `main_fields = [\n    "Backend Development",\n    "Cloud / AWS",\n    "Docker",\n    "Python"\n]`,
   `strengths = [\n    "ownership",\n    "leadership",\n    "hands-on",\n    "clear communication"\n, "continuous learning"\n]`,
   `def open_contact() -> str:\n    return "Let's work together!"`,
-  `class DeveloperProfile:\n    name: str = "Noam Pony"\n    title: str = "Backend Developer"`,
+  `class DeveloperProfile:\n    name: str = "Noam Pony"\n    title: str = "Senior Backend Developer"`,
   `experience_start = "2022-10"`,
   `def build_backend() -> str:\n    return "scalable & reliable systems"`,
   `learning_path = {\n    "courses": 35,\n    "focus": ["cloud backend", "generative AI"]\n}`,

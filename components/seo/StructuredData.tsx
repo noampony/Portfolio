@@ -26,7 +26,7 @@ export function StructuredData() {
     "@type": "WebSite",
     name: "Noam Pony",
     description:
-      "Noam Pony is a backend developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
+      "Noam Pony is a Senior Backend Developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
     inLanguage: "en",
     ...(siteUrl ? { url: siteUrl } : {}),
   };
