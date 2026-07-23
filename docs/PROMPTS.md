@@ -659,7 +659,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/12.5-pr
 # Phase 13 — Final Polish & Deployment Readiness
 Phase file: [tasks/phase-13-deployment.md](../tasks/phase-13-deployment.md)
 
-## ⬜ Task 13.1 — Full Homepage QA Sweep
+## ✅ Task 13.1 — Full Homepage QA Sweep
 
 ```text
 Implement ONLY Task 13.1 — "Full Homepage QA Sweep" — for the Noam Pony portfolio. Depends on Task 12.5.
