@@ -712,7 +712,7 @@ Task focus: BLOCKED — confirm the feature is promoted, plus tagline/resume lin
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/14.1-card-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 14.2 — Implement the Accessible Left-Side Drawer
+## ✅ Task 14.2 — Implement the Accessible Left-Side Drawer
 
 ```text
 Implement ONLY Task 14.2 — "Implement the Accessible Left-Side Drawer" — for the Noam Pony portfolio. Depends on Task 14.1.
