@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { CountUp } from "@/components/ui/CountUp";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { profile } from "@/lib/content/data/profile";
@@ -406,12 +407,13 @@ export function HeroContent({ initials }: HeroContentProps) {
                 maskImage: "linear-gradient(to bottom, transparent 40%, #000 62%)",
               }}
             />
-            {/* eslint-disable-next-line @next/next/no-img-element -- Hero LCP; static public asset */}
-            <img
+            <Image
               src={profile.profileImage}
               alt={`${profile.name} profile`}
               width={1191}
               height={1852}
+              priority
+              sizes="(min-width: 1024px) 20rem, (min-width: 850px) 18.6rem, (min-width: 640px) 11.5rem, 10rem"
               className="absolute inset-0 h-full w-full object-contain"
               style={profileImageMask}
             />

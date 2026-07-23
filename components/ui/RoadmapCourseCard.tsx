@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import Image from "next/image";
 
 import type { RoadmapCourse } from "@/lib/content/types";
 
@@ -19,18 +19,23 @@ type RoadmapCourseCardProps = {
 export function RoadmapCourseCard({ course, headingId }: RoadmapCourseCardProps) {
   const { name, category, image } = course;
 
-  const mediaStyle = image
-    ? ({ "--roadmap-card-image": `url(${image})` } as CSSProperties)
-    : undefined;
-
   return (
     <article aria-labelledby={headingId} className="roadmap-course-card">
       <div
         aria-hidden="true"
         className="roadmap-course-media"
         data-has-image={image ? "true" : "false"}
-        style={mediaStyle}
-      />
+      >
+        {image ? (
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 12rem, 10.5rem"
+            className="object-cover"
+          />
+        ) : null}
+      </div>
       <div className="roadmap-course-body">
         <span className="roadmap-course-category">{category}</span>
         <h4 id={headingId} className="roadmap-course-name">

@@ -630,7 +630,7 @@ Task focus: end-to-end §20 audit (landmarks, single h1/heading order across the
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/12.3-a11y-audit`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 12.4 — Performance Pass (Images, Bundle, Animation)
+## ✅ Task 12.4 — Performance Pass (Images, Bundle, Animation)
 
 ```text
 Implement ONLY Task 12.4 — "Performance Pass (Images, Bundle, Animation)" — for the Noam Pony portfolio. Depends on Task 12.3.

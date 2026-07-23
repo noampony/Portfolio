@@ -1617,23 +1617,18 @@ html {
 
 /* GlareHover overlay replaces the former ::before shimmer sweep. */
 
-.project-flip-face > * {
+.project-flip-face > :not(.project-card-bg) {
   position: relative;
   z-index: 1;
 }
 
-/* Decorative low-opacity photo behind the card content. The image URL is supplied per card
-   via the inline `--card-bg` custom property; absent → `none` (cards just show the glass, no
-   console error). Sits below the content (the `> *` rule lifts content to z-index 1). */
+/* Decorative low-opacity photo behind the card content. It uses Next's responsive image
+   pipeline and native lazy loading, while the card's fixed geometry prevents CLS. */
 .project-card-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   border-radius: inherit;
-  background-image: var(--card-bg, none);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
   opacity: var(--card-bg-opacity, 0.14);
   pointer-events: none;
 }
@@ -2197,9 +2192,10 @@ html {
 
 /* Media area: course image when provided, otherwise a consistent gradient fallback. */
 .roadmap-course-media {
+  position: relative;
+  overflow: hidden;
   height: 4.75rem;
   background:
-    var(--roadmap-card-image, none) center / cover no-repeat,
     linear-gradient(135deg, color-mix(in srgb, var(--accent) 32%, transparent), transparent 60%),
     linear-gradient(225deg, color-mix(in srgb, #3b82f6 24%, transparent), transparent 65%);
   background-color: color-mix(in srgb, var(--bg-base) 70%, transparent);
