@@ -606,7 +606,7 @@ Task focus: sitemap lists ONLY existing public routes (Home now); robots.txt all
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/12.1-sitemap-robots`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 12.2 — Add Open Graph and Structured Data
+## ✅ Task 12.2 — Add Open Graph and Structured Data
 
 ```text
 Implement ONLY Task 12.2 — "Add Open Graph and Structured Data" — for the Noam Pony portfolio. Depends on Task 12.1.
