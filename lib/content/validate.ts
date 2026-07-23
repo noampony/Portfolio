@@ -9,6 +9,7 @@ import type {
   AboutEducation,
   AboutSectionData,
   AboutStats,
+  BusinessCard,
   Contact,
   Course,
   EducationCertificateRef,
@@ -54,6 +55,19 @@ function assertRequiredString(value: unknown, path: string): string {
     throw new ContentValidationError(path, "required non-empty string");
   }
   return value;
+}
+
+function assertRequiredInternalPath(value: unknown, path: string): string {
+  const internalPath = assertRequiredString(value, path);
+  if (
+    !internalPath.startsWith("/") ||
+    internalPath.startsWith("//") ||
+    internalPath.includes("://") ||
+    internalPath.includes("..")
+  ) {
+    throw new ContentValidationError(path, "expected a safe root-relative path");
+  }
+  return internalPath;
 }
 
 function assertOptionalString(value: unknown, path: string): string | undefined {
@@ -472,6 +486,24 @@ export function validateContact(data: unknown): Contact {
     ),
     contactFormEnabled: assertRequiredBoolean(raw.contactFormEnabled, `${path}.contactFormEnabled`),
   });
+}
+
+/** Floating Business Card data (spec §8.9). */
+export function validateBusinessCard(data: unknown): BusinessCard {
+  const path = "BusinessCard";
+  const raw = assertObject(data, path);
+
+  return {
+    isPromoted: assertRequiredBoolean(raw.isPromoted, `${path}.isPromoted`),
+    name: assertRequiredString(raw.name, `${path}.name`),
+    title: assertRequiredString(raw.title, `${path}.title`),
+    shortTagline: assertRequiredString(raw.shortTagline, `${path}.shortTagline`),
+    email: assertRequiredString(raw.email, `${path}.email`),
+    linkedIn: assertRequiredString(raw.linkedIn, `${path}.linkedIn`),
+    resumeLink: assertRequiredInternalPath(raw.resumeLink, `${path}.resumeLink`),
+    profileImage: assertRequiredInternalPath(raw.profileImage, `${path}.profileImage`),
+    location: assertRequiredString(raw.location, `${path}.location`),
+  };
 }
 
 /** §11.8 SocialLink */

@@ -700,7 +700,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/13.3-re
 # Phase 14 — Floating Business Card (Nice-to-have)
 Phase file: [tasks/phase-14-business-card.md](../tasks/phase-14-business-card.md) · Must not start before Phase 13 is merged (Dependency Rule 10).
 
-## ⬜ Task 14.1 — Define Business Card Data and Confirm Promotion
+## ✅ Task 14.1 — Define Business Card Data and Confirm Promotion
 
 ```text
 Implement ONLY Task 14.1 — "Define Business Card Data and Confirm Promotion" — for the Noam Pony portfolio. Depends on Task 13.3.
