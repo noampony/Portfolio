@@ -594,7 +594,7 @@ Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/11.4-co
 # Phase 12 — SEO, Accessibility, Performance & Privacy Hardening
 Phase file: [tasks/phase-12-hardening.md](../tasks/phase-12-hardening.md)
 
-## ⬜ Task 12.1 — Add Sitemap and robots.txt
+## ✅ Task 12.1 — Add Sitemap and robots.txt
 
 ```text
 Implement ONLY Task 12.1 — "Add Sitemap and robots.txt" — for the Noam Pony portfolio. Depends on Task 11.4.
