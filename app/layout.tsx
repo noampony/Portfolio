@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollToTopButton } from "@/components/layout/ScrollToTopButton";
 import { ResumeViewerProvider } from "@/components/providers/ResumeViewerProvider";
+import { FloatingCard } from "@/components/business-card/FloatingCard";
 import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </main>
           <Footer />
           <ScrollToTopButton />
+          <FloatingCard />
         </ResumeViewerProvider>
         <Analytics />
       </body>
