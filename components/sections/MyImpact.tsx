@@ -232,8 +232,7 @@ export function MyImpact() {
           <ul
             ref={trackRef}
             className="impact-gallery-track"
-            role="group"
-            aria-roledescription="carousel"
+            role="list"
             aria-label="Career impact highlights"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}

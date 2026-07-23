@@ -98,12 +98,12 @@ export function EducationCertificateTrigger({
     <button
       type="button"
       className="about-cert-trigger"
-      aria-label={certificate.viewLabel}
       title={certificate.viewLabel}
       onClick={handleClick}
     >
       {leadingIcon ?? <CertificateDocumentIcon />}
       <span className="about-cert-trigger-label">{label}</span>
+      <span className="sr-only">: {certificate.viewLabel}</span>
       <CertificateOpenIcon />
     </button>
   );

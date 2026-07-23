@@ -618,7 +618,7 @@ Task focus: OG title/description/type/url + Person & WebSite JSON-LD. OG image i
 Then follow the Standing Workflow at the top of PROMPTS.md (branch `task/12.2-og-structured-data`, build green, commit + push + PR as Noam Pony / noampony, then mark ✅).
 ```
 
-## ⬜ Task 12.3 — Homepage Accessibility Audit and Fixes
+## ✅ Task 12.3 — Homepage Accessibility Audit and Fixes
 
 ```text
 Implement ONLY Task 12.3 — "Homepage Accessibility Audit and Fixes" — for the Noam Pony portfolio. Depends on Task 12.2.
