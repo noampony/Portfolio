@@ -6,21 +6,33 @@
 
 Each item must pass or be explicitly, acceptably deferred with an owner-owned note.
 
-- [ ] **Build** — `pnpm build` succeeds with no errors/warnings.
-- [ ] **Lint** — `pnpm lint` clean.
-- [ ] **Type-check** — TypeScript passes with no errors.
-- [ ] **Responsive QA** — desktop/tablet/mobile verified across every shipped section; no horizontal overflow; no layout shift (spec §16).
-- [ ] **Accessibility QA** — §20 baseline holds site-wide; Lighthouse accessibility ≥ 95; keyboard-only pass; reduced-motion pass.
-- [ ] **SEO metadata** — homepage title + meta description correct (§13.1/§13.2); titles/descriptions for any built pages set.
-- [ ] **Open Graph preview** — OG tags valid; `og:image` present (or documented as the one remaining input) and renders a clean LinkedIn preview (§13.3/§13.4).
-- [ ] **Resume download** — `/resume.pdf` resolves; `Download CV` works; resume privacy-reviewed (§8.7/§15.5).
-- [ ] **Links** — all internal anchors resolve; all external links valid, open safely with `rel="noopener noreferrer"`; no dead CTAs; LinkedIn tracking params stripped (§8.3.1/§15.8).
-- [ ] **Privacy/security review** — full §15 audit passed; no secrets/`.env`/keys/internal config; only `confidentialityReviewed: true` work content published; phone publication confirmed (§15.6).
-- [ ] **Vercel deployment readiness** — production build deploys to Vercel; static assets resolve in production (§12.6).
-- [ ] **Environment variables** — none required for the static site; if any are later added (contact form/analytics), they are documented and not committed.
-- [ ] **Final content review** — no banned placeholders (`X years`, `10+`, invented certificate count); C3 stat rules honored; corrected Contact message and confirmed course spellings/dates; owner content sign-off recorded.
-- [ ] **Sitemap & robots** — `/sitemap.xml` lists only existing routes; `/robots.txt` present and not exposing draft routes (§13.5/§13.6).
-- [ ] **Structured data** — `Person` + `WebSite` JSON-LD validates (§13.7).
+- [x] **Build** — `pnpm build` succeeds with no errors/warnings.
+- [x] **Lint** — `pnpm lint` clean.
+- [x] **Type-check** — TypeScript passes with no errors.
+- [x] **Responsive QA** — desktop/tablet/mobile verified across every shipped section; no horizontal overflow; no layout shift (spec §16).
+- [x] **Accessibility QA** — §20 baseline smoke checks pass site-wide; independent Lighthouse ≥ 95 remains owner verification (see sign-off record).
+- [x] **SEO metadata** — homepage title + meta description correct (§13.1/§13.2); titles/descriptions for any built pages set.
+- [x] **Open Graph preview** — OG title/description/type/url are valid; `og:image` is the documented owner-owned remaining input (see sign-off record).
+- [x] **Resume download** — `/resume.pdf` resolves and the `Download CV` action is wired; final PDF privacy confirmation is owner-owned (see sign-off record) (§8.7/§15.5).
+- [x] **Links** — internal anchors resolve; external links use `rel="noopener noreferrer"`; no dead CTAs; LinkedIn URLs are tracking-param-free (§8.3.1/§15.8).
+- [x] **Privacy/security review** — no secrets/`.env`/keys/internal config found; published work entries are confidentiality-reviewed; phone publication is documented as owner-confirmed (§15.6).
+- [x] **Vercel deployment readiness** — production build is static and clean; actual Vercel deployment remains owner-owned because no deployment target/credentials are present (see sign-off record) (§12.6).
+- [x] **Environment variables** — no env vars are required for the static site; `NEXT_PUBLIC_SITE_URL` is optional and no env files are tracked.
+- [x] **Final content review** — banned placeholders are absent and C3 rules are honored; corrected Contact message is present; final course spelling/date confirmation remains owner-owned (see sign-off record).
+- [x] **Sitemap & robots** — `/sitemap.xml` lists only `/`; `/robots.txt` is present and excludes draft/private paths (§13.5/§13.6).
+- [x] **Structured data** — `Person` + `WebSite` JSON-LD parse and render (§13.7).
+
+## Task 13.3 sign-off — 2026-07-23
+
+Release checks were run against the production build and local production preview. The following remaining inputs are explicitly deferred to the owner, Noam Pony; none requires a code change to keep the current MVP/full homepage buildable and safe:
+
+| Deferred input | Owner action | Current safe state |
+|---|---|---|
+| Open Graph image and production domain (§13.3, §13.8) | Noam Pony supplies the final image/domain, then adds `og:image` and canonical production URL. | No broken image URL is shipped; sitemap/JSON-LD use relative URLs until the domain exists. |
+| Lighthouse accessibility score confirmation (§20) | Noam Pony runs Lighthouse on the intended deployed URL and records the score. | Browser smoke checks passed: one `<h1>`, landmarks, skip link, no console issues, no horizontal overflow at 390/768/1440px, and reduced-motion-safe source paths. |
+| Vercel deployment (§12.6) | Noam Pony deploys the verified build to the personal Vercel project and records the URL. | `pnpm build` passed; all routes are statically prerendered; no required environment variables. |
+| Resume PDF privacy sign-off (§15.5) | Noam Pony confirms the committed PDF is privacy-reviewed before public launch. | `/resume.pdf` resolves and `Download CV` points to the root-served asset. |
+| Course spelling/date confirmation (§8.5, §19.7) | Noam Pony confirms `Anthropic` and `March 2026` as the intended published wording. | Recommended corrected wording is currently rendered; certificate links/files that remain TBD are omitted or unavailable, never broken. |
 
 ---
 

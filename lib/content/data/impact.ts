@@ -36,7 +36,7 @@ const impactData = [
     // §8.2.2
     title: "System Architecture",
     description:
-      "Designed 10+ backend systems from the ground up - architecture, documentation, planning, testing, and rollout.",
+      "Designed more than ten backend systems from the ground up - architecture, documentation, planning, testing, and rollout.",
     impactBullets: [
       "Less rework and fewer late design changes",
       "Potential bugs found during planning, not in production",

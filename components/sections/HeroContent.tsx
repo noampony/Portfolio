@@ -6,7 +6,6 @@ import Image from "next/image";
 import { CountUp } from "@/components/ui/CountUp";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { profile } from "@/lib/content/data/profile";
-import { learningPaths } from "@/lib/content/data/learning-paths";
 import { cn } from "@/lib/utils";
 import { useResumeViewer } from "@/components/providers/ResumeViewerProvider";
 
@@ -29,14 +28,9 @@ const yearsOfExperience = yearsExperienceSince(profile.yearsExperienceStartDate)
 /**
  * Floating tags pinned to the left edge of the profile-frame ellipse. They pop in
  * bottom-to-top, one second apart, each reusing the original experience-tag
- * spring + float treatment. The courses count is derived from the Courses
- * section data so it never drifts from what that section renders.
+ * spring + float treatment. The courses count follows the owner-approved profile
+ * stat (35 completed courses), which exceeds the small preview subset.
  */
-const totalCoursesCompleted = learningPaths.reduce(
-  (total, path) => total + path.courses.length,
-  0,
-);
-
 const profileTags = [
   {
     key: "experience",
@@ -50,10 +44,10 @@ const profileTags = [
   },
   {
     key: "courses",
-    ariaLabel: `${totalCoursesCompleted}+ external courses completed`,
-    value: `${totalCoursesCompleted}+`,
-    numericValue: totalCoursesCompleted,
-    lines: ["External", "Courses", "Completed"],
+    ariaLabel: `${profile.coursesCountLabel} courses completed`,
+    value: profile.coursesCountLabel,
+    numericValue: Number(profile.coursesCountLabel),
+    lines: ["Courses", "Completed"],
     positionClasses:
       "top-1/2 -translate-y-1/2 -left-12 sm:-left-[55px] min-[850px]:-left-20",
     appearDelay: 2.15,

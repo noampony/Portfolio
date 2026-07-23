@@ -1,8 +1,6 @@
 import { FloatingCode } from "@/components/sections/FloatingCode";
 import { HeroContent } from "@/components/sections/HeroContent";
-import { heroFont } from "@/app/fonts";
 import { profile } from "@/lib/content/data/profile";
-import { cn } from "@/lib/utils";
 
 function getInitials(name: string): string {
   return name
@@ -25,7 +23,7 @@ export function Hero() {
     <section
       id="home"
       aria-labelledby="hero-heading"
-      className={cn("relative isolate w-full overflow-x-hidden font-hero", heroFont.variable)}
+      className="relative isolate w-full overflow-x-hidden font-hero"
     >
       {/* Atmospheric backdrop — tokens only (§6.3) + decorative floating code (§8.1). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">

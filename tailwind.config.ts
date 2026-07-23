@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "Montserrat", "system-ui", "-apple-system", "sans-serif"],
-        hero: ["var(--font-hero)", "Montserrat", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["var(--font-mono)", "Montserrat", "system-ui", "-apple-system", "sans-serif"]
+        sans: ["var(--font-sans)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        hero: ["var(--font-hero)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SF Mono", "Menlo", "monospace"]
       },
       fontSize: {
         display: ["var(--type-display)", { lineHeight: "var(--leading-display)" }],
