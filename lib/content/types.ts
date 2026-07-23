@@ -224,6 +224,20 @@ export type Contact = {
   contactFormEnabled: boolean;
 };
 
+/** Floating Business Card data (spec §8.9). */
+export type BusinessCard = {
+  /** Owner-confirmed promotion of the optional feature. */
+  isPromoted: boolean;
+  name: string;
+  title: string;
+  shortTagline: string;
+  email: string;
+  linkedIn: string;
+  resumeLink: string;
+  profileImage: AssetReference;
+  location: string;
+};
+
 /** §11.8 Social Link Model */
 export type SocialLink = {
   label: string;

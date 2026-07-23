@@ -14,13 +14,13 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
 const homepageUrl = siteUrl ? `${siteUrl}/` : "/";
 
 export const metadata: Metadata = {
-  title: "Noam Pony | Backend Developer",
+  title: "Noam Pony | Senior Backend Developer",
   description:
-    "Noam Pony is a backend developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
+    "Noam Pony is a Senior Backend Developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
   openGraph: {
-    title: "Noam Pony | Backend Developer",
+    title: "Noam Pony | Senior Backend Developer",
     description:
-      "Noam Pony is a backend developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
+      "Noam Pony is a Senior Backend Developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
     type: "website",
     url: homepageUrl,
   },

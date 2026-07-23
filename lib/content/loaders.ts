@@ -7,6 +7,7 @@
 
 import {
   filterConfidentialityReviewed,
+  validateBusinessCard,
   validateContact,
   validateAboutSectionData,
   validateCourse,
@@ -28,6 +29,7 @@ export {
   ContentValidationError,
   filterConfidentialityReviewed,
   getUnreviewedWorkItems,
+  validateBusinessCard,
   validateContact,
   validateAboutSectionData,
   validateCourse,
@@ -97,6 +99,10 @@ export function loadResume(data: unknown) {
 
 export function loadContact(data: unknown) {
   return validateContact(data);
+}
+
+export function loadBusinessCard(data: unknown) {
+  return validateBusinessCard(data);
 }
 
 export function loadSocialLink(data: unknown) {

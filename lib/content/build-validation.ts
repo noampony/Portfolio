@@ -7,6 +7,7 @@
 
 import { profile } from "./data/profile";
 import { about } from "./data/about";
+import { businessCard } from "./data/businessCard";
 import { courses } from "./data/courses";
 import { experiences } from "./data/experience";
 import { impacts } from "./data/impact";
@@ -133,6 +134,9 @@ if (!profile.name) {
 }
 if (!about.professionalSummary) {
   throw new Error("Content validator self-check failed: about data failed to load.");
+}
+if (!businessCard.isPromoted) {
+  throw new Error("Content validator self-check failed: business card promotion was not confirmed.");
 }
 assertConfidentialityFilter();
 assertExperienceConfidentialityGate();
