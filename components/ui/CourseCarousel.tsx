@@ -90,7 +90,7 @@ export function CourseCarousel({ courses, label }: CourseCarouselProps) {
       <ul
         ref={trackRef}
         className="roadmap-carousel-track"
-        role="group"
+        role="list"
         aria-label={`${label} courses`}
         tabIndex={0}
         onScroll={updateScrollState}

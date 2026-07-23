@@ -267,43 +267,42 @@ function SkillCategoryCard({
           </motion.ul>
         </div>
 
-        {/* Always rendered so all cards reserve the same button height; invisible when no overflow. */}
-        <button
-          type="button"
-          onClick={() => {
-            if (!expanded && gridRef.current) {
-              const gridRect = gridRef.current.getBoundingClientRect();
-              const items = gridRef.current.querySelectorAll(":scope > li");
-              let split = items.length;
-              for (let i = 0; i < items.length; i++) {
-                const itemTop = (items[i] as HTMLElement).getBoundingClientRect().top - gridRect.top;
-                if (itemTop >= collapsedHeight) { split = i; break; }
+        {/* Keep category cards aligned without exposing an inert control to assistive tech. */}
+        {hasOverflow ? (
+          <button
+            type="button"
+            onClick={() => {
+              if (!expanded && gridRef.current) {
+                const gridRect = gridRef.current.getBoundingClientRect();
+                const items = gridRef.current.querySelectorAll(":scope > li");
+                let split = items.length;
+                for (let i = 0; i < items.length; i++) {
+                  const itemTop = (items[i] as HTMLElement).getBoundingClientRect().top - gridRect.top;
+                  if (itemTop >= collapsedHeight) { split = i; break; }
+                }
+                setSplitIndex(split);
+                setExpandCount((c) => c + 1);
               }
-              setSplitIndex(split);
-              setExpandCount((c) => c + 1);
-            }
-            setExpanded((prev) => !prev);
-          }}
-          aria-expanded={hasOverflow ? expanded : undefined}
-          aria-hidden={!hasOverflow}
-          tabIndex={hasOverflow ? undefined : -1}
-          className={[
-            "mt-1 flex w-full items-center justify-center gap-1.5 rounded-md py-0 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-            !hasOverflow ? "invisible pointer-events-none" : "",
-          ].join(" ")}
-        >
-          {expanded ? (
-            <>
-              <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15" /></svg>
-              Show less
-            </>
-          ) : (
-            <>
-              <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-              Show all {categorySkills.length}
-            </>
-          )}
-        </button>
+              setExpanded((prev) => !prev);
+            }}
+            aria-expanded={expanded}
+            className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md py-0 font-mono text-[0.65rem] uppercase tracking-widest text-text-muted transition-colors duration-150 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            {expanded ? (
+              <>
+                <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15" /></svg>
+                Show less
+              </>
+            ) : (
+              <>
+                <svg aria-hidden="true" className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                Show all {categorySkills.length}
+              </>
+            )}
+          </button>
+        ) : (
+          <div aria-hidden="true" className="mt-1 h-[0.9375rem]" />
+        )}
       </div>
     </motion.div>
   );
