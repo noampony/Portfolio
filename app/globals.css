@@ -2538,15 +2538,47 @@ a.business-card-contact-link:focus-visible {
 }
 
 .roadmap-course-name {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  position: relative;
   margin: 0;
   overflow: hidden;
+  white-space: nowrap;
   font-size: var(--type-small);
   font-weight: 600;
   line-height: 1.35;
   color: var(--text-primary);
+}
+
+/* Inner run of text — the piece that slides. inline-block so its full (possibly clipped)
+   width is measurable from the clip box. */
+.roadmap-course-name-text {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Only animate when the card marks the name as overflowing (set from JS on hover/focus).
+   The distance/duration come in as inline CSS vars sized to the actual overflow. */
+.roadmap-course-name[data-scrolling="true"] .roadmap-course-name-text {
+  animation: roadmap-course-name-scroll var(--course-name-duration, 4s) ease-in-out infinite;
+}
+
+@keyframes roadmap-course-name-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  42%,
+  55% {
+    transform: translateX(var(--course-name-distance, 0));
+  }
+  97%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-course-name[data-scrolling="true"] .roadmap-course-name-text {
+    animation: none;
+  }
 }
 
 /* Tighter node on small screens; the gutter keeps just enough room for the road's outward
