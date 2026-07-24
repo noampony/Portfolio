@@ -95,10 +95,12 @@ function clampValue(value: number, lo: number, hi: number): number {
 }
 
 /**
- * Position the fixed overlay. Anchored mode renders the panel at the trigger's width (so it
- * "grows in place" — same width, taller), aligned over the card and clamped inside the
- * viewport (so edge cards never clip); the transform-origin sits at the trigger centre so it
- * grows out of the compact card. Sheet mode centres a wider panel on screen.
+ * Position the overlay. Anchored mode renders the panel at the trigger's width (so it "grows in
+ * place" — same width, taller), aligned over the card and clamped inside the viewport (so edge
+ * cards never clip); the transform-origin sits at the trigger centre so it grows out of the
+ * compact card. Its coordinates are returned in the document space (viewport position + scroll
+ * offset) so the absolutely-positioned panel scrolls with the page like the compact card. Sheet
+ * mode centres a wider, viewport-fixed panel on screen.
  */
 function computePanelPos(
   mode: "anchored" | "sheet",
@@ -119,7 +121,13 @@ function computePanelPos(
     const top = clampValue(anchor.top, VIEWPORT_MARGIN, Math.max(VIEWPORT_MARGIN, vh - ph - VIEWPORT_MARGIN));
     const cx = anchor.left + anchor.width / 2;
     const cy = anchor.top + anchor.height / 2;
-    return { left, top, originX: clampValue(cx - left, 0, pw), originY: clampValue(cy - top, 0, ph) };
+    // Origins stay in viewport space (cx/left share it); left/top become document coordinates.
+    return {
+      left: left + window.scrollX,
+      top: top + window.scrollY,
+      originX: clampValue(cx - left, 0, pw),
+      originY: clampValue(cy - top, 0, ph),
+    };
   }
 
   return {
@@ -243,9 +251,10 @@ function ExperienceExpandCard({
   }, [open, pos]);
 
   // While open: Escape dismisses (and returns focus to the trigger) even when the card was
-  // opened by hover and nothing inside it has focus (WCAG 1.4.13). Anchored overlays close
-  // on page scroll (they would otherwise drift from the trigger); both modes close on
-  // resize. Inner panel scrolling does not fire window `scroll`.
+  // opened by hover and nothing inside it has focus (WCAG 1.4.13); both modes close on resize.
+  // The anchored overlay is positioned in the document (see `computePanelPos`), so it scrolls with
+  // the page like the compact card — as the page scrolls it slides out from under a stationary
+  // pointer and the normal pointer-leave then closes it; no scroll listener is needed.
   useEffect(() => {
     if (!open) {
       return;
@@ -260,15 +269,11 @@ function ExperienceExpandCard({
     };
     window.addEventListener("resize", onResize);
     document.addEventListener("keydown", onKeyDown);
-    if (mode === "anchored") {
-      window.addEventListener("scroll", closeCard, { passive: true });
-    }
     return () => {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("scroll", closeCard);
     };
-  }, [open, mode, closeCard]);
+  }, [open, closeCard]);
 
   // Keep the latest open-card id available to the deferred close (see `scheduleClose`).
   useEffect(() => {
@@ -402,7 +407,7 @@ function ExperienceExpandCard({
             <AnimatePresence>
               {/* Backdrop only in sheet (touch) mode, where tap-outside is the close path. In
                   anchored (hover) mode a full-screen backdrop would sit over the other cards
-                  and swallow their hover — there, pointer-leave / Escape / scroll close it. */}
+                  and swallow their hover — there, pointer-leave / Escape close it. */}
               {open && mode === "sheet" ? (
                 <motion.div
                   key="backdrop"
@@ -429,7 +434,9 @@ function ExperienceExpandCard({
                     current && "experience-card-panel--current",
                   )}
                   style={{
-                    position: "fixed",
+                    // Anchored: absolute + document coords so it scrolls with the page like the
+                    // compact card. Sheet: fixed so the centred modal stays put over the backdrop.
+                    position: mode === "anchored" ? "absolute" : "fixed",
                     left: pos?.left ?? 0,
                     top: pos?.top ?? 0,
                     // Anchored: match the compact card's width so it grows in place. Sheet: CSS width.
