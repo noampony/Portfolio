@@ -64,80 +64,80 @@ export function FloatingCard() {
       <dialog
         ref={dialogRef}
         className="business-card-dialog"
-        aria-labelledby={open ? "business-card-name" : undefined}
+        aria-labelledby="business-card-name"
         onCancel={close}
         onClose={close}
         onClick={handleBackdropClick}
       >
-        {open ? (
-          <div className="business-card-panel">
-            <header className="business-card-header">
-              <span className="business-card-header-label">Business card</span>
-              <button
-                type="button"
-                className="business-card-close"
-                aria-label="Close business card"
-                onClick={close}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </header>
-
-            <div className="business-card-identity">
-              <span className="business-card-avatar">
-                <Image
-                  src={businessCard.profileImage}
-                  alt={`${businessCard.name} profile`}
-                  width={192}
-                  height={192}
-                  sizes="6rem"
-                  className="business-card-avatar-image"
-                />
-              </span>
-              <h2 id="business-card-name" className="business-card-name">
-                {businessCard.name}
-              </h2>
-              <p className="business-card-title">{businessCard.title}</p>
-            </div>
-
-            <ul className="business-card-contact-list">
-              <li>
-                <a href={`mailto:${businessCard.email}`} className="business-card-contact-link">
-                  <MailIcon />
-                  <span className="business-card-contact-text">{businessCard.email}</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={businessCard.linkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="business-card-contact-link"
-                >
-                  <LinkedInIcon />
-                  <span className="business-card-contact-text">LinkedIn</span>
-                  <ExternalLinkIcon />
-                </a>
-              </li>
-              <li>
-                <span className="business-card-contact-link business-card-contact-static">
-                  <PinIcon />
-                  <span className="business-card-contact-text">{businessCard.location}</span>
-                </span>
-              </li>
-            </ul>
-
-            <a
-              href={businessCard.resumeLink}
-              download={resume.fileName}
-              className="business-card-resume-action"
+        {/* Kept mounted while closed (the <dialog> is display:none then) so the
+            content is still visible during the shrink-out close transition. */}
+        <div className="business-card-panel">
+          <header className="business-card-header">
+            <span className="business-card-header-label">Business card</span>
+            <button
+              type="button"
+              className="business-card-close"
+              aria-label="Close business card"
               onClick={close}
             >
-              <DownloadIcon />
-              {resume.downloadButtonText}
-            </a>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </header>
+
+          <div className="business-card-identity">
+            <span className="business-card-avatar">
+              <Image
+                src={businessCard.profileImage}
+                alt={`${businessCard.name} profile`}
+                width={192}
+                height={192}
+                sizes="6rem"
+                className="business-card-avatar-image"
+              />
+            </span>
+            <h2 id="business-card-name" className="business-card-name">
+              {businessCard.name}
+            </h2>
+            <p className="business-card-title">{businessCard.title}</p>
           </div>
-        ) : null}
+
+          <ul className="business-card-contact-list">
+            <li>
+              <a href={`mailto:${businessCard.email}`} className="business-card-contact-link">
+                <MailIcon />
+                <span className="business-card-contact-text">{businessCard.email}</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href={businessCard.linkedIn}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="business-card-contact-link"
+              >
+                <LinkedInIcon />
+                <span className="business-card-contact-text">LinkedIn</span>
+                <ExternalLinkIcon />
+              </a>
+            </li>
+            <li>
+              <span className="business-card-contact-link business-card-contact-static">
+                <PinIcon />
+                <span className="business-card-contact-text">{businessCard.location}</span>
+              </span>
+            </li>
+          </ul>
+
+          <a
+            href={businessCard.resumeLink}
+            download={resume.fileName}
+            className="business-card-resume-action"
+            onClick={close}
+          >
+            <DownloadIcon />
+            {resume.downloadButtonText}
+          </a>
+        </div>
       </dialog>
     </>
   );

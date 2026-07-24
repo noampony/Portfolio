@@ -2,18 +2,12 @@
 
 /**
  * Always-visible floating trigger for the business card (spec §7.6, §8.9).
- * One button, three responsive forms (all in `.business-card-trigger` CSS):
+ * A horizontal "Reach Out" pill (id-card icon + text) fixed at the bottom
+ * center of the viewport — same size and shape at every screen width (owner
+ * request). Clicking it expands the card up out of the button
+ * ({@link FloatingCard} anchors to the same bottom-center point and scales
+ * from a bottom-center origin).
  *
- *  - > 1500px: horizontal "Reach Out" pill (id-card icon + text), top-left
- *    just below the sticky navbar.
- *  - 780–1500px: vertical edge tab (icon on top, text reading downward) at
- *    the same top-left anchor, so it doesn't stretch across hero content.
- *  - < 780px: compact icon-only circle at the bottom-left — mirroring the
- *    bottom-right scroll-to-top button — with the text label visually hidden
- *    but kept in the accessibility tree as the button's name.
- *
- * Clicking it expands the card out of the button's corner ({@link FloatingCard}
- * anchors to the same corner per breakpoint and scales from that origin).
  * Activates on click/Enter/Space — nothing is hover-only — and exposes the
  * card relationship via `aria-haspopup`/`aria-expanded`. Focus returns here
  * automatically when the native `<dialog>` card closes.
