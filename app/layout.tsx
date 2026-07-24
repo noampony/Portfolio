@@ -11,10 +11,16 @@ import { FloatingCard } from "@/components/business-card/FloatingCard";
 import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-const homepageUrl = siteUrl ? `${siteUrl}/` : "/";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://noam-pony-portfolio.vercel.app"
+).replace(/\/$/, "");
+const homepageUrl = `${siteUrl}/`;
 
 export const metadata: Metadata = {
+  // Resolves the file-convention OG/Twitter images (app/opengraph-image.png,
+  // app/twitter-image.png) to absolute URLs so link unfurlers (WhatsApp,
+  // Notion, Slack, etc.) can fetch them.
+  metadataBase: new URL(siteUrl),
   title: "Noam Pony | Senior Backend Developer",
   description:
     "Noam Pony is a Senior Backend Developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
@@ -24,6 +30,13 @@ export const metadata: Metadata = {
       "Noam Pony is a Senior Backend Developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
     type: "website",
     url: homepageUrl,
+    siteName: "Noam Pony",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Noam Pony | Senior Backend Developer",
+    description:
+      "Noam Pony is a Senior Backend Developer focused on cloud backend systems, Python, AWS, automation, DevOps, and security-aware software engineering.",
   },
 };
 
