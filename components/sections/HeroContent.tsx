@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { CountUp } from "@/components/ui/CountUp";
 import { Magnetic } from "@/components/ui/Magnetic";
+import { TypewriterRotator } from "@/components/ui/TypewriterRotator";
 import { profile } from "@/lib/content/data/profile";
 import { learningPaths } from "@/lib/content/data/learning-paths";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,17 @@ const SECONDARY_CTA_LABEL = "Contact";
 const TYPEWRITER_CHAR_MS = 88;
 
 const heroTextLines = profile.heroText.split("\n").filter(Boolean);
+
+// Rotating typewriter subtitle rendered under the role title (Hero, §7.3).
+const heroRoles = [
+  "AI Agents Enthusiastic",
+  "Team Leader Volunteer",
+  "Private Tutor",
+  "Mentoring Juniors",
+  "Cloud Python Developer",
+  "AWS Expert",
+  "Cyber Security Oriented",
+] as const;
 
 function yearsExperienceSince(startDate: string): number {
   const [startYear, startMonth] = startDate.split("-").map(Number);
@@ -317,7 +329,16 @@ export function HeroContent({ initials }: HeroContentProps) {
           </motion.p>
 
           <motion.div
-            className="flex flex-col gap-1.5 text-lg text-white sm:text-xl lg:text-[1.375rem] lg:leading-relaxed"
+            className="mt-1 min-h-[1.6em] text-lg font-medium leading-[1.6] text-accent sm:text-xl lg:text-[1.5rem]"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+            animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.3 }}
+          >
+            <TypewriterRotator phrases={heroRoles} start={contentRevealed} />
+          </motion.div>
+
+          <motion.div
+            className="mt-4 flex flex-col gap-1.5 text-lg text-white sm:text-xl lg:text-[1.375rem] lg:leading-relaxed"
             variants={paragraphContainerVariants}
             initial="hidden"
             animate={contentRevealed ? "visible" : "hidden"}
