@@ -13,20 +13,39 @@
  * automatically when the native `<dialog>` card closes.
  */
 
+import type { RefObject } from "react";
+
 type CardTriggerProps = {
   /** Whether the card is currently open (drives `aria-expanded`). */
   open: boolean;
   onClick: () => void;
+  /**
+   * Handle to the button so {@link FloatingCard} can mark it `data-no-ring`
+   * before the closing card restores focus here (see globals.css). The marker
+   * is dropped as soon as focus leaves, so focusing the button on its own terms
+   * still shows the ring.
+   */
+  buttonRef?: RefObject<HTMLButtonElement | null>;
 };
 
-export function CardTrigger({ open, onClick }: CardTriggerProps) {
+/**
+ * Drop the suppression once focus leaves: the next time the button is focused
+ * (tabbing back to it, say) it is genuine keyboard focus and earns the ring.
+ */
+function clearRingSuppression(event: { currentTarget: HTMLButtonElement }) {
+  event.currentTarget.removeAttribute("data-no-ring");
+}
+
+export function CardTrigger({ open, onClick, buttonRef }: CardTriggerProps) {
   return (
     <button
+      ref={buttonRef}
       type="button"
       aria-haspopup="dialog"
       aria-expanded={open}
       onClick={onClick}
-      className="business-card-trigger fixed z-30 outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
+      onBlur={clearRingSuppression}
+      className="business-card-trigger fixed z-30"
     >
       <IdCardIcon />
       <span className="business-card-trigger-label">Reach Out</span>

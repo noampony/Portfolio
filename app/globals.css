@@ -935,6 +935,21 @@ html {
     inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
 }
 
+/* Keyboard focus ring. Owned here (not via Tailwind ring utilities) so the
+   `data-no-ring` escape hatch below can cancel it with plain specificity: when
+   the card closes, focus is restored to this button programmatically, and
+   Escape leaves the browser in keyboard mode — which would otherwise flash a
+   ring the user never asked for. The attribute is set before focus returns and
+   removed as soon as the button is focused or keyed on its own terms. */
+.business-card-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.business-card-trigger[data-no-ring]:focus-visible {
+  outline-color: transparent;
+}
+
 .business-card-trigger svg {
   flex: none;
   color: var(--accent);
