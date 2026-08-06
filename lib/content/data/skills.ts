@@ -85,14 +85,17 @@ const skillData: unknown[] = [
   { name: "Agent Orchestration",  category: "AI Development", displayOrder: 7 },
 
   // ── Interpersonal ────────────────────────────────────────────────────────
-  // Source: the resume's "Interpersonal" line. Rendered apart from the other
-  // categories — a full-width band of pills below the technical cards.
-  { name: "Creativity",      category: INTERPERSONAL_CATEGORY, displayOrder: 1 },
-  { name: "Motivation",      category: INTERPERSONAL_CATEGORY, displayOrder: 2 },
-  { name: "Self-Learning",   category: INTERPERSONAL_CATEGORY, displayOrder: 3 },
-  { name: "Teamwork",        category: INTERPERSONAL_CATEGORY, displayOrder: 4 },
-  { name: "Responsibility",  category: INTERPERSONAL_CATEGORY, displayOrder: 5 },
-  { name: "Problem-Solving", category: INTERPERSONAL_CATEGORY, displayOrder: 6 },
+  // 1–6 are the resume's "Interpersonal" line, in its order; 7–8 are owner
+  // additions not on the resume. Rendered apart from the other categories —
+  // a full-width band of pills below the technical cards.
+  { name: "Creativity",          category: INTERPERSONAL_CATEGORY, displayOrder: 1 },
+  { name: "Motivation",          category: INTERPERSONAL_CATEGORY, displayOrder: 2 },
+  { name: "Self-Learning",       category: INTERPERSONAL_CATEGORY, displayOrder: 3 },
+  { name: "Teamwork",            category: INTERPERSONAL_CATEGORY, displayOrder: 4 },
+  { name: "Responsibility",      category: INTERPERSONAL_CATEGORY, displayOrder: 5 },
+  { name: "Problem-Solving",     category: INTERPERSONAL_CATEGORY, displayOrder: 6 },
+  { name: "Leadership",          category: INTERPERSONAL_CATEGORY, displayOrder: 7 },
+  { name: "Hiring & Interview",  category: INTERPERSONAL_CATEGORY, displayOrder: 8 },
 ];
 
 export const skills: Skill[] = validateSkillList(skillData);

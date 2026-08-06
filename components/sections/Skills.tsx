@@ -344,7 +344,7 @@ function InterpersonalBand({
       </h3>
 
       <motion.ul
-        className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6"
+        className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4"
         aria-label={`${INTERPERSONAL_CATEGORY} skills`}
         variants={tileStaggerVariants}
         initial="hidden"
