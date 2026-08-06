@@ -11,7 +11,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { SectionBackground } from "@/components/layout/SectionBackground";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SkillBadge } from "@/components/ui/SkillBadge";
-import { skills } from "@/lib/content/data/skills";
+import { INTERPERSONAL_CATEGORY, skills } from "@/lib/content/data/skills";
+import { getSkillIcon } from "@/lib/content/skill-icons";
 import { easeOut } from "@/lib/motion";
 
 // Fallback collapsed height before DOM measurement fires.
@@ -62,7 +63,14 @@ function groupByCategory(list: typeof skills) {
   return map;
 }
 
-const grouped = groupByCategory(skills);
+// Interpersonal skills are the one non-technical category, so they're pulled out
+// of the technical card grid and rendered as their own full-width band below it.
+const technicalSkills = skills.filter((s) => s.category !== INTERPERSONAL_CATEGORY);
+const interpersonalSkills = skills
+  .filter((s) => s.category === INTERPERSONAL_CATEGORY)
+  .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+const grouped = groupByCategory(technicalSkills);
 
 // Tailwind `sm` breakpoint — below it the cards stack into a single column.
 const TWO_COLUMN_QUERY = "(min-width: 640px)";
@@ -309,6 +317,76 @@ function SkillCategoryCard({
 }
 
 /**
+ * The Interpersonal category, rendered as a full-width band under the technical
+ * cards. Deliberately styled apart from them: horizontal icon+label pills on an
+ * accent-washed surface rather than a card of stacked square tiles, so it reads
+ * as a different kind of skill rather than one more technical bucket.
+ */
+function InterpersonalBand({
+  shouldReduceMotion,
+}: {
+  shouldReduceMotion: boolean | null;
+}) {
+  const bandRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(bandRef, { once: true, margin: "-60px" });
+  const animateState = isInView && !shouldReduceMotion ? "visible" : "hidden";
+
+  return (
+    <motion.div
+      ref={bandRef}
+      variants={cardVariants}
+      initial="hidden"
+      animate={shouldReduceMotion ? "visible" : animateState}
+      className="skills-interpersonal-card mt-4 rounded-xl px-4 py-4 sm:mt-5 sm:px-5 sm:py-5"
+    >
+      <h3 className="mb-4 font-mono text-[0.65rem] font-semibold uppercase tracking-widest text-accent">
+        {INTERPERSONAL_CATEGORY}
+      </h3>
+
+      <motion.ul
+        className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6"
+        aria-label={`${INTERPERSONAL_CATEGORY} skills`}
+        variants={tileStaggerVariants}
+        initial="hidden"
+        animate={shouldReduceMotion ? "visible" : animateState}
+      >
+        {interpersonalSkills.map((skill) => {
+          const iconPath = getSkillIcon(skill.name);
+          return (
+            <motion.li
+              key={skill.name}
+              variants={tileRevealVariants}
+              className="list-none"
+            >
+              <div className="skills-interpersonal-pill flex h-full items-center gap-2.5 rounded-full py-2 pl-2 pr-3.5">
+                <span className="skills-interpersonal-pill-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                  {iconPath ? (
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="h-[1.125rem] w-[1.125rem] fill-current text-accent"
+                    >
+                      <path d={iconPath} />
+                    </svg>
+                  ) : (
+                    <span className="font-mono text-sm font-bold text-accent">
+                      {skill.name.charAt(0)}
+                    </span>
+                  )}
+                </span>
+                <span className="min-w-0 font-mono text-[0.65rem] font-medium leading-tight tracking-wide text-text-secondary">
+                  {skill.name}
+                </span>
+              </div>
+            </motion.li>
+          );
+        })}
+      </motion.ul>
+    </motion.div>
+  );
+}
+
+/**
  * Technical Skills section (spec §8.6, Task 9.3).
  * Two independent flex columns of category cards, each containing an icon grid.
  */
@@ -378,6 +456,8 @@ export function Skills() {
             </div>
           ))}
         </div>
+
+        <InterpersonalBand shouldReduceMotion={shouldReduceMotion} />
       </div>
     </section>
   );
