@@ -28,6 +28,7 @@ const PROJECT_BACKGROUNDS: Record<string, string> = {
   "Delivery Safety Net": "/images/projects/final-failure-watchdog.png",
   "At-Risk Teenagers Monitoring System": "/images/projects/students-tracking-system.png",
   "Developer Portfolio Website": "/images/projects/portfolio-website.png",
+  TogetherIL: "/images/projects/togetheril-wide.png",
   "Securing a Shared Search Platform":
     "/images/projects/opensearch-fine-grained-access-control.png",
 };
