@@ -27,7 +27,7 @@ const businessCardData = {
   linkedIn: contact.linkedIn,
   resumeLink: resume.publicUrl,
   profileImage: profile.profileImage,
-  location: contact.location,
+  phone: contact.phone,
 } as const;
 
 export const businessCard: BusinessCard = validateBusinessCard(businessCardData);

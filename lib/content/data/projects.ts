@@ -112,7 +112,22 @@ const projectData = [
     confidentialityReviewed: true,
   },
   {
-    // §8.4 Project 6 — personal; this very website. No workplace, fully public content.
+    // §8.4 Project 6 — personal initiative (2023); no workplace, fully public content.
+    name: "TogetherIL",
+    role: "Initiator & Lead Developer",
+    shortDescription:
+      "A marketplace site I founded during the Iron Swords war, connecting shoppers with local businesses that were financially hurt by the war - through direct war damage, lost tourism, or owners and staff called up for reserve duty.",
+    problemSolved:
+      "At the start of the war, many small businesses lost income - from war damage, disappearing tourism, or reserve call-ups. Customers who wanted to support them had no easy way to find them.",
+    solution:
+      "Built on WordPress, the site let businesses submit their details and how they were affected; once approved, each listing went live with example products so shoppers could find and support them directly.",
+    techStack: ["WordPress", "PHP", "Product Management", "Community Building"],
+    whyImportant:
+      "I initiated and led it with one other developer. It ran for a few weeks and connected affected businesses with supportive shoppers, until larger, better-funded competitors launched similar platforms and the project became redundant.",
+    confidentialityReviewed: true,
+  },
+  {
+    // §8.4 Project 7 — personal; this very website. No workplace, fully public content.
     name: "Developer Portfolio Website",
     role: "Solo Developer",
     shortDescription:

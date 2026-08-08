@@ -175,6 +175,11 @@ export function ProjectCard({ project, headingId, backgroundImage, backgroundOpa
   );
 }
 
+/**
+ * `sizes` declares 50vw from `sm` up, which covers the widest card (the two-up first row of
+ * the Projects grid). The narrower three-up rows over-fetch slightly — cheaper than a soft
+ * image on the largest cards.
+ */
 function ProjectCardBackground({ src }: { src?: string }) {
   if (!src) return null;
 
@@ -184,7 +189,7 @@ function ProjectCardBackground({ src }: { src?: string }) {
         src={src}
         alt=""
         fill
-        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        sizes="(min-width: 640px) 50vw, 100vw"
         className="object-cover"
       />
     </div>

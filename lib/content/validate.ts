@@ -502,7 +502,7 @@ export function validateBusinessCard(data: unknown): BusinessCard {
     linkedIn: assertRequiredString(raw.linkedIn, `${path}.linkedIn`),
     resumeLink: assertRequiredInternalPath(raw.resumeLink, `${path}.resumeLink`),
     profileImage: assertRequiredInternalPath(raw.profileImage, `${path}.profileImage`),
-    location: assertRequiredString(raw.location, `${path}.location`),
+    phone: assertRequiredString(raw.phone, `${path}.phone`),
   };
 }
 

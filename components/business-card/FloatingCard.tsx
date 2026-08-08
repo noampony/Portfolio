@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 
 import { businessCard } from "@/lib/content/data/businessCard";
 import { resume } from "@/lib/content/data/resume";
@@ -26,9 +26,13 @@ import { CardTrigger } from "./CardTrigger";
  * comes from the validated {@link businessCard} data (Task 14.1) — nothing is
  * hardcoded here.
  */
+/** Digits-only form for the `tel:` URI, preserving the leading "+". */
+const telHref = `tel:${businessCard.phone.replace(/(?!^\+)[^\d]/g, "")}`;
+
 export function FloatingCard() {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -50,7 +54,17 @@ export function FloatingCard() {
     return null;
   }
 
-  const close = () => setOpen(false);
+  /**
+   * Closing always restores focus to the trigger (native `<dialog>` behaviour,
+   * kept for a11y), but that restore should not paint a focus ring — least of
+   * all after Escape, where the browser is in keyboard mode and would show one.
+   * The marker is set here, before the dialog closes, and the trigger drops it
+   * on its next real focus/keystroke.
+   */
+  const close = () => {
+    triggerRef.current?.setAttribute("data-no-ring", "");
+    setOpen(false);
+  };
 
   const handleBackdropClick = (event: MouseEvent<HTMLDialogElement>) => {
     if (event.target === event.currentTarget) {
@@ -58,9 +72,19 @@ export function FloatingCard() {
     }
   };
 
+  // Close Escape ourselves instead of letting the native cancel run: this way
+  // the dialog closes (and focus returns) only after `close` has marked the
+  // trigger, so there is no frame in which the ring is painted.
+  const handleKeyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close();
+    }
+  };
+
   return (
     <>
-      <CardTrigger open={open} onClick={() => setOpen(true)} />
+      <CardTrigger buttonRef={triggerRef} open={open} onClick={() => setOpen(true)} />
       <dialog
         ref={dialogRef}
         className="business-card-dialog"
@@ -68,6 +92,7 @@ export function FloatingCard() {
         onCancel={close}
         onClose={close}
         onClick={handleBackdropClick}
+        onKeyDown={handleKeyDown}
       >
         {/* Kept mounted while closed (the <dialog> is display:none then) so the
             content is still visible during the shrink-out close transition. */}
@@ -121,10 +146,10 @@ export function FloatingCard() {
               </a>
             </li>
             <li>
-              <span className="business-card-contact-link business-card-contact-static">
-                <PinIcon />
-                <span className="business-card-contact-text">{businessCard.location}</span>
-              </span>
+              <a href={telHref} className="business-card-contact-link">
+                <PhoneIcon />
+                <span className="business-card-contact-text">{businessCard.phone}</span>
+              </a>
             </li>
           </ul>
 
@@ -165,11 +190,10 @@ function LinkedInIcon() {
   );
 }
 
-function PinIcon() {
+function PhoneIcon() {
   return (
     <svg {...iconProps}>
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
+      <path d="M6.5 4h3l1.5 4-2 1.5a11 11 0 0 0 5 5L15.5 12l4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4Z" />
     </svg>
   );
 }

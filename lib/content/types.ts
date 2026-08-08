@@ -235,7 +235,7 @@ export type BusinessCard = {
   linkedIn: string;
   resumeLink: string;
   profileImage: AssetReference;
-  location: string;
+  phone: string;
 };
 
 /** §11.8 Social Link Model */
