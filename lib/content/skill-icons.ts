@@ -315,7 +315,7 @@ const SHIELD_CHECK =
 const ACCOUNT_TIE =
   "M12,3A4,4 0 0,1 16,7A4,4 0 0,1 12,11A4,4 0 0,1 8,7A4,4 0 0,1 12,3M16,13.54C16,14.6 15.72,17.07 13.81,19.83L13,15L13.94,13.12C13.32,13.05 12.67,13 12,13C11.33,13 10.68,13.05 10.06,13.12L11,15L10.19,19.83C8.28,17.07 8,14.6 8,13.54C5.61,14.24 4,15.5 4,17V21H20V17C20,15.5 18.4,14.24 16,13.54Z";
 
-// Hiring & Interview — a candidate under a magnifying glass (MDI account-search)
+// Hiring & Interviewing — a candidate under a magnifying glass (MDI account-search)
 const ACCOUNT_SEARCH =
   "M15.5,12C18,12 20,14 20,16.5C20,17.38 19.75,18.21 19.31,18.9L22.39,22L21,23.39L17.88,20.32C17.19,20.75 16.37,21 15.5,21C13,21 11,19 11,16.5C11,14 13,12 15.5,12M15.5,14A2.5,2.5 0 0,0 13,16.5A2.5,2.5 0 0,0 15.5,19A2.5,2.5 0 0,0 18,16.5A2.5,2.5 0 0,0 15.5,14M10,4A4,4 0 0,1 14,8C14,8.91 13.69,9.75 13.18,10.43C12.32,10.75 11.55,11.26 10.91,11.9L10,12A4,4 0 0,1 6,8A4,4 0 0,1 10,4M2,20V18C2,15.88 5.31,14.14 9.5,14C9.18,14.78 9,15.62 9,16.5C9,17.79 9.38,19 10,20H2Z";
 
@@ -401,7 +401,7 @@ export const SKILL_ICONS: Record<string, string> = {
   Responsibility: SHIELD_CHECK,
   "Problem-Solving": PUZZLE,
   Leadership: ACCOUNT_TIE,
-  "Hiring & Interview": ACCOUNT_SEARCH,
+  "Hiring & Interviewing": ACCOUNT_SEARCH,
 };
 
 export function getSkillIcon(skillName: string): string | null {

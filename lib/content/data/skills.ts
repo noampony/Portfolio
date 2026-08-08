@@ -95,7 +95,7 @@ const skillData: unknown[] = [
   { name: "Responsibility",      category: INTERPERSONAL_CATEGORY, displayOrder: 5 },
   { name: "Problem-Solving",     category: INTERPERSONAL_CATEGORY, displayOrder: 6 },
   { name: "Leadership",          category: INTERPERSONAL_CATEGORY, displayOrder: 7 },
-  { name: "Hiring & Interview",  category: INTERPERSONAL_CATEGORY, displayOrder: 8 },
+  { name: "Hiring & Interviewing",  category: INTERPERSONAL_CATEGORY, displayOrder: 8 },
 ];
 
 export const skills: Skill[] = validateSkillList(skillData);
