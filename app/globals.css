@@ -96,8 +96,23 @@ html {
 }
 
 /* Hero name shine — decorative sweep layered over the typed name; runs after typing
-   completes (gated in JSX) and only when motion is allowed. */
+   completes (gated in JSX) and only when motion is allowed.
+
+   The box is stretched 0.35em past the line box on both sides, and `padding-top` pushes
+   the duplicated text back down so it stays pixel-aligned with the base text. This is
+   needed because `background-clip: text` clips the paint to the border box: with a tight
+   line-height the line box is shorter than the glyph ink, so descender tips (y, g, p, j)
+   would never get lit. Growing the gradient (background-size) does not help — the clip
+   happens at the box edge, not the image edge. Keep the offsets in `em` so they scale
+   with the responsive font sizes, and do not add an `inset-0` utility to the element (it
+   would override these offsets). */
 .hero-name-shine {
+  position: absolute;
+  top: -0.35em;
+  right: 0;
+  bottom: -0.35em;
+  left: 0;
+  padding-top: 0.35em;
   background-image: linear-gradient(
     100deg,
     transparent 35%,
