@@ -31,6 +31,7 @@ const PROJECT_BACKGROUNDS: Record<string, string> = {
   TogetherIL: "/images/projects/togetheril-wide.png",
   "Securing a Shared Search Platform":
     "/images/projects/opensearch-fine-grained-access-control.png",
+  "Feature Cost Calculator": "/images/projects/feature-cost-calculator.png",
 };
 
 /** Per-project opacity override for `PROJECT_BACKGROUNDS` (front + back), keyed by project name. */

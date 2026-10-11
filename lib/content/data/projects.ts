@@ -149,6 +149,20 @@ const projectData = [
       "As a backend developer, building the entire frontend myself - design, animations, accessibility, performance - pushed me far outside my comfort zone and shows full-stack range.",
     confidentialityReviewed: true,
   },
+  {
+    // Owner-approved personal-time project; image will be added when provided.
+    name: "Feature Cost Calculator",
+    role: "Initiator and Project Lead",
+    workplace: { name: "Check Point", logo: "/logos/check-point.svg" },
+    shortDescription:
+      "A web app that helps product managers estimate feature costs based on customer usage and explore pricing scenarios. Developed on my own free time to improve product pricing setup",
+    problemSolved:
+      "Replaced a difficult-to-use and maintain Excel workbook with a clear, intuitive way to calculate costs and inform pricing decisions.",
+    techStack: ["TypeScript", "React", "Vite"],
+    whyImportant:
+      "Made it easier for product managers to understand how customer usage affects costs and set prices accordingly. The app is planned to expand to pricing calculations for other features.",
+    confidentialityReviewed: true,
+  },
 ] as const;
 
 export const projects: Project[] = validateProjectList(projectData);
