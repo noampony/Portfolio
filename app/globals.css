@@ -176,6 +176,22 @@ html {
   }
 }
 
+/* Hero core-technology pills (Python / AWS). Glass chips with the same teal edge
+   as the profile tags. They are labels, not controls, so they have no hover state.
+   Explicit color-mix (not Tailwind `/opacity`): the color tokens are bare var()
+   values, so `/opacity` modifiers produce no rule. */
+.hero-stack-pill {
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--border));
+  background: color-mix(in srgb, var(--bg-surface-raised) 72%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* Accent-tinted disc behind each pill's icon. */
+.hero-stack-pill-icon {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
 /* Hero CTA icons — decorative hover bounce, disabled under reduced motion (§7.3). */
 @keyframes hero-cta-icon-bounce {
   0%,
