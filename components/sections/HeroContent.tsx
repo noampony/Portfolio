@@ -8,6 +8,7 @@ import { Magnetic } from "@/components/ui/Magnetic";
 import { TypewriterRotator } from "@/components/ui/TypewriterRotator";
 import { profile } from "@/lib/content/data/profile";
 import { learningPaths } from "@/lib/content/data/learning-paths";
+import { getSkillIcon } from "@/lib/content/skill-icons";
 import { cn } from "@/lib/utils";
 import { useResumeViewer } from "@/components/providers/ResumeViewerProvider";
 
@@ -27,6 +28,14 @@ const heroRoles = [
   "AWS Expert",
   "Cyber Security Oriented",
 ] as const;
+
+// Expertise shown as always-visible pills between the role line and the summary
+// text. The same two are in the CV and cover-card title ("... | Python | AWS").
+const HERO_EXPERTISE_LABEL = "Expert in";
+const heroCoreStack = ["Python", "AWS"].map((name) => ({
+  name,
+  iconPath: getSkillIcon(name),
+}));
 
 function yearsExperienceSince(startDate: string): number {
   const [startYear, startMonth] = startDate.split("-").map(Number);
@@ -335,6 +344,46 @@ export function HeroContent({ initials }: HeroContentProps) {
             transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.3 }}
           >
             <TypewriterRotator phrases={heroRoles} start={contentRevealed} />
+          </motion.div>
+
+          {/* Expertise row: a small label + always-visible pills, above the summary text. */}
+          <motion.div
+            className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+            animate={contentRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.68, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.33 }}
+          >
+            <span
+              id="hero-expertise-label"
+              className="text-small font-semibold uppercase tracking-widest text-accent"
+            >
+              {HERO_EXPERTISE_LABEL}
+            </span>
+            <ul
+              aria-labelledby="hero-expertise-label"
+              className="m-0 flex list-none flex-wrap gap-2.5 p-0"
+            >
+              {heroCoreStack.map(({ name, iconPath }) => (
+                <li
+                  key={name}
+                  className="hero-stack-pill inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="hero-stack-pill-icon flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+                  >
+                    {iconPath ? (
+                      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current text-accent">
+                        <path d={iconPath} />
+                      </svg>
+                    ) : null}
+                  </span>
+                  <span className="text-small font-semibold tracking-wide text-text-primary">
+                    {name}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </motion.div>
 
           <motion.div
