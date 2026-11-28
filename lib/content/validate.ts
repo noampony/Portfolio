@@ -240,8 +240,10 @@ function validateAboutStats(value: unknown, path: string): AboutStats {
     `${path}.certificatesCountLabel`,
   );
 
-  if (coursesCountLabel !== "35") {
-    throw new ContentValidationError(`${path}.coursesCountLabel`, "must remain 35 per C3 rules");
+  // The exact value is cross-checked against the roadmap course count in
+  // build-validation.ts; here we only make sure it is a plain number.
+  if (!/^\d+$/.test(coursesCountLabel)) {
+    throw new ContentValidationError(`${path}.coursesCountLabel`, "must be a whole number");
   }
   if (technologiesCountLabel !== "18+") {
     throw new ContentValidationError(

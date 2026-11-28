@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { motion, useAnimation, useReducedMotion } from "framer-motion";
+import { profile } from "@/lib/content/data/profile";
 
 /**
  * Portfolio-themed Python snippets for the decorative Hero backdrop.
@@ -16,7 +17,7 @@ const SNIPPET_POOL = [
   `summary = (\n    "Senior Cloud backend developer"\n    " with hands-on ownership"\n)`,
   `tagline = (\n    "Building scalable and reliable"\n    " backend systems"\n)`,
   `portfolio_sections = [\n    "impact",\n    "experience",\n    "projects",\n    "courses",\n    "skills",\n    "resume",\n    "contact"\n]`,
-  `courses_completed = 35\ntech_stack_count = "18+"`,
+  `courses_completed = ${profile.coursesCountLabel}\ntech_stack_count = "18+"`,
   `skills = [\n    "Python",\n    "AWS",\n    "Docker",\n    "CI/CD"\n]`,
   `main_fields = [\n    "Backend Development",\n    "Cloud / AWS",\n    "Docker",\n    "Python"\n]`,
   `strengths = [\n    "ownership",\n    "leadership",\n    "hands-on",\n    "clear communication"\n, "continuous learning"\n]`,
@@ -24,7 +25,7 @@ const SNIPPET_POOL = [
   `class DeveloperProfile:\n    name: str = "Noam Pony"\n    title: str = "Senior Backend Developer"`,
   `experience_start = "2022-10"`,
   `def build_backend() -> str:\n    return "scalable & reliable systems"`,
-  `learning_path = {\n    "courses": 35,\n    "focus": ["cloud backend", "generative AI"]\n}`,
+  `learning_path = {\n    "courses": ${profile.coursesCountLabel},\n    "focus": ["cloud backend", "generative AI"]\n}`,
   `volunteer_project = {\n    "role": "team-leader volunteer",\n    "focus": "useful public impact"\n}`,
   `project_preview = "#projects"\ncourses_hub = "#courses"`,
   `contact_message = (\n    "Have something interesting"\n    " to work on? Contact me."\n)`,

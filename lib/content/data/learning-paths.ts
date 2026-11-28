@@ -39,19 +39,24 @@ const learningPathData = [
     id: "python-foundation",
     order: 1,
     title: "Python Foundation",
+    // Newest / most advanced first, down to the basics.
     courses: [
-      course("self.py", "/courses/self-py.png"),
-      course("Next.py", "/courses/next-py.png"),
-      course("Python3: Deep Dive Part 1 – Functional", "/courses/python-deep-dive-1.png"),
       course(
-        "Python3: Deep Dive Part 2 – Iterators & Generators",
-        "/courses/python-deep-dive-2.png",
+        "Concurrent and Parallel Programming in Python",
+        "/courses/concurrent-parallel-python.png",
       ),
+      course("Python3: Deep Dive Part 4 – OOP", "/courses/python-deep-dive-4.png"),
       course(
         "Python3: Deep Dive Part 3 – Dictionaries, Sets, JSON",
         "/courses/python-deep-dive-3.png",
       ),
-      course("Python3: Deep Dive Part 4 – OOP", "/courses/python-deep-dive-4.png"),
+      course(
+        "Python3: Deep Dive Part 2 – Iterators & Generators",
+        "/courses/python-deep-dive-2.png",
+      ),
+      course("Python3: Deep Dive Part 1 – Functional", "/courses/python-deep-dive-1.png"),
+      course("Next.py", "/courses/next-py.png"),
+      course("self.py", "/courses/self-py.png"),
     ],
   },
   {

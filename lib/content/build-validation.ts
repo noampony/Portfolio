@@ -11,6 +11,7 @@ import { businessCard } from "./data/businessCard";
 import { courses } from "./data/courses";
 import { experiences } from "./data/experience";
 import { impacts } from "./data/impact";
+import { learningPaths } from "./data/learning-paths";
 import { projects } from "./data/projects";
 import {
   sampleExperienceReviewed,
@@ -105,6 +106,22 @@ function assertCoursesData(): void {
   }
 }
 
+/**
+ * Verify the courses count label matches the real roadmap, so adding or removing a
+ * course without updating `profile.coursesCountLabel` fails the build.
+ */
+function assertCoursesCountLabel(): void {
+  const roadmapCourseCount = learningPaths.reduce(
+    (total, path) => total + path.courses.length,
+    0,
+  );
+  if (profile.coursesCountLabel !== String(roadmapCourseCount)) {
+    throw new Error(
+      `Content validator self-check failed: profile.coursesCountLabel is "${profile.coursesCountLabel}" but the learning-path roadmap has ${roadmapCourseCount} courses.`,
+    );
+  }
+}
+
 /** Verify the real My Impact data validates and is complete + correctly ordered (Task 5.1, §8.2). */
 function assertImpactData(): void {
   // All nine specification cards (§8.2.1–§8.2.9) must be present.
@@ -142,4 +159,5 @@ assertConfidentialityFilter();
 assertExperienceConfidentialityGate();
 assertProjectConfidentialityGate();
 assertCoursesData();
+assertCoursesCountLabel();
 assertImpactData();
