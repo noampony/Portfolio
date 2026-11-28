@@ -52,7 +52,40 @@ const yearsOfExperience = yearsExperienceSince(profile.yearsExperienceStartDate)
  * bottom-to-top, one second apart, each reusing the original experience-tag
  * spring + float treatment. The courses count is derived from the Courses
  * section data so it never drifts from what that section renders.
+ *
+ * Layout - the pills follow the frame's oval. Every pill has a fixed size
+ * (72.8 / 83.2 / 140px tall by breakpoint), so four of them are taller than the
+ * frame (224 / 256 / 416 / 448px). Each pill is centred on the frame
+ * (`top-1/2 -translate-y-1/2`) and moved by a whole number of *slots* (one pill
+ * height plus the gap) at -1.5 / -0.5 / +0.5 / +1.5. Centring on the frame keeps
+ * the column centred at both the min-[850px] (416px) and lg (448px) frame heights
+ * with one set of offsets.
+ *
+ * Horizontally, each pill's right edge sits on the ellipse `x = cx - rx·√(1 - u²)`.
+ * `u` is the slot's distance from the frame's vertical centre, as a fraction of a
+ * *path* ellipse: the frame's oval stretched up and down so the ±1.5 slots land on
+ * it (u = 0.75 there, 0.25 at the ±0.5 slots). The inner pills keep the old middle
+ * overhang, and the outer pair tucks back in, so the column bows out at the middle
+ * and narrows at the ends, like the oval itself.
  */
+const TAG_ARC_POSITION_CLASSES = "top-1/2 -translate-y-1/2";
+
+/**
+ * Per-slot offsets: vertical is ±0.5 / ±1.5 × (pill height + gap); horizontal is
+ * the ellipse solution above, so the two inner slots share one inset and the two
+ * outer slots share the other.
+ */
+const tagSlotOffsetClasses = {
+  "-1.5":
+    "mt-[-115.2px] -left-[24px] sm:mt-[-130.8px] sm:-left-[27px] min-[850px]:mt-[-219px] min-[850px]:-left-[38px]",
+  "-0.5":
+    "mt-[-38.4px] -left-12 sm:mt-[-43.6px] sm:-left-[55px] min-[850px]:mt-[-73px] min-[850px]:-left-20",
+  "0.5":
+    "mt-[38.4px] -left-12 sm:mt-[43.6px] sm:-left-[55px] min-[850px]:mt-[73px] min-[850px]:-left-20",
+  "1.5":
+    "mt-[115.2px] -left-[24px] sm:mt-[130.8px] sm:-left-[27px] min-[850px]:mt-[219px] min-[850px]:-left-[38px]",
+} as const;
+
 const totalCoursesCompleted = learningPaths.reduce(
   (total, path) => total + path.courses.length,
   0,
@@ -65,8 +98,18 @@ const profileTags = [
     value: `${yearsOfExperience}+`,
     numericValue: yearsOfExperience,
     lines: ["Years of", "Experience"],
-    positionClasses:
-      "-top-1 -left-6 sm:-top-[4.6px] sm:-left-[28px] min-[850px]:-top-3 min-[850px]:-left-10",
+    slotClasses: tagSlotOffsetClasses["-1.5"],
+    appearDelay: 4.15,
+  },
+  {
+    key: "team-leader",
+    ariaLabel: "1 year as a volunteer team leader",
+    value: "1 Year",
+    // "1 Year" is wider than the other values, so it uses one size step smaller
+    // to stay on one line inside the fixed pill width.
+    valueSizeClasses: "text-xs sm:text-sm min-[850px]:text-2xl",
+    lines: ["Volunteer", "Team", "Leader"],
+    slotClasses: tagSlotOffsetClasses["-0.5"],
     appearDelay: 3.15,
   },
   {
@@ -75,8 +118,7 @@ const profileTags = [
     value: `${totalCoursesCompleted}+`,
     numericValue: totalCoursesCompleted,
     lines: ["External", "Courses", "Completed"],
-    positionClasses:
-      "top-1/2 -translate-y-1/2 -left-12 sm:-left-[55px] min-[850px]:-left-20",
+    slotClasses: tagSlotOffsetClasses["0.5"],
     appearDelay: 2.15,
   },
   {
@@ -84,13 +126,7 @@ const profileTags = [
     ariaLabel: "B.Sc Computer Science Degree",
     value: "B.Sc",
     lines: ["Computer", "Science", "Degree"],
-    // Bottom offset is a touch larger than the top tag's (rather than the same
-    // -1/-2/-3 value) because this tag wraps onto 3 lines and is taller, so a
-    // matching edge offset would pull its center closer to the middle tag than
-    // the top tag's. The extra px exactly compensates for that height delta so
-    // the middle tag sits equidistant between the top and bottom tags.
-    positionClasses:
-      "-bottom-[7.2px] -left-[22px] sm:-bottom-[8.2px] sm:-left-[25px] min-[850px]:-bottom-[18.41px] min-[850px]:-left-10",
+    slotClasses: tagSlotOffsetClasses["1.5"],
     appearDelay: 1.15,
   },
 ] as const;
@@ -444,7 +480,9 @@ export function HeroContent({ initials }: HeroContentProps) {
       </div>
 
       <motion.div
-        className="order-2 flex shrink-0 items-start justify-center min-[850px]:order-none min-[850px]:justify-end"
+        // `my-5` below 850px: the 4-pill column is taller than the frame and spills
+        // ~40px past its top and bottom, so this keeps it off the text and CTAs.
+        className="order-2 my-5 flex shrink-0 items-start justify-center min-[850px]:order-none min-[850px]:my-0 min-[850px]:justify-end"
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={contentRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
         transition={{ duration: 0.83, ease: easeOut, delay: prefersReducedMotion ? 0 : 0.24 }}
@@ -494,7 +532,7 @@ export function HeroContent({ initials }: HeroContentProps) {
               <div
                 key={tag.key}
                 aria-label={tag.ariaLabel}
-                className={cn("absolute z-20", tag.positionClasses)}
+                className={cn("absolute z-20", TAG_ARC_POSITION_CLASSES, tag.slotClasses)}
               >
                 <motion.div
                   initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
@@ -517,7 +555,7 @@ export function HeroContent({ initials }: HeroContentProps) {
                   <div
                     className={cn(
                       // Fixed footprint (matches the 3-line "Degree" tag's own
-                      // content box) so all three pills render at the exact same
+                      // content box) so all four pills render at the exact same
                       // size regardless of label line-count/font-size — the box
                       // no longer shrinks to fit its own content.
                       "flex flex-col items-center justify-center",
@@ -541,7 +579,12 @@ export function HeroContent({ initials }: HeroContentProps) {
                   >
                     <span
                       aria-hidden="true"
-                      className="font-bold leading-none text-white text-sm sm:text-base min-[850px]:text-3xl"
+                      className={cn(
+                        "whitespace-nowrap font-bold leading-none text-white",
+                        "valueSizeClasses" in tag
+                          ? tag.valueSizeClasses
+                          : "text-sm sm:text-base min-[850px]:text-3xl",
+                      )}
                     >
                       {"numericValue" in tag ? (
                         <CountUp

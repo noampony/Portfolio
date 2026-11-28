@@ -13,12 +13,13 @@ const profileData = {
   title: "Senior Backend Developer",
   oneLineSummary: "A passionate, experienced cloud backend developer",
   heroText:
-    "A passionate, experienced cloud backend developer.\nBuilding scalable & reliable cloud backend systems.",
+    "A passionate, experienced cloud backend developer.\nBuilding scalable & reliable cloud backend systems.\nVolunteer team leader for 1 year.",
   location: "Israel",
   profileImage: "/profile.png",
   yearsExperienceStartDate: "2021-12",
   technologiesCountLabel: "18+",
-  coursesCountLabel: "35",
+  // Must equal the number of courses in the learning-path roadmap (checked at build time).
+  coursesCountLabel: "30",
   mainFields: [
     "Backend Development",
     "Python",
