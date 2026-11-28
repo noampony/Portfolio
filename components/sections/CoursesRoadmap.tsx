@@ -12,8 +12,8 @@ import { staggerContainerVariants } from "@/lib/motion";
 
 /**
  * Courses section (spec §8.5) — a compact learning *roadmap*: the ordered learning paths,
- * each rendered as a header plus a small carousel of its courses (see `RoadmapPath` /
- * `CourseCarousel`). Replaces the earlier flat top-3–5 "Courses Preview".
+ * each rendered as a header plus a fanned deck of its courses (see `RoadmapPath` /
+ * `CourseDeck`). Replaces the earlier flat top-3–5 "Courses Preview".
  *
  * Path ordering and grouping come from `lib/content/data/learning-paths.ts` (a deliberate
  * progression). Per-course categories and images are owner-supplied later (§19.7); cards show

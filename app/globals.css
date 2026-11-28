@@ -2361,7 +2361,7 @@ a.business-card-contact-link:focus-visible {
 
 /* ===== Courses — learning roadmap (spec §8.5) ========================================
    A vertical "journey": a glowing accent spine links the ordered paths top-to-bottom,
-   each path marked by a numbered node, then its header + a scroll-snap carousel of compact
+   each path marked by a numbered node, then its header + a fanned deck of compact
    course cards. Reuses the experience-tree node/line motif (.tree-dot) and tokens. All
    motion is transform/opacity-only and reduced-motion-gated (spec §20). */
 
@@ -2524,7 +2524,7 @@ a.business-card-contact-link:focus-visible {
   min-height: var(--roadmap-node-size);
 }
 
-/* Thin accent divider tying the header to its carousel (sits in the header→carousel gap). */
+/* Thin accent divider tying the header to its deck (sits in the header→deck gap). */
 .roadmap-path-header::after {
   content: "";
   position: absolute;
@@ -2610,49 +2610,87 @@ a.business-card-contact-link:focus-visible {
   color: var(--text-primary);
 }
 
-/* Carousel: prev arrow | scroll track | next arrow. */
-.roadmap-carousel {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  gap: 0.5rem;
+/* Fanned course deck (see CourseDeck.tsx). All cards share one grid cell and move with
+   `transform` only, so the deck height is the card height and focusing a card never shifts
+   layout. `--n` (card count) is set on .roadmap-deck and `--i` (card index) on each item.
+
+   The gap between cards (`--step`) is the smaller of a max gap and what the column can fit:
+   (column width - side room - card width) / (n - 1). `cqi` is the column width, through the
+   inline-size container on .roadmap-deck, so the fan always fits its column. */
+.roadmap-deck {
+  --card-w: 11rem;
+  --deck-side: 0.75rem; /* room for the rotated corners of the first / last card */
+  --deck-gaps: max(1, calc(var(--n, 1) - 1));
+  --step-max: 2.25rem;
+  --step-spread-max: 3.75rem;
+  container-type: inline-size;
 }
 
-/* When all cards fit there are no arrow buttons, so reserve their footprint
-   (2rem arrow + 0.5rem gap on each side) as padding — the track then starts at the
-   same offset whether or not the carousel scrolls. */
-.roadmap-carousel:not([data-arrows]) {
-  padding-inline: calc(2rem + 0.5rem);
-}
-
-.roadmap-carousel-track {
-  display: flex;
-  gap: 0.85rem;
-  margin: 0;
-  padding: 0.25rem;
+.roadmap-deck-stack {
+  --step: min(
+    var(--step-max),
+    calc((100cqi - 2 * var(--deck-side) - var(--card-w)) / var(--deck-gaps))
+  );
+  display: grid;
+  width: calc(var(--card-w) + (var(--n, 1) - 1) * var(--step));
+  max-width: calc(100% - 2 * var(--deck-side));
+  margin: 0 var(--deck-side);
+  /* Top: room for the focused card's lift + the rotated corners. */
+  padding: 1.5rem 0 0.75rem;
   list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: 0.25rem;
-  scrollbar-width: thin;
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.roadmap-carousel-track:focus-visible {
+.roadmap-deck-item {
+  --mid: calc((var(--n, 1) - 1) / 2);
+  --rot: clamp(-7deg, calc((var(--i) - var(--mid)) * 2.2deg), 7deg);
+  grid-area: 1 / 1;
+  width: var(--card-w);
+  z-index: var(--z, 0);
+  transform-origin: 50% 100%;
+  transform: translateX(calc(var(--i) * var(--step))) rotate(var(--rot));
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  outline: none;
+}
+
+/* The focused card: on top, straight, lifted a little. */
+.roadmap-deck-item[data-focused="true"] {
+  z-index: 100;
+  transform: translateX(calc(var(--i) * var(--step))) translateY(-0.75rem) scale(1.03);
+  cursor: default;
+}
+
+.roadmap-deck-item:focus-visible .roadmap-course-card {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: var(--radius);
 }
 
-.roadmap-carousel-item {
-  flex: 0 0 auto;
-  width: 13rem;
-  scroll-snap-align: start;
+/* Mouse users: hovering the deck spreads the fan so each card is easy to reach. */
+@media (hover: hover) {
+  .roadmap-deck-stack:hover {
+    --step-max: var(--step-spread-max);
+  }
 }
 
-/* Arrow buttons — progressive enhancement over native scrolling. */
-.roadmap-carousel-arrow {
-  flex: 0 0 auto;
-  align-self: center;
+/* Controls under the deck: ‹ 03 / 07 › */
+.roadmap-deck-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-inline: var(--deck-side);
+}
+
+.roadmap-deck-counter {
+  min-width: 3.75rem;
+  text-align: center;
+  font-family: var(--font-mono), var(--font-mono-fallback);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.roadmap-deck-arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2669,29 +2707,29 @@ a.business-card-contact-link:focus-visible {
     color 160ms ease;
 }
 
-.roadmap-carousel-arrow svg {
+.roadmap-deck-arrow svg {
   width: 1rem;
   height: 1rem;
 }
 
-.roadmap-carousel-arrow:hover:not(:disabled) {
+.roadmap-deck-arrow:hover:not(:disabled) {
   border-color: color-mix(in srgb, var(--accent) 65%, var(--border));
   background: color-mix(in srgb, var(--accent) 14%, var(--bg-surface));
   color: var(--accent);
 }
 
-.roadmap-carousel-arrow:disabled {
+.roadmap-deck-arrow:disabled {
   opacity: 0.35;
   cursor: default;
 }
 
-.roadmap-carousel-arrow:focus-visible {
+.roadmap-deck-arrow:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-/* Compact, flat course card — subtle surface with a gentle border/glow on hover (no lift,
-   no glare sheen). */
+/* Compact, flat course card. Cards behind the focused one are dimmed with a filter (not
+   opacity, which would let the cards below show through). */
 .roadmap-course-card {
   display: flex;
   flex-direction: column;
@@ -2700,19 +2738,26 @@ a.business-card-contact-link:focus-visible {
   border: 1px solid var(--border);
   background: var(--bg-surface);
   overflow: hidden;
+  filter: brightness(0.72) saturate(0.85);
+  box-shadow: 0 0.5rem 1.25rem rgb(0 0 0 / 0.35);
   transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease;
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    filter 200ms ease;
 }
 
-.roadmap-course-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-  box-shadow: 0 0 1rem color-mix(in srgb, var(--accent) 12%, transparent);
+.roadmap-course-card[data-focused="true"] {
+  filter: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  box-shadow:
+    0 0.75rem 1.75rem rgb(0 0 0 / 0.45),
+    0 0 1.25rem color-mix(in srgb, var(--accent) 16%, transparent);
 }
 
 /* Media area: course image when provided, otherwise a consistent gradient fallback. */
 .roadmap-course-media {
   position: relative;
+  flex: 0 0 auto;
   overflow: hidden;
   height: 4.75rem;
   background:
@@ -2737,47 +2782,33 @@ a.business-card-contact-link:focus-visible {
   color: var(--accent);
 }
 
+/* One line on a resting card, the full name (up to 4 lines - the longest titles need 4 at
+   card width) on the focused card. Every card reserves 4 lines so the deck height never
+   changes. */
 .roadmap-course-name {
-  position: relative;
+  display: -webkit-box;
+  min-height: calc(4 * 1.35em);
   margin: 0;
   overflow: hidden;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
   font-size: var(--type-small);
   font-weight: 600;
   line-height: 1.35;
   color: var(--text-primary);
 }
 
-/* Inner run of text — the piece that slides. inline-block so its full (possibly clipped)
-   width is measurable from the clip box. */
-.roadmap-course-name-text {
-  display: inline-block;
-  will-change: transform;
-}
-
-/* Only animate when the card marks the name as overflowing (set from JS on hover/focus).
-   The distance/duration come in as inline CSS vars sized to the actual overflow. */
-.roadmap-course-name[data-scrolling="true"] .roadmap-course-name-text {
-  animation: roadmap-course-name-scroll var(--course-name-duration, 4s) ease-in-out infinite;
-}
-
-@keyframes roadmap-course-name-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  42%,
-  55% {
-    transform: translateX(var(--course-name-distance, 0));
-  }
-  97%,
-  100% {
-    transform: translateX(0);
-  }
+.roadmap-course-card[data-focused="true"] .roadmap-course-name {
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .roadmap-course-name[data-scrolling="true"] .roadmap-course-name-text {
-    animation: none;
+  .roadmap-deck-stack,
+  .roadmap-deck-item,
+  .roadmap-course-card {
+    transition: none;
   }
 }
 
@@ -2790,7 +2821,7 @@ a.business-card-contact-link:focus-visible {
   }
 }
 
-/* ----- Desktop: centred spine, carousels alternating left/right ---------------------
+/* ----- Desktop: centred spine, decks alternating left/right ---------------------
    The road runs down the middle; each path's content branches to one side (odd → right,
    even → left), hugging the centre and extending outward, with a short connector from the
    node. More compact and balanced than the single left-aligned column. */
@@ -2816,7 +2847,7 @@ a.business-card-contact-link:focus-visible {
     display: none;
   }
 
-  /* Three columns: side | node | side. minmax(0,…) lets the carousels scroll inside; the
+  /* Three columns: side | node | side. minmax(0,…) keeps each deck inside its column; the
      wide centre gap gives the road room to wind without touching the cards. */
   .roadmap-path {
     padding-left: 0;
@@ -2824,6 +2855,16 @@ a.business-card-contact-link:focus-visible {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     column-gap: 3rem;
     align-items: start;
+    /* Paths overlap vertically (negative margin above), and each later path is painted on
+       top of the one before it. Its empty side column would then cover the bottom of the
+       path above - where the deck's arrow buttons sit - and catch their clicks. So the
+       grid itself lets pointer events pass through; only the real content catches them. */
+    pointer-events: none;
+  }
+
+  .roadmap-path-order,
+  .roadmap-path-content {
+    pointer-events: auto;
   }
 
   /* Node back in flow, aligned to the top of the content so the connector ::after/::before
@@ -2885,21 +2926,23 @@ a.business-card-contact-link:focus-visible {
     text-align: right;
   }
 
-  /* `safe` so that when a path's cards overflow the column the alignment falls back to
-     start — otherwise flex-end pushes the overflow past the start edge where it can't be
-     scrolled to (and scrollWidth wouldn't count it, so the arrows stay hidden). When the
-     cards fit, they still hug the centre spine. */
-  .roadmap-paths > li:nth-child(even) .roadmap-carousel-track {
-    justify-content: safe flex-end;
+  /* Left-side paths: the deck and its controls hug the centre spine. */
+  .roadmap-paths > li:nth-child(even) .roadmap-deck-stack {
+    margin-left: auto;
+  }
+
+  .roadmap-paths > li:nth-child(even) .roadmap-deck-controls {
+    justify-content: flex-end;
   }
 
   .roadmap-paths > li:nth-child(even) .roadmap-path-header::after {
     background: linear-gradient(270deg, color-mix(in srgb, var(--accent) 50%, transparent), transparent 75%);
   }
 
-  /* Slightly more compact cards on desktop. */
-  .roadmap-carousel-item {
-    width: 12rem;
+  /* Slightly wider cards and a wider spread on desktop. */
+  .roadmap-deck {
+    --card-w: 12rem;
+    --step-spread-max: 4rem;
   }
 
   .roadmap-course-media {
